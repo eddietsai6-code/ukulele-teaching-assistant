@@ -6,3 +6,5 @@ tmp/
 .env.*
 _vendor/
 docs/superpowers/
+.playwright-cli/
+.wrangler/
