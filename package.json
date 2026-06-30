@@ -1,0 +1,25 @@
+{
+  "name": "ukulele-teaching-assistant",
+  "version": "0.1.0",
+  "description": "A fresh dopamine-style UkuleleBook teaching site with a ukulele-only Web Audio tuner.",
+  "type": "module",
+  "license": "MIT",
+  "author": "eddietsai6-code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eddietsai6-code/ukulele-teaching-assistant.git"
+  },
+  "homepage": "https://ukulele-teaching-assistant.pages.dev",
+  "scripts": {
+    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js",
+    "check": "node tools/check-syntax.mjs",
+    "serve": "python -m http.server 4184 --bind 127.0.0.1"
+  },
+  "keywords": [
+    "ukulele",
+    "tuner",
+    "web-audio",
+    "teaching",
+    "static-site"
+  ]
+}

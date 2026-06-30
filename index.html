@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UkuleleBook · 尤克里里教学助手模板</title>
+    <meta
+      name="description"
+      content="清新多巴胺风格的尤克里里教学网站基础框架，保留等级、曲库、课程详情和动效结构。"
+    />
+    <link rel="stylesheet" href="./assets/styles.css?v=preserve-framework-ukulele" />
+  </head>
+  <body class="uke-fresh-theme">
+    <header class="site-header" aria-label="UkuleleBook 导航">
+      <a class="brand-mark" href="#top" aria-label="UkuleleBook 首页">
+        <span class="brand-hand" aria-hidden="true"></span>
+      </a>
+      <a class="pill-button" href="#catalog">打开歌单</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="UkuleleBook 尤克里里教学助手">
+        <div class="hero-copy">
+          <p class="marker-caption">Dear ukulele learners,</p>
+          <div class="text-pressure-stage hero-pressure-stage">
+            <h1
+              id="heroPressure"
+              class="text-pressure-title hero-pressure flex"
+              data-text="UkuleleBook"
+              aria-label="UkuleleBook"
+            ></h1>
+          </div>
+          <p class="intro-copy">
+            一个保留原版互动框架的尤克里里教学助手模板，用四弦、和弦、扫弦、节拍和课堂歌单组织学习路径，
+            <span>not just “easy or hard”</span>。
+          </p>
+          <div id="heroStats" class="stat-row" aria-label="模板统计"></div>
+          <div class="hero-actions">
+            <a class="pill-button" href="#catalog">打开曲库</a>
+            <a class="quiet-link" href="#levels">先看等级路径</a>
+          </div>
+          <p class="preorder-note">
+            清新多巴胺配色 · 适合作为尤克里里教学网站基础框架 · 不含真实音频、谱面或付款资源。
+          </p>
+        </div>
+
+        <div
+          id="heroLanyard"
+          class="ukulele-lanyard lanyard-wrapper"
+          aria-label="UkuleleBook 模板吊牌动效"
+        >
+          <canvas class="lanyard-canvas" aria-hidden="true"></canvas>
+          <span class="lanyard-a11y">可拖动的尤克里里教学助手吊牌</span>
+        </div>
+
+        <div class="hero-product" aria-label="当前尤克里里课堂卡片">
+          <p class="scribble-caption caption-left">四弦课堂卡</p>
+          <svg class="arrow arrow-left" viewBox="0 0 128 84" aria-hidden="true">
+            <path d="M6 62 C36 28, 68 18, 112 24" />
+            <path d="M100 10 L116 24 L101 39" />
+          </svg>
+          <div id="heroNotebook" class="notebook-object"></div>
+          <div class="pencil-object" aria-hidden="true"></div>
+          <div class="sticker sticker-bolt" aria-hidden="true">C F G</div>
+          <div class="sticker sticker-beat" aria-hidden="true">节拍</div>
+        </div>
+      </section>
+
+      <section id="ukuleleTuner" class="ukulele-tuner-section section" aria-label="Ukulele Tuner">
+        <div class="tuner-copy">
+          <p class="marker-caption">tune first</p>
+          <h2>先把四根弦调准，再开始上课。</h2>
+          <p>
+            这个模块移植自你的 twelve-tone-tuner：去掉其他乐器选择，只保留 Ukulele 标准调弦，
+            麦克风检测、音高计算、指针和 cents 偏差读数都保留。
+          </p>
+        </div>
+
+        <article class="uke-tuner-panel" aria-labelledby="ukuleleTunerTitle" aria-describedby="tunerStatusText">
+          <header class="uke-tuner-top">
+            <div>
+              <p class="kicker">UKULELE</p>
+              <h2 id="ukuleleTunerTitle">Ukulele Tuner</h2>
+              <small id="ukuleleTuningHint">4=G4 3=C4 2=E4 1=A4</small>
+            </div>
+            <div class="uke-status-lamp" aria-hidden="true"></div>
+          </header>
+
+          <div
+            id="ukuleleVuMeter"
+            class="uke-vu-meter"
+            role="meter"
+            aria-label="Ukulele cents offset"
+            aria-valuemin="-50"
+            aria-valuemax="50"
+            aria-valuenow="0"
+          >
+            <div class="uke-meter-face">
+              <div id="tunerScale" class="uke-scale" aria-hidden="true"></div>
+              <div class="uke-center-band" aria-hidden="true"></div>
+              <div class="uke-meter-frequency" aria-hidden="true">
+                <span id="tunerFrequency">--</span>
+                <small>Hz</small>
+              </div>
+              <div class="uke-meter-cents" aria-hidden="true">
+                <span id="tunerCentsValue">0</span>
+                <small>Cents</small>
+              </div>
+              <div id="tunerNeedle" class="uke-needle" aria-hidden="true"></div>
+              <div class="uke-pivot" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <section class="uke-readout" aria-live="polite">
+            <div class="uke-primary-note">
+              <div class="uke-note-line">
+                <span id="tunerNoteName">--</span>
+                <small id="tunerNoteOctave"></small>
+              </div>
+              <span id="tunerTargetValue" class="uke-target-inline">--</span>
+            </div>
+            <div class="uke-string-strip" aria-label="Ukulele standard tuning">
+              <span>4 · G4</span>
+              <span>3 · C4</span>
+              <span>2 · E4</span>
+              <span>1 · A4</span>
+            </div>
+          </section>
+
+          <footer class="uke-control-strip">
+            <button id="startTunerButton" class="uke-start-button" type="button">START</button>
+            <div class="uke-level-meter" aria-hidden="true">
+              <span id="tunerLevelFill"></span>
+            </div>
+          </footer>
+
+          <p id="tunerStatusText" class="uke-status-text">READY</p>
+        </article>
+      </section>
+
+      <section class="infinite-menu-section" aria-label="尤克里里等级轨道">
+        <div class="infinite-copy">
+          <p class="marker-caption">pick a path</p>
+          <h2>先选级别，再进入歌曲。</h2>
+          <p>
+            原版的旋转轨道保留下来，用来展示从开放弦、基础和弦到指弹表现的学习层级。
+          </p>
+        </div>
+        <div class="infinite-stage">
+          <div id="infiniteMenu" class="infinite-menu" tabindex="0" aria-label="拖动查看尤克里里等级">
+            <div id="orbitCanvas" class="orbit-canvas"></div>
+            <h3 id="orbitTitle" class="face-title"></h3>
+            <p id="orbitDescription" class="face-description"></p>
+            <button id="orbitAction" class="action-button" type="button">查看这个等级</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-row" aria-label="尤克里里教学素材形态">
+        <article class="showcase-object notebook-blue">
+          <p class="scribble-caption">和弦本</p>
+          <svg class="arrow" viewBox="0 0 128 84" aria-hidden="true">
+            <path d="M8 64 C42 34, 70 22, 112 25" />
+            <path d="M99 12 L116 25 L102 40" />
+          </svg>
+          <div class="mini-notebook">
+            <span>chord book</span>
+            <strong>C · F · G7 · Am</strong>
+          </div>
+        </article>
+        <div class="showcase-copy">
+          <p class="marker-caption">fresh frame</p>
+          <h2>还是原来的网页结构，只换成尤克里里课堂。</h2>
+          <p>
+            这里继续使用原模板的笔记本、贴纸、等级卡和课程卡框架，后续可以逐步填入你自己的课程体系。
+          </p>
+        </div>
+        <article class="showcase-object notebook-pink">
+          <p class="scribble-caption">扫弦卡</p>
+          <svg class="arrow" viewBox="0 0 128 84" aria-hidden="true">
+            <path d="M9 61 C39 35, 74 20, 114 28" />
+            <path d="M101 13 L118 28 L101 42" />
+          </svg>
+          <div class="mini-notebook">
+            <span>strum notes</span>
+            <strong>down · up · chuck</strong>
+          </div>
+        </article>
+      </section>
+
+      <section id="levels" class="levels-section section" aria-label="尤克里里等级路径">
+        <div class="section-heading wide">
+          <p class="marker-caption">level path</p>
+          <h2>从四弦入门到完整弹唱。</h2>
+          <p>
+            保留原模板的横向等级画廊和弹出式歌曲抽屉，方便以后扩展成完整课程路径。
+          </p>
+        </div>
+        <div
+          id="levelBoard"
+          class="level-board circular-gallery chroma-grid"
+          tabindex="0"
+          aria-label="尤克里里等级画廊"
+        ></div>
+        <div id="levelSongPicker" class="level-song-picker" hidden></div>
+      </section>
+
+      <section id="catalog" class="catalog-section section" aria-label="尤克里里歌曲目录">
+        <div class="section-heading wide">
+          <p class="marker-caption">song catalog</p>
+          <h2>歌单、技巧和课堂目标都在一页里。</h2>
+          <p>
+            用原版曲库筛选结构承接尤克里里歌曲：按等级、来源、类型和技巧标签快速定位。
+          </p>
+        </div>
+        <div class="filters" aria-label="歌曲筛选">
+          <label>
+            search
+            <input id="queryInput" type="search" placeholder="搜和弦 / 扫弦 / 节拍" autocomplete="off" />
+          </label>
+          <label>
+            level
+            <select id="levelFilter"></select>
+          </label>
+          <label>
+            source
+            <select id="sourceFilter"></select>
+          </label>
+          <label>
+            category
+            <select id="categoryFilter"></select>
+          </label>
+        </div>
+        <div id="techCloud" class="tech-cloud" aria-label="技巧标签"></div>
+        <div class="catalog-head">
+          <strong id="resultCount">0 labels</strong>
+          <span id="activeSummary">all songs</span>
+        </div>
+        <div id="songList" class="song-label-grid" aria-label="歌曲列表"></div>
+      </section>
+
+      <section id="lesson" class="lesson-section section" aria-label="尤克里里课程详情">
+        <div class="section-heading">
+          <p class="marker-caption">lesson card</p>
+          <h2>点一首歌，右侧就是课堂卡片。</h2>
+          <p>
+            原版课程详情卡继续保留，后面可以接入示范视频、授权音频、谱面图片或练习记录。
+          </p>
+        </div>
+        <article id="songDetail" class="lesson-card" aria-live="polite"></article>
+      </section>
+    </main>
+
+    <footer class="footer-band sponsor-footer" aria-label="尤克里里模板页脚">
+      <div class="sponsor-footer-head">
+        <strong>UkuleleBook · 尤克里里教学助手基础框架</strong>
+        <p
+          class="sponsor-footer-note decrypt-text"
+          data-decrypt-text="保留原版互动骨架，替换为清新多巴胺的四弦课堂视觉。"
+        >
+          保留原版互动骨架，替换为清新多巴胺的四弦课堂视觉。
+        </p>
+      </div>
+      <div class="logoloop sponsor-logoloop logoloop--scale-hover logoloop--fade" aria-label="课程模块滚动">
+        <div class="logoloop__track">
+          <ul class="logoloop__list">
+            <li class="logoloop__item"><span class="logoloop__node">四弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">和弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">扫弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">节拍</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">弹唱</span></li>
+          </ul>
+          <ul class="logoloop__list" aria-hidden="true">
+            <li class="logoloop__item"><span class="logoloop__node">四弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">和弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">扫弦</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">节拍</span></li>
+            <li class="logoloop__item"><span class="logoloop__node">弹唱</span></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./assets/data.js?v=preserve-framework-ukulele"></script>
+    <script src="./assets/app.js?v=preserve-framework-ukulele"></script>
+    <script type="module" src="./assets/ukulele-tuner.js?v=ukulele-only"></script>
+  </body>
+</html>
