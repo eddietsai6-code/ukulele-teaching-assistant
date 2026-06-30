@@ -83,6 +83,16 @@ a {
   }
 }
 
+@keyframes tunerCardFloat {
+  0%,
+  100% {
+    filter: drop-shadow(0 28px 34px rgba(23, 23, 23, 0.18));
+  }
+  50% {
+    filter: drop-shadow(0 38px 44px rgba(23, 23, 23, 0.26));
+  }
+}
+
 @keyframes notebookFloatMobile {
   0%,
   100% {
@@ -3316,6 +3326,37 @@ main {
   text-transform: none;
 }
 
+.tuner-notebook-object {
+  right: 0;
+  top: 78px;
+  width: min(430px, calc(100vw - 48px));
+  min-height: 560px;
+  transform: rotate(6deg);
+  animation: tunerCardFloat 5.2s ease-in-out 850ms infinite;
+}
+
+.hero-tuner-panel {
+  width: 100%;
+  min-height: 560px;
+  gap: 12px;
+  padding: 16px;
+  transform: none;
+}
+
+.hero-tuner-panel .uke-tuner-top h2 {
+  margin-bottom: 0;
+  font-size: clamp(34px, 4.6vw, 48px);
+}
+
+.hero-tuner-panel .uke-meter-face {
+  height: 245px;
+}
+
+.hero-tuner-panel .uke-primary-note {
+  min-height: 82px;
+  font-size: clamp(44px, 7vw, 66px);
+}
+
 .uke-status-lamp {
   width: 0;
   height: 0;
@@ -3501,7 +3542,8 @@ main {
   gap: 8px;
 }
 
-.uke-string-strip span {
+.uke-string-button {
+  appearance: none;
   min-width: 0;
   padding: 10px 8px;
   border: 1px solid rgba(255, 209, 102, 0.34);
@@ -3512,6 +3554,29 @@ main {
   font-size: 14px;
   font-weight: 850;
   text-align: center;
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.uke-string-button:hover,
+.uke-string-button:focus-visible {
+  border-color: #FFD166;
+  background: rgba(255, 209, 102, 0.16);
+  color: #fff6d9;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.uke-string-button.is-active {
+  border-color: #FFD166;
+  background: linear-gradient(180deg, #ffe08a, #d99a3a);
+  box-shadow: 0 6px 16px rgba(255, 209, 102, 0.24);
+  color: #171109;
 }
 
 .uke-control-strip {
@@ -3577,6 +3642,21 @@ main {
   .uke-tuner-panel {
     transform: rotate(-1deg);
   }
+
+  .tuner-notebook-object {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    width: min(430px, 100%);
+    margin: 32px auto 0;
+    transform: rotate(3deg);
+    animation-name: tunerCardFloat;
+  }
+
+  .hero-tuner-panel {
+    transform: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -3588,6 +3668,10 @@ main {
 
   .uke-meter-face {
     height: 230px;
+  }
+
+  .hero-tuner-panel {
+    min-height: auto;
   }
 
   .uke-string-strip {

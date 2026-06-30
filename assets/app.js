@@ -427,6 +427,8 @@
   }
 
   function renderHeroNotebook() {
+    if (els.heroNotebook?.querySelector("#ukuleleTuner")) return;
+
     const song = getSelectedSong();
     if (!song) return;
     const level = levelById[song.level];

@@ -1,10 +1,10 @@
 import {
+  centsFromFrequency,
   centsToNeedleDegrees,
   detectPitchAutoCorrelate,
-  findClosestInstrumentTarget,
   getRms,
-  getTuningHint,
   isTuned,
+  noteNumberToFrequency,
 } from "./tuner-core.js";
 
 const app = document.querySelector("#ukuleleTuner");
@@ -19,7 +19,7 @@ const noteOctave = document.querySelector("#tunerNoteOctave");
 const targetValue = document.querySelector("#tunerTargetValue");
 const statusText = document.querySelector("#tunerStatusText");
 const levelFill = document.querySelector("#tunerLevelFill");
-const tuningHint = document.querySelector("#ukuleleTuningHint");
+const stringButtons = [...document.querySelectorAll("[data-string-midi]")];
 
 let audioContext = null;
 let analyser = null;
@@ -28,11 +28,20 @@ let animationFrame = null;
 let timeBuffer = null;
 let lastFrequency = null;
 let lastDetectedAt = 0;
-const activeMode = "ukulele";
+let selectedTarget = null;
 const tuningA4 = 440;
+const defaultTarget = {
+  string: "4",
+  name: "G",
+  octave: 4,
+  midi: 67,
+  label: "4 · G4",
+  target: "G4",
+};
 
 function buildScale() {
   if (!scale) return;
+  scale.textContent = "";
 
   for (let cents = -50; cents <= 50; cents += 5) {
     const tick = document.createElement("span");
@@ -49,6 +58,7 @@ function formatFrequency(value) {
 }
 
 function setStatus(text, isError = false) {
+  if (!statusText) return;
   statusText.textContent = text;
   statusText.classList.toggle("error", isError);
 }
@@ -57,26 +67,78 @@ function setNeedle(cents) {
   const safeCents = Number.isFinite(cents) ? cents : 0;
   const degrees = centsToNeedleDegrees(safeCents);
   needle.style.setProperty("--needle-deg", `${degrees}deg`);
-  vuMeter.setAttribute("aria-valuenow", String(Math.max(-50, Math.min(50, safeCents))));
+  vuMeter?.setAttribute("aria-valuenow", String(Math.max(-50, Math.min(50, safeCents))));
 }
 
 function setTunedState(tuned) {
   app.classList.toggle("is-tuned", tuned);
 }
 
+function targetFromButton(button) {
+  if (!button) return null;
+
+  const midi = Number(button.dataset.stringMidi);
+  if (!Number.isFinite(midi)) return null;
+
+  return {
+    string: button.dataset.stringLabel?.split(" · ")[0] || "",
+    name: button.dataset.stringName || button.dataset.stringTarget?.replace(/\d+$/, "") || "",
+    octave: Number(button.dataset.stringOctave || 4),
+    midi,
+    label: button.dataset.stringLabel || button.textContent.trim(),
+    target: button.dataset.stringTarget || "",
+  };
+}
+
+function getActiveTarget() {
+  if (selectedTarget) return selectedTarget;
+
+  const activeButton = stringButtons.find((button) => button.classList.contains("is-active"));
+  selectedTarget = targetFromButton(activeButton) || defaultTarget;
+  return selectedTarget;
+}
+
+function setActiveTarget(button) {
+  const nextTarget = targetFromButton(button);
+  if (!nextTarget) return;
+
+  selectedTarget = nextTarget;
+  stringButtons.forEach((item) => {
+    const active = item === button;
+    item.classList.toggle("is-active", active);
+    item.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+
+  updateReadout(lastFrequency ? getTuningResult(lastFrequency) : null);
+  if (audioContext && !lastFrequency) {
+    setStatus("LISTENING");
+  }
+}
+
 function getTuningResult(frequency) {
-  return findClosestInstrumentTarget(frequency, activeMode, tuningA4);
+  const target = getActiveTarget();
+  const targetFrequency = noteNumberToFrequency(target.midi, tuningA4);
+
+  return {
+    ...target,
+    frequency,
+    targetFrequency,
+    cents: centsFromFrequency(frequency, target.midi, tuningA4),
+    display: target.label,
+  };
 }
 
 function updateReadout(result) {
+  const target = result || getActiveTarget();
+
   if (!result) {
     setTunedState(false);
     setNeedle(0);
     meterFrequency.textContent = "--";
     meterCentsValue.textContent = "0";
-    noteName.textContent = "--";
-    noteOctave.textContent = "";
-    targetValue.textContent = "";
+    noteName.textContent = target.name;
+    noteOctave.textContent = target.octave;
+    targetValue.textContent = `TARGET ${target.label}`;
     return;
   }
 
@@ -102,7 +164,9 @@ function updateReadout(result) {
 
 function updateLevel(buffer) {
   const level = Math.min(1, getRms(buffer) * 8);
-  levelFill.style.width = `${Math.round(level * 100)}%`;
+  if (levelFill) {
+    levelFill.style.width = `${Math.round(level * 100)}%`;
+  }
 }
 
 function tick() {
@@ -140,12 +204,21 @@ async function start() {
     return;
   }
 
+  if (!window.isSecureContext && !["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+    setStatus("HTTPS REQUIRED", true);
+    return;
+  }
+
   startButton.disabled = true;
   setStatus("STARTING");
 
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     audioContext = new AudioContextClass();
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
     analyser = audioContext.createAnalyser();
     analyser.fftSize = 8192;
     analyser.smoothingTimeConstant = 0.12;
@@ -161,6 +234,9 @@ async function start() {
 
     const source = audioContext.createMediaStreamSource(stream);
     source.connect(analyser);
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
 
     startButton.textContent = "STOP";
     startButton.disabled = false;
@@ -195,7 +271,9 @@ function stop() {
   timeBuffer = null;
   lastFrequency = null;
   lastDetectedAt = 0;
-  levelFill.style.width = "0%";
+  if (levelFill) {
+    levelFill.style.width = "0%";
+  }
   startButton.textContent = "START";
   startButton.disabled = false;
   updateReadout(null);
@@ -203,6 +281,10 @@ function stop() {
 }
 
 if (app && startButton) {
+  stringButtons.forEach((button) => {
+    button.addEventListener("click", () => setActiveTarget(button));
+  });
+
   startButton.addEventListener("click", () => {
     if (audioContext) {
       stop();
@@ -212,7 +294,7 @@ if (app && startButton) {
   });
 
   buildScale();
-  tuningHint.textContent = getTuningHint(activeMode);
+  getActiveTarget();
   updateReadout(null);
   setStatus("READY");
 }

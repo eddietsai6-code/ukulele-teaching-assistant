@@ -29,8 +29,6 @@ export const TUNING_MODES = {
   },
 };
 
-export const UKULELE_TUNING_HINT = "4=G4 3=C4 2=E4 1=A4";
-
 export function noteNumberToFrequency(midi, a4 = DEFAULT_A4) {
   return a4 * 2 ** ((midi - A4_MIDI) / 12);
 }
@@ -86,15 +84,6 @@ function compactStringLabel(stringTarget) {
 
 function displayStringLabel(stringTarget) {
   return `${stringTarget.string} = ${stringTarget.name}${stringTarget.octave}`;
-}
-
-export function getTuningHint(modeId) {
-  const mode = TUNING_MODES[modeId];
-  if (!mode || !mode.strings.length) {
-    return UKULELE_TUNING_HINT;
-  }
-
-  return mode.strings.map(compactStringLabel).join(" ");
 }
 
 export function findClosestInstrumentTarget(frequency, modeId, a4 = DEFAULT_A4) {
