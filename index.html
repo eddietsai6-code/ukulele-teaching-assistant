@@ -152,18 +152,27 @@
                 </div>
               </section>
 
+              <button
+                id="twelveTetModeButton"
+                class="uke-mode-button"
+                type="button"
+                data-tuning-mode="chromatic"
+                aria-pressed="false"
+              >
+                <strong>12-TET</strong>
+                <span>Any 12-TET note</span>
+              </button>
+
               <footer class="uke-control-strip">
-                <button id="startTunerButton" class="uke-start-button" type="button">START</button>
                 <div class="uke-level-meter" aria-hidden="true">
                   <span id="tunerLevelFill"></span>
                 </div>
+                <button id="startTunerButton" class="uke-start-button" type="button">START</button>
               </footer>
-
               <p id="tunerStatusText" class="uke-status-text">READY</p>
             </article>
           </div>
           <div class="pencil-object" aria-hidden="true"></div>
-          <div class="sticker sticker-bolt" aria-hidden="true">C F G</div>
           <div class="sticker sticker-beat" aria-hidden="true">节拍</div>
         </div>
       </section>

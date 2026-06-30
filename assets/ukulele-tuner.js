@@ -2,6 +2,7 @@ import {
   centsFromFrequency,
   centsToNeedleDegrees,
   detectPitchAutoCorrelate,
+  frequencyToNote,
   getRms,
   isTuned,
   noteNumberToFrequency,
@@ -19,6 +20,7 @@ const noteOctave = document.querySelector("#tunerNoteOctave");
 const targetValue = document.querySelector("#tunerTargetValue");
 const statusText = document.querySelector("#tunerStatusText");
 const levelFill = document.querySelector("#tunerLevelFill");
+const twelveTetModeButton = document.querySelector("#twelveTetModeButton");
 const stringButtons = [...document.querySelectorAll("[data-string-midi]")];
 
 let audioContext = null;
@@ -29,6 +31,7 @@ let timeBuffer = null;
 let lastFrequency = null;
 let lastDetectedAt = 0;
 let selectedTarget = null;
+let tuningMode = "fixed";
 const tuningA4 = 440;
 const defaultTarget = {
   string: "4",
@@ -98,11 +101,18 @@ function getActiveTarget() {
   return selectedTarget;
 }
 
-function setActiveTarget(button) {
+function setTwelveTetButton(active) {
+  twelveTetModeButton?.classList.toggle("is-active", active);
+  twelveTetModeButton?.setAttribute("aria-pressed", active ? "true" : "false");
+}
+
+function setFixedTarget(button) {
   const nextTarget = targetFromButton(button);
   if (!nextTarget) return;
 
+  tuningMode = "fixed";
   selectedTarget = nextTarget;
+  setTwelveTetButton(false);
   stringButtons.forEach((item) => {
     const active = item === button;
     item.classList.toggle("is-active", active);
@@ -115,7 +125,33 @@ function setActiveTarget(button) {
   }
 }
 
+function setTwelveTetMode() {
+  getActiveTarget();
+  tuningMode = "chromatic";
+  stringButtons.forEach((item) => {
+    item.classList.remove("is-active");
+    item.setAttribute("aria-pressed", "false");
+  });
+  setTwelveTetButton(true);
+
+  updateReadout(lastFrequency ? getTuningResult(lastFrequency) : null);
+  if (audioContext && !lastFrequency) {
+    setStatus("LISTENING");
+  }
+}
+
 function getTuningResult(frequency) {
+  if (tuningMode === "chromatic") {
+    const note = frequencyToNote(frequency, tuningA4);
+    if (!note) return null;
+
+    return {
+      ...note,
+      display: `${note.name}${note.octave}`,
+      mode: "chromatic",
+    };
+  }
+
   const target = getActiveTarget();
   const targetFrequency = noteNumberToFrequency(target.midi, tuningA4);
 
@@ -136,9 +172,15 @@ function updateReadout(result) {
     setNeedle(0);
     meterFrequency.textContent = "--";
     meterCentsValue.textContent = "0";
-    noteName.textContent = target.name;
-    noteOctave.textContent = target.octave;
-    targetValue.textContent = `TARGET ${target.label}`;
+    if (tuningMode === "chromatic") {
+      noteName.textContent = "--";
+      noteOctave.textContent = "";
+      targetValue.textContent = "12-TET / ANY NOTE";
+    } else {
+      noteName.textContent = target.name;
+      noteOctave.textContent = target.octave;
+      targetValue.textContent = `TARGET ${target.label}`;
+    }
     return;
   }
 
@@ -151,7 +193,7 @@ function updateReadout(result) {
   meterCentsValue.textContent = `${centsPrefix}${result.cents}`;
   noteName.textContent = result.name;
   noteOctave.textContent = result.octave;
-  targetValue.textContent = result.display;
+  targetValue.textContent = result.mode === "chromatic" ? "12-TET" : result.display;
 
   if (tuned) {
     setStatus("TUNED");
@@ -282,8 +324,10 @@ function stop() {
 
 if (app && startButton) {
   stringButtons.forEach((button) => {
-    button.addEventListener("click", () => setActiveTarget(button));
+    button.addEventListener("click", () => setFixedTarget(button));
   });
+
+  twelveTetModeButton?.addEventListener("click", setTwelveTetMode);
 
   startButton.addEventListener("click", () => {
     if (audioContext) {
