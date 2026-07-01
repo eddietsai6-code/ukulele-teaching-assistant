@@ -73,6 +73,90 @@
       passStandard: "Play 16 bars at 60 BPM without losing the beat."
     }),
     makeSong({
+      id: "debut-xiao-xing-xing",
+      title: "小星星",
+      artist: "Traditional",
+      level: "debut",
+      source: "用户上传曲谱",
+      category: "旋律练习",
+      style: "Nursery melody",
+      techniques: ["C major scale", "quarter note", "half note", "melody tab"],
+      goal: "认识C调音阶，认识4分音符与2分音符。",
+      focus: "用C调音阶位置读谱，并区分4分音符与2分音符的时值。",
+      practiceOrder: ["唱名读谱", "拍读4分音符与2分音符", "慢速弹奏TAB", "跟80 BPM稳定完成全曲"],
+      commonIssues: ["2分音符时值不够", "相同音连续弹奏时节拍不稳", "只看数字不唱音阶"],
+      passStandard: "能在80 BPM稳定弹完整曲，并说出4分音符与2分音符的区别。",
+      scoreImages: [
+        {
+          title: "小星星 谱面 1",
+          src: "./assets/scores/ukulele/debut-xiao-xing-xing/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "debut-kang-kang-wu-qu-cancan",
+      title: "康康舞曲 Cancan",
+      artist: "Jacques Offenbach",
+      level: "debut",
+      source: "用户上传曲谱",
+      category: "旋律练习",
+      style: "Classical melody",
+      techniques: ["C major scale", "quarter note", "half note", "melody tab"],
+      goal: "认识C调音阶，认识4分音符与2分音符。",
+      focus: "用C调音阶位置读谱，并区分4分音符与2分音符的时值。",
+      practiceOrder: ["唱名读谱", "拍读4分音符与2分音符", "慢速分句弹奏TAB", "跟160 BPM稳定完成全曲"],
+      commonIssues: ["2分音符时值不够", "Do-Re-Fa-Mi-Re 乐句回弹不稳", "速度变快后只看数字不唱音阶"],
+      passStandard: "能在160 BPM稳定弹完整曲，并说出4分音符与2分音符的区别。",
+      scoreImages: [
+        {
+          title: "康康舞曲 Cancan 谱面 1",
+          src: "./assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "debut-c-diao-yin-jie",
+      title: "C 调音阶",
+      artist: "乐音树艺术教育",
+      level: "debut",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Scale exercise",
+      techniques: ["C major scale", "quarter note", "half note", "melody tab"],
+      goal: "认识C调音阶，建立Do到高音Do的指板位置。",
+      focus: "按唱名找到C调音阶在TAB上的位置，并保持4分音符与2分音符的时值稳定。",
+      practiceOrder: ["唱名读谱", "上行音阶慢速弹奏", "下行音阶慢速弹奏", "跟80 BPM稳定完成全曲"],
+      commonIssues: ["Sol与高音Do位置混淆", "2分音符保持不够", "下行音阶换音时节拍不稳"],
+      passStandard: "能在80 BPM稳定弹完整条音阶，并说出C调音阶每个唱名的位置。",
+      scoreImages: [
+        {
+          title: "C 调音阶 谱面 1",
+          src: "./assets/scores/ukulele/debut-c-diao-yin-jie/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-yin-yue-zhi-sheng",
+      title: "音乐之声",
+      artist: "Richard Rodgers",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "旋律练习",
+      style: "Musical melody",
+      techniques: ["eighth note", "C major scale", "dotted note", "melody tab"],
+      goal: "掌握八分音符，C调音阶，附点音符。",
+      focus: "在C调音阶中读准旋律位置，并把八分音符与附点音符的时值弹稳定。",
+      practiceOrder: ["唱名读谱", "拍读八分音符组合", "单独练习附点节奏", "跟120 BPM分句完成全曲"],
+      commonIssues: ["八分音符连接不均匀", "附点音符拖拍或抢拍", "换到高音位置时忘记唱名"],
+      passStandard: "能在120 BPM稳定弹完整曲，并说明八分音符和附点音符的时值关系。",
+      scoreImages: [
+        {
+          title: "音乐之声 谱面 1",
+          src: "./assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "little-island",
       title: "Little Island",
       artist: "Ukulele Template",
@@ -153,7 +237,7 @@
     return {
       ...song,
       audio: [],
-      scoreImages: [],
+      scoreImages: Array.isArray(song.scoreImages) ? song.scoreImages : [],
       teaching: {
         goal: song.goal,
         focus: song.focus,

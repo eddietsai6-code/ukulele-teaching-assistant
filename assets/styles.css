@@ -145,6 +145,25 @@ a {
   }
 }
 
+@keyframes tuneLabelFloat {
+  0%,
+  100% {
+    transform: rotate(-5deg) translate3d(0, 0, 0);
+  }
+  45% {
+    transform: rotate(-3deg) translate3d(0, -5px, 0);
+  }
+}
+
+@keyframes tuneLabelUnderline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes cardPeelIn {
   from {
     opacity: 0;
@@ -163,6 +182,16 @@ a {
   }
   50% {
     transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0) rotate(3deg);
+  }
+}
+
+@keyframes ukebookLogoDrift {
+  0%,
+  100% {
+    transform: rotate(2.2deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotate(0.8deg) translate3d(-4px, -10px, 0);
   }
 }
 
@@ -327,7 +356,7 @@ main {
 
 .hero-copy {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   animation: pageRise 650ms ease both;
 }
 
@@ -362,33 +391,6 @@ main {
   animation: orangePulse 2.4s ease-in-out 900ms infinite;
 }
 
-.stat-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 28px;
-}
-
-.stat-row span {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 6px 14px;
-  border: 1.5px solid var(--color-charcoal);
-  border-radius: 20px;
-  background: var(--color-cream-paper);
-  box-shadow: var(--shadow-subtle);
-  color: var(--color-cocoa-ink);
-  font-size: 16px;
-  line-height: 1.25;
-}
-
-.stat-row strong {
-  font-size: 24px;
-  line-height: 1;
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -417,7 +419,7 @@ main {
 .ukulele-lanyard {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: 1;
   width: 100%;
   height: auto;
   pointer-events: none;
@@ -436,7 +438,25 @@ main {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  opacity: 0;
   filter: drop-shadow(0 22px 28px rgba(23, 23, 23, 0.18));
+}
+
+.ukebook-logo-stage {
+  position: absolute;
+  z-index: 2;
+  top: clamp(4px, 2.6vw, 32px);
+  right: clamp(18px, 5.4vw, 102px);
+  display: block;
+  width: clamp(214px, 24vw, 348px);
+  height: auto;
+  pointer-events: none;
+  transform: rotate(2.2deg);
+  transform-origin: 52% 9%;
+  filter:
+    drop-shadow(0 26px 26px rgba(6, 32, 29, 0.18))
+    drop-shadow(0 8px 0 rgba(255, 255, 255, 0.32));
+  animation: ukebookLogoDrift 5.8s ease-in-out 720ms infinite;
 }
 
 .lanyard-a11y {
@@ -458,8 +478,59 @@ main {
 }
 
 .caption-left {
-  top: 16px;
-  left: -18px;
+  top: 20px;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 7px 16px 9px;
+  border: 1.5px solid rgba(45, 38, 28, 0.82);
+  border-radius: 8px 18px 9px 16px;
+  background:
+    linear-gradient(100deg, rgba(255, 255, 255, 0.92), rgba(255, 244, 211, 0.82)),
+    linear-gradient(135deg, rgba(124, 246, 163, 0.32), rgba(92, 200, 255, 0.18));
+  box-shadow:
+    0 10px 0 rgba(255, 209, 102, 0.34),
+    0 16px 34px rgba(29, 58, 74, 0.12);
+  color: #ff6b35;
+  font-size: clamp(21px, 2.25vw, 28px);
+  font-weight: 650;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  transform-origin: 18% 50%;
+  will-change: transform;
+  animation-name: tuneLabelFloat;
+  animation-duration: 4.8s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 900ms;
+  animation-iteration-count: infinite;
+}
+
+.caption-left::before {
+  content: "";
+  position: absolute;
+  inset: -7px auto auto 18px;
+  width: 42px;
+  height: 13px;
+  border: 1px solid rgba(45, 38, 28, 0.28);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.62);
+  transform: rotate(2deg);
+}
+
+.caption-left::after {
+  content: "";
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  bottom: 7px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7CF6A3, #5CC8FF, #FFD166);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: tuneLabelUnderline 700ms ease 780ms both;
 }
 
 .arrow {
@@ -481,9 +552,9 @@ main {
 }
 
 .arrow-left {
-  top: 48px;
-  left: 58px;
-  transform: rotate(5deg);
+  top: 60px;
+  left: 86px;
+  transform: rotate(2deg);
 }
 
 .notebook-object {
@@ -633,7 +704,6 @@ main {
 }
 
 .uke-fresh-theme .pill-button,
-.uke-fresh-theme .stat-row span,
 .uke-fresh-theme .filters input,
 .uke-fresh-theme .filters select,
 .uke-fresh-theme .tech-cloud button,
@@ -2159,7 +2229,256 @@ main {
   box-shadow: 0 0 18px rgba(49, 214, 255, 0.28);
 }
 
+.lesson-metronome-host {
+  min-height: 360px;
+}
+
+.lesson-metronome {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1.5px solid rgba(21, 48, 71, 0.86);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(124, 246, 163, 0.32), transparent 30%),
+    radial-gradient(circle at 92% 12%, rgba(255, 209, 102, 0.32), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(236, 255, 246, 0.92));
+  box-shadow:
+    rgba(21, 48, 71, 0.12) 0 18px 42px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.lesson-metronome-display {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+  border: 1.5px solid rgba(21, 48, 71, 0.9);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(6, 50, 49, 0.98), rgba(8, 29, 36, 0.98)),
+    #082126;
+  color: #effffb;
+  box-shadow:
+    rgba(6, 32, 29, 0.22) 0 18px 34px,
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.lesson-metronome-display span,
+.lesson-metronome-grid span {
+  display: block;
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.lesson-metronome-display strong {
+  display: block;
+  color: #ffd166;
+  font-family: var(--font-geist);
+  font-size: clamp(62px, 11vw, 104px);
+  font-weight: 950;
+  line-height: 0.92;
+}
+
+.lesson-metronome-display small {
+  color: rgba(239, 255, 251, 0.76);
+  font-family: var(--font-geist);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.lesson-metronome-status {
+  align-self: start;
+  padding: 9px 12px;
+  border: 1px solid rgba(124, 246, 163, 0.28);
+  border-radius: 999px;
+  color: #7cf6a3;
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.lesson-metronome-beats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
+  gap: 8px;
+}
+
+.lesson-metronome .lesson-metronome-beats button {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 7px 8px 6px;
+  border: 1px solid rgba(239, 255, 251, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(239, 255, 251, 0.72);
+  font-family: var(--font-geist);
+  font-weight: 900;
+  box-shadow: none;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    background 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.lesson-metronome .lesson-metronome-beats button:hover,
+.lesson-metronome .lesson-metronome-beats button:focus-visible {
+  border-color: rgba(255, 209, 102, 0.72);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.lesson-metronome-beats button span {
+  display: block;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.lesson-metronome-beats button small {
+  color: currentColor;
+  font-family: var(--font-geist);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.76;
+  text-transform: uppercase;
+}
+
+.lesson-metronome .lesson-metronome-beats button[data-level="accent"],
+.lesson-metronome .lesson-metronome-beats button[aria-pressed="true"][data-level="accent"] {
+  border-color: rgba(255, 209, 102, 0.82);
+  background: rgba(255, 209, 102, 0.14);
+  color: #ffd166;
+}
+
+.lesson-metronome .lesson-metronome-beats button[data-level="secondary"],
+.lesson-metronome .lesson-metronome-beats button[aria-pressed="true"][data-level="secondary"] {
+  border-color: rgba(92, 200, 255, 0.78);
+  background: rgba(92, 200, 255, 0.12);
+  color: #5cc8ff;
+}
+
+.lesson-metronome .lesson-metronome-beats button[data-level="rest"],
+.lesson-metronome .lesson-metronome-beats button[aria-pressed="true"][data-level="rest"] {
+  border-color: rgba(239, 255, 251, 0.18);
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(239, 255, 251, 0.42);
+}
+
+.lesson-metronome .lesson-metronome-beats button[data-level="rest"] span {
+  text-decoration: line-through;
+}
+
+.lesson-metronome .lesson-metronome-beats button.is-active {
+  background: linear-gradient(135deg, #7cf6a3, #ffd166);
+  color: #062125;
+  box-shadow: rgba(124, 246, 163, 0.36) 0 0 0 5px;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.lesson-metronome-controls,
+.lesson-metronome-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.lesson-metronome-controls {
+  grid-template-columns: 1.4fr 0.8fr 0.8fr;
+}
+
+.lesson-metronome button,
+.lesson-metronome input,
+.lesson-metronome select {
+  min-width: 0;
+  border: 1.5px solid rgba(21, 48, 71, 0.9);
+  border-radius: 12px;
+  font-family: var(--font-geist);
+}
+
+.lesson-metronome button {
+  min-height: 54px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-cocoa-ink);
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: rgba(21, 48, 71, 0.12) 0 10px 18px;
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.lesson-metronome button:hover,
+.lesson-metronome button:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+  box-shadow: rgba(21, 48, 71, 0.16) 0 14px 24px;
+}
+
+.lesson-metronome-play {
+  background: linear-gradient(135deg, #7cf6a3, #ffd166) !important;
+  color: #062125 !important;
+}
+
+.lesson-metronome button[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ff8fab, #ffd166);
+}
+
+.lesson-metronome-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lesson-metronome-grid label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lesson-metronome-grid input,
+.lesson-metronome-grid select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--color-cocoa-ink);
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.lesson-metronome-volume {
+  grid-column: 1 / -1;
+}
+
+.lesson-metronome-volume input {
+  accent-color: #ff6b35;
+}
+
+.lesson-metronome-note {
+  margin: 0;
+  color: var(--color-cocoa-ink);
+  font-family: var(--font-geist);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
 @media (max-width: 560px) {
+  .lesson-metronome-display,
+  .lesson-metronome-controls,
+  .lesson-metronome-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lesson-metronome-status {
+    justify-self: start;
+  }
+
   .audio-version-head {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2227,7 +2546,7 @@ main {
   height: auto;
   border: 1px solid rgba(43, 26, 7, 0.14);
   background: #ffffff;
-  filter: contrast(2.15) brightness(0.86) saturate(0.85);
+  filter: none;
 }
 
 .evidence-tags {
@@ -2968,6 +3287,12 @@ main {
     transform: none;
   }
 
+  .ukebook-logo-stage {
+    top: -8px;
+    right: clamp(8px, 3vw, 28px);
+    width: clamp(148px, 24vw, 188px);
+  }
+
   .hero-product {
     min-height: 560px;
   }
@@ -3050,11 +3375,71 @@ main {
   }
 
   .ukulele-lanyard {
+    --badge-top: 58px;
+    --badge-right: 28px;
+    --badge-width: 136px;
+    --badge-center-right: 96px;
     inset: 0;
-    z-index: 1;
+    z-index: 4;
     width: 100%;
-    height: auto;
+    height: 238px;
     transform: none;
+  }
+
+  .ukulele-lanyard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: var(--badge-center-right);
+    width: 2px;
+    height: calc(var(--badge-top) + 18px);
+    border-radius: 999px;
+    background: linear-gradient(
+      180deg,
+      rgba(21, 48, 71, 0.08),
+      rgba(21, 48, 71, 0.72) 26%,
+      rgba(47, 158, 125, 0.46)
+    );
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
+    transform: translateX(50%);
+  }
+
+  .ukulele-lanyard::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--badge-top) + 7px);
+    right: calc(var(--badge-center-right) - 7px);
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(21, 48, 71, 0.56);
+    border-radius: 999px;
+    background: rgba(247, 255, 251, 0.84);
+    box-shadow: 0 2px 8px rgba(21, 48, 71, 0.12);
+  }
+
+  .ukebook-logo-stage {
+    display: block;
+    top: var(--badge-top);
+    right: var(--badge-right);
+    width: var(--badge-width);
+    transform: rotate(0.7deg);
+    transform-origin: 52% 7%;
+    filter:
+      drop-shadow(0 18px 20px rgba(6, 32, 29, 0.18))
+      drop-shadow(0 5px 0 rgba(255, 255, 255, 0.28));
+  }
+
+  .hero-pressure-stage {
+    height: 178px;
+    margin-bottom: 18px;
+  }
+
+  .text-pressure-title {
+    font-size: 42px !important;
+  }
+
+  .text-pressure-title span {
+    font-variation-settings: 'wght' 540, 'wdth' 72, 'ital' 0 !important;
   }
 
   .hero-product {
@@ -3237,7 +3622,7 @@ main {
 
 .uke-tuner-panel {
   --needle-deg: 0deg;
-  --scale-radius: 148px;
+  --scale-radius: 92px;
   position: relative;
   display: grid;
   gap: 14px;
@@ -3329,12 +3714,12 @@ main {
 }
 
 .hero-tuner-panel .uke-meter-face {
-  height: 222px;
+  height: 206px;
 }
 
 .hero-tuner-panel .uke-primary-note {
-  min-height: 74px;
-  font-size: clamp(44px, 7vw, 66px);
+  min-height: 92px;
+  font-size: clamp(42px, 6.4vw, 62px);
 }
 
 .hero-tuner-panel .uke-control-strip {
@@ -3373,6 +3758,7 @@ main {
   border: 9px solid #15110d;
   border-radius: 10px;
   background:
+    repeating-linear-gradient(90deg, rgba(44, 36, 22, 0.12) 0 1px, transparent 1px 56px),
     linear-gradient(180deg, rgba(255, 255, 255, 0.62), transparent 34%),
     radial-gradient(ellipse at 50% 96%, rgba(73, 47, 18, 0.22), transparent 42%),
     linear-gradient(180deg, #fff6d9 0%, #eadfbf 54%, #c9b98f 100%);
@@ -3391,7 +3777,7 @@ main {
 
 .uke-scale {
   position: absolute;
-  inset: 18px 8% 22%;
+  inset: 38px 10% 31%;
 }
 
 .uke-tuner-tick {
@@ -3407,41 +3793,27 @@ main {
 
 .uke-tuner-tick.major {
   width: 3px;
-  height: 30px;
+  height: 25px;
   background: #12100d;
 }
 
 .uke-tuner-tick.center {
   width: 4px;
-  height: 38px;
+  height: 31px;
   background: #157348;
 }
 
 .uke-center-band {
   position: absolute;
   left: calc(50% - 17px);
-  top: 17%;
+  top: 12%;
   width: 34px;
-  height: 72px;
+  height: 82px;
   border: 1px solid rgba(4, 87, 38, 0.35);
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, rgba(124, 246, 163, 0.46), transparent);
 }
 
-.uke-meter-frequency {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  color: rgba(18, 16, 13, 0.76);
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 750;
-  transform: translateX(-50%);
-}
-
-.uke-meter-frequency small,
 .uke-meter-cents small {
   font-family: var(--font-geist);
   font-size: 12px;
@@ -3451,14 +3823,14 @@ main {
 
 .uke-meter-cents {
   position: absolute;
-  right: 14%;
-  top: 58%;
+  right: 11%;
+  top: 50%;
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 5px;
   color: rgba(18, 16, 13, 0.72);
   font-family: var(--font-geist);
-  font-size: clamp(17px, 2.6vw, 25px);
+  font-size: clamp(16px, 2.35vw, 23px);
   font-weight: 900;
 }
 
@@ -3518,6 +3890,32 @@ main {
   margin-left: 4px;
   color: #FFD166;
   font-size: 0.34em;
+}
+
+.uke-note-frequency {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  min-height: 16px;
+  margin-top: -7px;
+  color: rgba(255, 209, 102, 0.9);
+  font-family: var(--font-geist);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.uke-note-frequency span {
+  min-width: 32px;
+  text-align: right;
+}
+
+.uke-note-frequency small {
+  color: rgba(255, 246, 217, 0.78);
+  font-size: 10px;
+  font-weight: 950;
 }
 
 .uke-target-inline {
@@ -3689,6 +4087,23 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .hero-product {
+    padding-top: 84px;
+  }
+
+  .caption-left {
+    top: 10px;
+    left: 22px;
+  }
+
+  .arrow-left {
+    top: 48px;
+    left: 112px;
+    width: 114px;
+    height: 75px;
+    transform: rotate(6deg);
+  }
+
   .uke-tuner-panel {
     transform: rotate(-1deg);
   }
@@ -3699,7 +4114,7 @@ main {
     right: auto;
     top: auto;
     width: min(430px, 100%);
-    margin: 32px auto 0;
+    margin: 0 auto;
     transform: rotate(3deg);
     animation-name: tunerCardFloat;
   }
@@ -3710,8 +4125,26 @@ main {
 }
 
 @media (max-width: 640px) {
+  .hero-product {
+    padding-top: 78px;
+  }
+
+  .caption-left {
+    left: 14px;
+    min-height: 42px;
+    padding: 6px 13px 8px;
+    font-size: 21px;
+  }
+
+  .arrow-left {
+    top: 45px;
+    left: 96px;
+    width: 108px;
+    height: 70px;
+  }
+
   .uke-tuner-panel {
-    --scale-radius: 98px;
+    --scale-radius: 88px;
     padding: 14px;
     transform: none;
   }

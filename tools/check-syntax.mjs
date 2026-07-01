@@ -3,6 +3,8 @@ import { spawnSync } from "node:child_process";
 const files = [
   "assets/app.js",
   "assets/data.js",
+  "assets/lesson-metronome.js",
+  "assets/professional-metronome-core.js",
   "assets/ukulele-tuner.js",
   "assets/tuner-core.js",
 ];

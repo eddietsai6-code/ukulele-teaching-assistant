@@ -35,7 +35,6 @@
   };
 
   const els = {
-    heroStats: document.getElementById("heroStats"),
     heroNotebook: document.getElementById("heroNotebook"),
     infiniteMenu: document.getElementById("infiniteMenu"),
     orbitCanvas: document.getElementById("orbitCanvas"),
@@ -51,9 +50,6 @@
     categoryFilter: document.getElementById("categoryFilter"),
     levelFilter: document.getElementById("levelFilter"),
     techCloud: document.getElementById("techCloud"),
-    resultCount: document.getElementById("resultCount"),
-    activeSummary: document.getElementById("activeSummary"),
-    songList: document.getElementById("songList"),
     songDetail: document.getElementById("songDetail")
   };
 
@@ -414,18 +410,6 @@
     return tags.map((tag) => `<button type="button" class="tag-chip" data-tech="${tag}">${tag}</button>`).join("");
   }
 
-  function renderHeroStats(filteredSongs) {
-    const singCount = data.songs.filter((song) => song.category === "弹唱").length;
-    const practiceCount = data.songs.filter((song) => song.category === "原创练习").length;
-    els.heroStats.innerHTML = `
-      <span><strong>${data.levels.length}</strong>等级</span>
-      <span><strong>${data.songs.length}</strong>曲目</span>
-      <span><strong>${singCount}</strong>弹唱</span>
-      <span><strong>${practiceCount}</strong>练习</span>
-      <span><strong>${filteredSongs.length}</strong>命中</span>
-    `;
-  }
-
   function renderHeroNotebook() {
     if (els.heroNotebook?.querySelector("#ukuleleTuner")) return;
 
@@ -570,8 +554,10 @@
       ctx.setTransform(lanyard.dpr, 0, 0, lanyard.dpr, 0, 0);
 
       const isNarrow = lanyard.width < 680;
-      const cardWidth = clamp(lanyard.width * 0.18, 112, 146);
-      const cardHeight = cardWidth * 1.36;
+      const cardWidth = isNarrow
+        ? clamp(lanyard.width * 0.36, 156, 214)
+        : clamp(lanyard.width * 0.24, 190, 260);
+      const cardHeight = cardWidth * 1.18;
       lanyard.card.width = cardWidth;
       lanyard.card.height = cardHeight;
       lanyard.card.angle = -0.08;
@@ -692,56 +678,286 @@
       ctx.restore();
     };
 
-    const drawUkuleleLogo = () => {
+    const badgePath = (width, height, inset = 0) => {
+      const left = -width / 2 + inset;
+      const right = width / 2 - inset;
+      const top = -height / 2 + inset;
+      const bottom = height / 2 - inset;
+      const shoulder = Math.min(width * 0.22, 56);
+      const radius = Math.min(width * 0.16, 34);
+
+      ctx.beginPath();
+      ctx.moveTo(left + shoulder, top);
+      ctx.quadraticCurveTo(0, top - radius * 0.42, right - shoulder, top);
+      ctx.quadraticCurveTo(right, top + 3, right, top + shoulder);
+      ctx.lineTo(right, bottom - shoulder * 0.66);
+      ctx.quadraticCurveTo(right, bottom, right - shoulder * 0.82, bottom);
+      ctx.lineTo(left + shoulder * 0.82, bottom);
+      ctx.quadraticCurveTo(left, bottom, left, bottom - shoulder * 0.66);
+      ctx.lineTo(left, top + shoulder);
+      ctx.quadraticCurveTo(left, top + 3, left + shoulder, top);
+      ctx.closePath();
+    };
+
+    const drawPalmTree = (x, y, scale = 1, flip = 1) => {
       ctx.save();
-      ctx.strokeStyle = "#f7fffb";
-      ctx.fillStyle = "#FFD166";
-      ctx.lineWidth = 2.4;
+      ctx.translate(x, y);
+      ctx.scale(flip * scale, scale);
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.rotate(-0.16);
 
+      ctx.strokeStyle = "#5a3516";
+      ctx.lineWidth = 8;
       ctx.beginPath();
-      ctx.ellipse(-11, 12, 17, 23, -0.18, 0, Math.PI * 2);
-      ctx.ellipse(14, 11, 18, 24, 0.18, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(0, 48);
+      ctx.quadraticCurveTo(8, 17, -2, -18);
       ctx.stroke();
 
-      ctx.fillStyle = "#153047";
-      ctx.beginPath();
-      ctx.arc(3, 7, 6.5, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 209, 102, 0.44)";
+      ctx.lineWidth = 2;
+      [-6, 2, 10, 18, 27].forEach((mark) => {
+        ctx.beginPath();
+        ctx.moveTo(-5, mark);
+        ctx.lineTo(6, mark - 4);
+        ctx.stroke();
+      });
 
-      ctx.fillStyle = "#153047";
-      roundedRect(-16, 28, 36, 5, 2.5);
-      ctx.fill();
+      const leaf = (angle, length, width) => {
+        ctx.save();
+        ctx.rotate(angle);
+        const grad = ctx.createLinearGradient(0, 0, length, 0);
+        grad.addColorStop(0, "#0b5f38");
+        grad.addColorStop(0.55, "#4fbf62");
+        grad.addColorStop(1, "#b8f35a");
+        ctx.fillStyle = grad;
+        ctx.strokeStyle = "#073323";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(length * 0.46, -width, length, -2);
+        ctx.quadraticCurveTo(length * 0.42, width * 0.64, 0, 0);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      };
 
-      ctx.strokeStyle = "#FFD166";
-      ctx.lineWidth = 9;
+      ctx.translate(-2, -20);
+      [-2.55, -2.05, -1.55, -1.05, -0.55, 0.12].forEach((angle, index) => {
+        leaf(angle, 45 - index * 2, 14);
+      });
+      ctx.restore();
+    };
+
+    const drawHibiscus = (x, y, scale = 1) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = "#0b3a2d";
+      ctx.lineWidth = 2;
+      for (let index = 0; index < 5; index += 1) {
+        ctx.save();
+        ctx.rotate((Math.PI * 2 * index) / 5);
+        const petal = ctx.createRadialGradient(0, -12, 2, 0, -12, 22);
+        petal.addColorStop(0, "#fff8b5");
+        petal.addColorStop(0.65, "#FFD166");
+        petal.addColorStop(1, "#f7a33b");
+        ctx.fillStyle = petal;
+        ctx.beginPath();
+        ctx.ellipse(0, -15, 10, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.fillStyle = "#7b4b13";
       ctx.beginPath();
-      ctx.moveTo(19, -4);
-      ctx.lineTo(52, -42);
+      ctx.arc(0, 0, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#7b4b13";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(9, 8, 14, 22);
       ctx.stroke();
+      ctx.fillStyle = "#fff8b5";
+      ctx.beginPath();
+      ctx.arc(15, 23, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const drawBadgeUkulele = (width, height) => {
+      ctx.save();
+      ctx.translate(width * 0.12, height * -0.01);
+      ctx.rotate(0.26);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      ctx.strokeStyle = "#062d27";
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      ctx.moveTo(18, -20);
+      ctx.lineTo(44, -106);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f6f1da";
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(18, -20);
+      ctx.lineTo(44, -106);
+      ctx.stroke();
+
+      const neck = ctx.createLinearGradient(20, -28, 46, -104);
+      neck.addColorStop(0, "#8c5620");
+      neck.addColorStop(0.5, "#5b3517");
+      neck.addColorStop(1, "#2b1b10");
+      ctx.strokeStyle = neck;
+      ctx.lineWidth = 20;
+      ctx.beginPath();
+      ctx.moveTo(18, -20);
+      ctx.lineTo(44, -106);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f6f1da";
+      ctx.lineWidth = 1.3;
+      [-11, -4, 3, 10].forEach((offset) => {
+        ctx.beginPath();
+        ctx.moveTo(11 + offset * 0.16, 44);
+        ctx.lineTo(41 + offset * 0.1, -104);
+        ctx.stroke();
+      });
+
+      ctx.strokeStyle = "rgba(255,255,255,0.58)";
+      ctx.lineWidth = 1;
+      [-86, -72, -58, -44, -30].forEach((fret) => {
+        ctx.beginPath();
+        ctx.moveTo(28, fret);
+        ctx.lineTo(54, fret - 5);
+        ctx.stroke();
+      });
 
       ctx.save();
-      ctx.translate(54, -46);
-      ctx.rotate(0.74);
-      ctx.fillStyle = "#7CF6A3";
-      ctx.strokeStyle = "#f7fffb";
-      ctx.lineWidth = 2;
-      roundedRect(-8, -9, 16, 20, 4);
+      ctx.translate(48, -119);
+      ctx.rotate(0.12);
+      ctx.fillStyle = "#6edb87";
+      ctx.strokeStyle = "#062d27";
+      ctx.lineWidth = 6;
+      roundedRect(-16, -31, 38, 58, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#f6f1da";
+      ctx.font = "900 25px Georgia, serif";
+      ctx.fillText("E", 3, -2);
+      ctx.fillStyle = "#f6f1da";
+      [-12, 20].forEach((x) => {
+        [-16, 9].forEach((y) => {
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        });
+      });
+      ctx.restore();
+
+      const body = ctx.createRadialGradient(-10, 18, 10, -3, 27, 82);
+      body.addColorStop(0, "#fff2a8");
+      body.addColorStop(0.35, "#FFD166");
+      body.addColorStop(1, "#d98725");
+      ctx.strokeStyle = "#062d27";
+      ctx.lineWidth = 8;
+      ctx.fillStyle = body;
+      ctx.beginPath();
+      ctx.ellipse(-22, 15, 34, 42, -0.12, 0, Math.PI * 2);
+      ctx.ellipse(14, 21, 42, 56, 0.15, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = "#f6f1da";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.ellipse(-22, 15, 27, 34, -0.12, 0, Math.PI * 2);
+      ctx.ellipse(14, 21, 34, 48, 0.15, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = "#052923";
+      ctx.beginPath();
+      ctx.arc(-1, 20, 15, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#573411";
+      ctx.strokeStyle = "#062d27";
+      ctx.lineWidth = 3;
+      roundedRect(-24, 62, 54, 10, 4);
       ctx.fill();
       ctx.stroke();
       ctx.restore();
+    };
 
-      ctx.strokeStyle = "rgba(247, 255, 251, 0.92)";
-      ctx.lineWidth = 1.2;
-      [-5, -1, 3, 7].forEach((offset) => {
+    const drawTropicalBadgeScene = (width, height) => {
+      ctx.save();
+      badgePath(width, height, 11);
+      ctx.clip();
+
+      const sky = ctx.createLinearGradient(0, -height / 2, 0, height / 2);
+      sky.addColorStop(0, "#0b665f");
+      sky.addColorStop(0.28, "#48b69d");
+      sky.addColorStop(0.52, "#c8f5cf");
+      sky.addColorStop(1, "#0c4b45");
+      ctx.fillStyle = sky;
+      ctx.fillRect(-width / 2, -height / 2, width, height);
+
+      const sunY = -height * 0.06;
+      ctx.fillStyle = "#FFD166";
+      ctx.beginPath();
+      ctx.arc(0, sunY, width * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(255, 239, 156, 0.72)";
+      ctx.lineWidth = 3;
+      for (let index = 0; index < 9; index += 1) {
+        const angle = -Math.PI * 0.85 + index * (Math.PI * 0.21);
         ctx.beginPath();
-        ctx.moveTo(48 + offset * 0.12, -43 + offset);
-        ctx.lineTo(14 + offset * 0.18, 28 + offset * 0.12);
+        ctx.moveTo(Math.cos(angle) * width * 0.16, sunY + Math.sin(angle) * width * 0.16);
+        ctx.lineTo(Math.cos(angle) * width * 0.34, sunY + Math.sin(angle) * width * 0.34);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(255, 248, 218, 0.9)";
+      [-width * 0.3, width * 0.3].forEach((cloudX) => {
+        ctx.beginPath();
+        ctx.arc(cloudX - 12, sunY + 8, 14, 0, Math.PI * 2);
+        ctx.arc(cloudX + 4, sunY + 1, 18, 0, Math.PI * 2);
+        ctx.arc(cloudX + 25, sunY + 9, 12, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.74)";
+      ctx.strokeStyle = "#eaf8d5";
+      ctx.lineWidth = 2;
+      [-38, 0, 42].forEach((x, index) => {
+        ctx.beginPath();
+        ctx.moveTo(x, sunY + 12 + index * 2);
+        ctx.quadraticCurveTo(x + 7, sunY + 5, x + 14, sunY + 12 + index * 2);
+        ctx.quadraticCurveTo(x + 20, sunY + 5, x + 27, sunY + 12 + index * 2);
         ctx.stroke();
       });
+
+      for (let row = 0; row < 4; row += 1) {
+        const y = height * (0.12 + row * 0.07);
+        ctx.strokeStyle = row % 2 ? "#8debc7" : "#2d9e91";
+        ctx.lineWidth = row % 2 ? 4 : 6;
+        ctx.beginPath();
+        ctx.moveTo(-width / 2, y);
+        for (let x = -width / 2; x <= width / 2 + 20; x += 28) {
+          ctx.quadraticCurveTo(x + 14, y - 10, x + 28, y);
+        }
+        ctx.stroke();
+      }
+
+      drawPalmTree(-width * 0.35, height * 0.19, width / 250, 1);
+      drawPalmTree(width * 0.36, height * 0.18, width / 250, -1);
+      drawHibiscus(-width * 0.32, height * 0.33, width / 265);
+      drawHibiscus(width * 0.34, height * 0.34, width / 280);
+
       ctx.restore();
     };
 
@@ -752,14 +968,22 @@
       ctx.rotate(lanyard.card.angle);
       ctx.lineWidth = 1.4;
       ctx.strokeStyle = "rgba(23, 23, 23, 0.78)";
-      const metal = ctx.createLinearGradient(-25, -26, 25, 8);
+      const clipWidth = Math.min(lanyard.card.width * 0.44, 108);
+      const metal = ctx.createLinearGradient(-clipWidth / 2, -38, clipWidth / 2, 10);
       metal.addColorStop(0, "#f6f1ea");
-      metal.addColorStop(0.5, "#b9b1a5");
-      metal.addColorStop(1, "#f7efe9");
+      metal.addColorStop(0.5, "#fffdf2");
+      metal.addColorStop(1, "#c8c2b6");
       ctx.fillStyle = metal;
-      roundedRect(-26, -25, 52, 27, 10);
+      roundedRect(-clipWidth / 2, -44, clipWidth, 46, 16);
       ctx.fill();
       ctx.stroke();
+      ctx.fillStyle = "#0b5b52";
+      ctx.textAlign = "center";
+      ctx.font = "900 34px Aptos, Segoe UI, sans-serif";
+      ctx.fillText("E", 0, -13);
+      ctx.fillStyle = "#ff8a2a";
+      roundedRect(10, -23, 17, 5, 2);
+      ctx.fill();
       ctx.beginPath();
       ctx.arc(0, 10, 12, 0, Math.PI * 2);
       ctx.stroke();
@@ -784,41 +1008,48 @@
       ctx.save();
       ctx.translate(0, 12);
       ctx.shadowColor = "rgba(0, 0, 0, 0.36)";
-      ctx.shadowBlur = 22;
-      ctx.shadowOffsetY = 16;
-      roundedRect(-width / 2, -height / 2, width, height, 18);
+      ctx.shadowBlur = 28;
+      ctx.shadowOffsetY = 18;
+      badgePath(width, height, 0);
       ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
       ctx.fill();
       ctx.restore();
 
-      const cardGradient = ctx.createLinearGradient(-width / 2, -height / 2, width / 2, height / 2);
-      cardGradient.addColorStop(0, "#0d6b72");
-      cardGradient.addColorStop(0.48, "#153047");
-      cardGradient.addColorStop(1, "#071b25");
-      roundedRect(-width / 2, -height / 2, width, height, 18);
-      ctx.fillStyle = cardGradient;
+      badgePath(width, height, 0);
+      ctx.fillStyle = "#083d37";
       ctx.fill();
-      ctx.lineWidth = 1.4;
-      ctx.strokeStyle = "#171717";
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "#f6f1da";
+      ctx.stroke();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#062923";
       ctx.stroke();
 
-      const shine = ctx.createLinearGradient(-width / 2, -height / 2, width / 2, 0);
-      shine.addColorStop(0, "rgba(255, 255, 255, 0.16)");
-      shine.addColorStop(0.38, "rgba(255, 255, 255, 0.03)");
-      shine.addColorStop(1, "rgba(255, 255, 255, 0)");
-      roundedRect(-width / 2 + 6, -height / 2 + 6, width - 12, height - 12, 14);
-      ctx.fillStyle = shine;
-      ctx.fill();
+      drawTropicalBadgeScene(width, height);
+
+      badgePath(width - 26, height - 28, 0);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(246, 241, 218, 0.62)";
+      ctx.stroke();
 
       ctx.textAlign = "center";
       ctx.fillStyle = "#FFD166";
-      ctx.font = "800 11px Aptos, Segoe UI, sans-serif";
-      ctx.letterSpacing = "1px";
-      ctx.fillText("UKE", 0, -height / 2 + 34);
+      ctx.font = `900 ${Math.round(width * 0.12)}px Aptos, Segoe UI, sans-serif`;
+      ctx.fillText("EDDIE", -width * 0.1, -height * 0.34);
 
-      ctx.translate(0, -6);
-      drawUkuleleLogo();
-      ctx.translate(0, 6);
+      drawBadgeUkulele(width, height);
+
+      const band = ctx.createLinearGradient(0, height * 0.18, 0, height * 0.44);
+      band.addColorStop(0, "rgba(2, 42, 35, 0.72)");
+      band.addColorStop(1, "rgba(0, 25, 24, 0.96)");
+      ctx.fillStyle = band;
+      ctx.beginPath();
+      ctx.moveTo(-width / 2 + 18, height * 0.22);
+      ctx.quadraticCurveTo(0, height * 0.15, width / 2 - 18, height * 0.22);
+      ctx.lineTo(width / 2 - 18, height / 2 - 22);
+      ctx.quadraticCurveTo(0, height / 2 - 8, -width / 2 + 18, height / 2 - 22);
+      ctx.closePath();
+      ctx.fill();
 
       const fitCardText = (text, maxWidth, maxSize, minSize, weight, family) => {
         let size = maxSize;
@@ -828,12 +1059,16 @@
         } while (ctx.measureText(text).width > maxWidth && size > minSize);
       };
 
-      ctx.fillStyle = "#ffffff";
-      fitCardText("UkeBook", width - 18, 29, 20, "700", "Georgia, serif");
-      ctx.fillText("UkeBook", 0, height / 2 - 44);
-      ctx.fillStyle = "rgba(247, 255, 251, 0.72)";
-      ctx.font = "800 10px Aptos, Segoe UI, sans-serif";
-      ctx.fillText("LEVEL ATLAS", 0, height / 2 - 21);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+      fitCardText("UkeBook", width - 22, width * 0.22, width * 0.14, "800", "Georgia, serif");
+      ctx.fillText("UkeBook", 3, height * 0.33 + 5);
+      ctx.fillStyle = "#fff6d9";
+      fitCardText("UkeBook", width - 22, width * 0.22, width * 0.14, "800", "Georgia, serif");
+      ctx.fillText("UkeBook", 0, height * 0.33);
+
+      ctx.fillStyle = "rgba(184, 243, 90, 0.85)";
+      ctx.font = `900 ${Math.round(width * 0.056)}px Aptos, Segoe UI, sans-serif`;
+      ctx.fillText("LEVEL ATLAS", 0, height * 0.43);
       ctx.restore();
     };
 
@@ -1438,46 +1673,6 @@
     });
   }
 
-  function renderSongList(filteredSongs) {
-    if (!els.songList || !els.resultCount || !els.activeSummary) return;
-    els.resultCount.textContent = `${filteredSongs.length} 首歌`;
-    const summary = [];
-    if (state.query.trim()) summary.push(`search: ${state.query.trim()}`);
-    if (state.level !== "all") summary.push(levelById[state.level].label);
-    if (state.source !== "all") summary.push(state.source);
-    if (state.category !== "all") summary.push(state.category);
-    els.activeSummary.textContent = summary.length ? summary.join(" · ") : "全部歌曲";
-
-    if (!filteredSongs.length) {
-      els.songList.innerHTML = `<div class="empty-note">没有匹配结果。换一个关键词、等级或来源。</div>`;
-      return;
-    }
-
-    els.songList.innerHTML = filteredSongs
-      .map((song, index) => {
-        const level = levelById[song.level];
-        const active = song.id === state.selectedSongId ? " is-active" : "";
-        return `
-          <button type="button" class="song-label${active}" data-song="${song.id}">
-            <span class="roll-number">${String(index + 1).padStart(2, "0")}</span>
-            <span class="label-field">Song</span>
-            <strong>${song.title}</strong>
-            <small>${song.artist || "Ukulele Template"} · ${song.style}</small>
-            <div class="sticker-grid">
-              <p><span>Level</span><b>${levelShort(level)}</b></p>
-              <p><span>Source</span><b>${song.source}</b></p>
-            </div>
-            <div class="song-tags">${tagMarkup([song.category, ...song.techniques], 4)}</div>
-          </button>
-        `;
-      })
-      .join("");
-
-    els.songList.querySelectorAll("[data-song]").forEach((button) => {
-      button.addEventListener("click", () => selectSong(button.dataset.song, true));
-    });
-  }
-
   function audioVersionSlots(song) {
     const audioItems = Array.isArray(song.audio) ? song.audio : [];
     const count = audioItems.length || AUDIO_VERSION_COUNT;
@@ -1613,8 +1808,15 @@
 
   function renderContentPane(song, level) {
     if (state.detailTab === "score") return `<div class="score-grid">${renderScores(song)}</div>`;
+    if (state.detailTab === "metronome") return `<div class="lesson-metronome-host" data-metronome-host></div>`;
     if (state.detailTab === "evidence") return renderEvidence(song, level);
     return renderLesson(song, level);
+  }
+
+  function mountLessonMetronome(root = els.songDetail) {
+    const host = root?.querySelector("[data-metronome-host]");
+    if (!host) return;
+    window.UkeBookMetronome?.mount(host);
   }
 
   function bindDetailTechButtons(root) {
@@ -1637,6 +1839,7 @@
       if (state.detailTab !== "audio") {
         contentPane.innerHTML = renderContentPane(song, level);
         bindDetailTechButtons(contentPane);
+        mountLessonMetronome(contentPane);
       }
     }
   }
@@ -1665,7 +1868,7 @@
         <button type="button" class="${state.detailTab === "lesson" ? "is-active" : ""}" data-tab="lesson">教学</button>
         <button type="button" class="${state.detailTab === "audio" ? "is-active" : ""}" data-tab="audio">音频</button>
         <button type="button" class="${state.detailTab === "score" ? "is-active" : ""}" data-tab="score">谱面</button>
-        <button type="button" class="${state.detailTab === "evidence" ? "is-active" : ""}" data-tab="evidence">依据</button>
+        <button type="button" class="${state.detailTab === "metronome" ? "is-active" : ""}" data-tab="metronome">节拍器</button>
       </div>
       <div class="lesson-pane lesson-audio-pane" data-audio-pane ${state.detailTab === "audio" ? "" : "hidden"}>${renderAudio(song)}</div>
       <div class="lesson-pane" data-content-pane ${state.detailTab === "audio" ? "hidden" : ""}>${state.detailTab === "audio" ? "" : renderContentPane(song, level)}</div>
@@ -1690,6 +1893,7 @@
 
     bindDetailTechButtons(els.songDetail);
     bindAudioProgress(els.songDetail);
+    mountLessonMetronome(els.songDetail);
   }
 
   function render() {
@@ -1699,13 +1903,11 @@
       state.detailTab = "lesson";
     }
     syncControls();
-    renderHeroStats(filteredSongs);
     renderHeroNotebook();
     renderLevelOrbit();
     renderLevelBoard();
     renderLevelSongPicker();
     renderTechCloud(filteredSongs);
-    renderSongList(filteredSongs);
     renderSongDetail();
   }
 

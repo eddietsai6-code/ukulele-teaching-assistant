@@ -46,10 +46,10 @@ function buildScale() {
   if (!scale) return;
   scale.textContent = "";
 
-  for (let cents = -50; cents <= 50; cents += 5) {
+  for (let cents = -50; cents <= 50; cents += 10) {
     const tick = document.createElement("span");
     tick.className = "uke-tuner-tick";
-    if (cents % 10 === 0) tick.classList.add("major");
+    if (cents % 20 === 0) tick.classList.add("major");
     if (cents === 0) tick.classList.add("center");
     tick.style.setProperty("--angle", `${centsToNeedleDegrees(cents)}deg`);
     scale.appendChild(tick);

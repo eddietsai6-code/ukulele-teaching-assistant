@@ -25,6 +25,20 @@ test('site uses the UkuleleBook framework as the published homepage', () => {
   ]) {
     assert.ok(html.includes(expected), `missing framework token: ${expected}`);
   }
+
+  for (const expected of [
+    '零基础入门',
+    '弹唱提高',
+    '中级进阶',
+    '高阶指弹',
+    '四个阶段',
+    '0-8 级共 9 个等级',
+  ]) {
+    assert.ok(html.includes(expected), `missing hero stage copy: ${expected}`);
+  }
+
+  assert.equal(html.includes('not just'), false);
+  assert.equal(html.includes('难度 1-2'), false);
 });
 
 test('homepage embeds the ukulele-only tuner UI without other instrument choices', () => {
@@ -58,12 +72,28 @@ test('homepage embeds the ukulele-only tuner UI without other instrument choices
     /id="twelveTetModeButton"[\s\S]*id="startTunerButton"[\s\S]*id="tunerStatusText"/,
     '12-TET option should sit in the old START area, with START moved lower'
   );
+  assert.match(
+    html,
+    /class="uke-note-line"[\s\S]*id="tunerFrequency"[\s\S]*id="tunerTargetValue"/,
+    'frequency Hz readout should live in the note readout area'
+  );
+  assert.equal(html.includes('class="uke-meter-frequency"'), false);
   assert.equal(html.includes('id="ukuleleTuningHint"'), false);
   assert.equal(html.includes('4=G4 3=C4 2=E4 1=A4'), false);
   assert.equal(html.includes('sticker-bolt'), false);
   assert.equal(html.includes('C F G'), false);
   assert.equal(html.includes('data-mode="guitar"'), false);
   assert.equal(html.includes('Guitar'), false);
+});
+
+test('homepage does not show the hero statistic capsule row', () => {
+  const html = read('index.html');
+  const app = read('assets/app.js');
+
+  assert.equal(html.includes('id="heroStats"'), false);
+  assert.equal(html.includes('aria-label="模板统计"'), false);
+  assert.equal(app.includes('renderHeroStats'), false);
+  assert.equal(app.includes('heroStats'), false);
 });
 
 test('ukulele tuner assets keep microphone tuning behavior', () => {
@@ -93,4 +123,85 @@ test('ukulele tuner assets keep microphone tuning behavior', () => {
 
   assert.ok(core.includes('ukulele'), 'core should keep ukulele mode');
   assert.ok(css.includes('.hero-tuner-panel'), 'stylesheet should include hero tuner placement styles');
+});
+
+test('lesson detail embeds a persistent professional metronome tab', () => {
+  const html = read('index.html');
+  const app = read('assets/app.js');
+  const metronome = read('assets/lesson-metronome.js');
+  const core = read('assets/professional-metronome-core.js');
+  const css = read('assets/styles.css');
+
+  assert.ok(html.includes('assets/lesson-metronome.js'), 'homepage should load the metronome module');
+  assert.ok(app.includes('data-tab="metronome"'), 'detail tabs should include the metronome tab');
+  assert.ok(app.includes('data-metronome-host'), 'detail pane should expose a metronome mount point');
+  assert.ok(app.includes('window.UkeBookMetronome?.mount'), 'app shell should mount the persistent metronome controller');
+  assert.equal(app.includes('data-tab="evidence">依据'), false, 'old evidence tab should be replaced');
+
+  for (const expected of [
+    '__UKEBOOK_LESSON_METRONOME__',
+    'AudioContext',
+    'createSchedule',
+    'getScheduleEndTime',
+    'HIGH_OUTPUT_GAIN',
+    'MASTER_OUTPUT_GAIN',
+    'CLICK_GAIN_LIMIT',
+    'CLICK_DECAY_SECONDS',
+    'volume: 1',
+    'data-metronome-play',
+    'data-metronome-beat',
+    'data-metronome-volume',
+    'toggleBeatLevel',
+    'getNextBeatLevel',
+  ]) {
+    assert.ok(metronome.includes(expected), `missing metronome behavior token: ${expected}`);
+  }
+  assert.match(metronome, /const HIGH_OUTPUT_GAIN = 5\.5;/, 'classroom metronome should use boosted click output');
+  assert.match(metronome, /const MASTER_OUTPUT_GAIN = 1\.6;/, 'classroom metronome should raise the master output floor');
+  assert.match(metronome, /const CLICK_GAIN_LIMIT = 3\.2;/, 'classroom metronome should allow stronger click peaks');
+  assert.match(
+    metronome,
+    /normal[\s\S]*accent[\s\S]*secondary[\s\S]*rest/,
+    'beat buttons should cycle through selectable beat levels'
+  );
+
+  assert.ok(core.includes('export function createSchedule'), 'professional metronome scheduler core should be imported');
+  assert.ok(css.includes('.lesson-metronome'), 'metronome panel should have page-native styling');
+  assert.ok(css.includes('.lesson-metronome-beats button'), 'beat selectors should be styled as buttons');
+});
+
+test('UkeBook Eddie logo ships as editable SVG and React component', () => {
+  const html = read('index.html');
+  const svg = read('ukebook_logo.svg');
+  const component = read('UkebookLogo.tsx');
+  const spec = read('ukebook_logo_codex_spec.md');
+
+  assert.ok(html.includes('src="./ukebook_logo.svg"'), 'homepage should use the SVG logo asset');
+  assert.ok(html.includes('class="ukebook-logo-stage"'), 'homepage should position the SVG logo layer');
+
+  for (const expected of [
+    'id="clip"',
+    'id="badge-shell"',
+    'id="tropical-scene"',
+    'id="ukulele-hero"',
+    'id="wordmark"',
+    'UkeBook',
+    'EDDIE',
+    'LEVEL ATLAS',
+  ]) {
+    assert.ok(svg.includes(expected), `missing editable SVG token: ${expected}`);
+  }
+
+  for (const expected of [
+    'export function UkebookLogo',
+    'React.useId',
+    'ukulele-hero',
+    'wordmark',
+    'UkeBook',
+    'LEVEL ATLAS',
+  ]) {
+    assert.ok(component.includes(expected), `missing React logo token: ${expected}`);
+  }
+
+  assert.ok(spec.includes('Deliverables'), 'logo spec should document deliverables');
 });

@@ -8,7 +8,7 @@
       name="description"
       content="清新多巴胺风格的尤克里里教学网站基础框架，保留等级、曲库、课程详情和动效结构。"
     />
-    <link rel="stylesheet" href="./assets/styles.css?v=preserve-framework-ukulele" />
+    <link rel="stylesheet" href="./assets/styles.css?v=ukebook-logo-svg" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237CF6A3'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' font-family='serif' fill='%23171109'%3EU%3C/text%3E%3C/svg%3E" />
   </head>
   <body class="uke-fresh-theme">
@@ -32,10 +32,8 @@
             ></h1>
           </div>
           <p class="intro-copy">
-            一个保留原版互动框架的尤克里里教学助手模板，用四弦、和弦、扫弦、节拍和课堂歌单组织学习路径，
-            <span>not just “easy or hard”</span>。
+            教学分为 <span>零基础入门</span>、<span>弹唱提高</span>、<span>中级进阶</span>、<span>高阶指弹</span> 四个阶段；具体难度和能力进阶，会分布在 <span>0-8 级共 9 个等级</span>的曲目中体现。
           </p>
-          <div id="heroStats" class="stat-row" aria-label="模板统计"></div>
           <div class="hero-actions">
             <a class="pill-button" href="#catalog">打开曲库</a>
             <a class="quiet-link" href="#levels">先看等级路径</a>
@@ -51,15 +49,19 @@
           aria-label="UkuleleBook 模板吊牌动效"
         >
           <canvas class="lanyard-canvas" aria-hidden="true"></canvas>
+          <img
+            class="ukebook-logo-stage"
+            src="./ukebook_logo.svg"
+            width="1024"
+            height="1200"
+            alt=""
+            aria-hidden="true"
+          />
           <span class="lanyard-a11y">可拖动的尤克里里教学助手吊牌</span>
         </div>
 
         <div class="hero-product" aria-label="当前尤克里里课堂卡片">
-          <p class="scribble-caption caption-left">四弦课堂卡</p>
-          <svg class="arrow arrow-left" viewBox="0 0 128 84" aria-hidden="true">
-            <path d="M6 62 C36 28, 68 18, 112 24" />
-            <path d="M100 10 L116 24 L101 39" />
-          </svg>
+          <p class="scribble-caption caption-left">从调音开始</p>
           <div id="heroNotebook" class="notebook-object tuner-notebook-object">
             <article
               id="ukuleleTuner"
@@ -69,7 +71,6 @@
             >
               <header class="uke-tuner-top">
                 <div>
-                  <p class="kicker">UKULELE</p>
                   <h2 id="ukuleleTunerTitle">Eddie Ukulele</h2>
                 </div>
                 <div class="uke-status-lamp" aria-hidden="true"></div>
@@ -87,10 +88,6 @@
                 <div class="uke-meter-face">
                   <div id="tunerScale" class="uke-scale" aria-hidden="true"></div>
                   <div class="uke-center-band" aria-hidden="true"></div>
-                  <div class="uke-meter-frequency" aria-hidden="true">
-                    <span id="tunerFrequency">--</span>
-                    <small>Hz</small>
-                  </div>
                   <div class="uke-meter-cents" aria-hidden="true">
                     <span id="tunerCentsValue">0</span>
                     <small>Cents</small>
@@ -105,6 +102,10 @@
                   <div class="uke-note-line">
                     <span id="tunerNoteName">G</span>
                     <small id="tunerNoteOctave">4</small>
+                  </div>
+                  <div class="uke-note-frequency" aria-hidden="true">
+                    <span id="tunerFrequency">--</span>
+                    <small>Hz</small>
                   </div>
                   <span id="tunerTargetValue" class="uke-target-inline">TARGET 4 · G4</span>
                 </div>
@@ -271,11 +272,6 @@
           </label>
         </div>
         <div id="techCloud" class="tech-cloud" aria-label="技巧标签"></div>
-        <div class="catalog-head">
-          <strong id="resultCount">0 labels</strong>
-          <span id="activeSummary">all songs</span>
-        </div>
-        <div id="songList" class="song-label-grid" aria-label="歌曲列表"></div>
       </section>
 
       <section id="lesson" class="lesson-section section" aria-label="尤克里里课程详情">
@@ -321,7 +317,8 @@
     </footer>
 
     <script src="./assets/data.js?v=preserve-framework-ukulele"></script>
-    <script src="./assets/app.js?v=preserve-framework-ukulele"></script>
+    <script src="./assets/app.js?v=tropical-logo-ukulele"></script>
+    <script type="module" src="./assets/lesson-metronome.js?v=professional-metronome"></script>
     <script type="module" src="./assets/ukulele-tuner.js?v=ukulele-only"></script>
   </body>
 </html>
