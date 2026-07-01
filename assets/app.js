@@ -54,7 +54,6 @@
   };
 
   const levelById = Object.fromEntries(data.levels.map((level) => [level.id, level]));
-  const AUDIO_VERSION_COUNT = 3;
   const orbit = {
     initialized: false,
     discs: [],
@@ -169,6 +168,36 @@
 
   function levelShort(level) {
     return level.order === 0 ? "Debut" : `G${level.order}`;
+  }
+
+  function renderLevelMedia(level) {
+    const shortName = levelShort(level);
+    const songCount = levelCount(level.id);
+    if (level.coverImage) {
+      return `
+        <div class="circular-media has-cover">
+          <img
+            class="circular-cover-image"
+            src="${level.coverImage}"
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+          <div class="circular-cover-meta" aria-hidden="true">
+            <strong>${songCount}</strong>
+            <em>songs</em>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="circular-media">
+        <span>${shortName}</span>
+        <strong>${songCount}</strong>
+        <em>songs</em>
+      </div>
+    `;
   }
 
   function chromaStyle(level) {
@@ -1475,17 +1504,13 @@
         return `
           <button
             type="button"
-            class="level-label circular-card chroma-card${active}"
+            class="level-label circular-card chroma-card${level.coverImage ? " has-book-cover" : ""}${active}"
             data-level="${level.id}"
             aria-controls="levelSongPicker"
             aria-expanded="${expanded}"
             style="${chromaStyle(level)}"
           >
-            <div class="circular-media">
-              <span>${levelShort(level)}</span>
-              <strong>${levelCount(level.id)}</strong>
-              <em>songs</em>
-            </div>
+            ${renderLevelMedia(level)}
             <footer class="circular-caption chroma-info">
               <h3 class="name">${level.label}</h3>
               <span class="handle">${level.techniques[0] || "strum"}</span>
@@ -1495,7 +1520,14 @@
           </button>
         `;
       })
-      .join("") + `</div><div class="chroma-overlay"></div><div class="chroma-fade"></div>`;
+      .join("") + `</div>
+        <button class="level-gallery-arrow level-gallery-prev" type="button" data-level-gallery-prev aria-label="Previous level cover">
+          <span aria-hidden="true">&lsaquo;</span>
+        </button>
+        <button class="level-gallery-arrow level-gallery-next" type="button" data-level-gallery-next aria-label="Next level cover">
+          <span aria-hidden="true">&rsaquo;</span>
+        </button>
+        <div class="chroma-overlay"></div><div class="chroma-fade"></div>`;
 
     levelGallery.cards = [...els.levelBoard.querySelectorAll("[data-level]")];
     const selectedIndex = data.levels.findIndex((level) => level.id === state.level);
@@ -1510,6 +1542,7 @@
     levelGallery.cards.forEach((button, index) => {
       button.dataset.galleryIndex = String(index);
     });
+    bindLevelGalleryControls();
     bindChromaGrid();
     updateLevelGalleryLayout();
   }
@@ -1558,6 +1591,23 @@
     }
     updateLevelGalleryLayout();
     levelGallery.frame = requestAnimationFrame(animateLevelGallery);
+  }
+
+  function bindLevelGalleryControls() {
+    const root = els.levelBoard;
+    if (!root) return;
+    root.querySelector("[data-level-gallery-prev]")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      levelGallery.target = clampGalleryTarget(Math.round(levelGallery.target) - 1);
+      startLevelGalleryAnimation();
+    });
+    root.querySelector("[data-level-gallery-next]")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      levelGallery.target = clampGalleryTarget(Math.round(levelGallery.target) + 1);
+      startLevelGalleryAnimation();
+    });
   }
 
   function bindChromaGrid() {
@@ -1675,9 +1725,7 @@
 
   function audioVersionSlots(song) {
     const audioItems = Array.isArray(song.audio) ? song.audio : [];
-    const count = audioItems.length || AUDIO_VERSION_COUNT;
-    return Array.from({ length: count }, (_, index) => {
-      const item = audioItems[index] || {};
+    return audioItems.map((item, index) => {
       return {
         index,
         number: String(index + 1).padStart(2, "0"),
@@ -1707,16 +1755,28 @@
 
   function renderAudio(song) {
     const slots = audioVersionSlots(song);
+    if (!slots.length) {
+      return `
+        <div class="audio-workbench">
+          <div class="resource-note">
+            <span>音频</span>
+            <strong>歌曲音频待加入</strong>
+            <small>导入授权音频后，这里会显示可播放版本。</small>
+          </div>
+        </div>
+      `;
+    }
     const activeIndex = activeAudioVersionIndex(song, slots);
     const activeSlot = slots[activeIndex];
+    const playerLabel = `${song.title} - ${activeSlot.title}`;
 
     return `
       <div class="audio-workbench">
         <div class="audio-player-frame">
           <div class="audio-version-head">
-            <span>占位版本</span>
+            <span>播放器版本</span>
             <strong>${escapeHtml(activeSlot.title)}</strong>
-            <em>这个模板没有接入真实音频文件。</em>
+            <em>${escapeHtml(playerLabel)}</em>
           </div>
           <div class="audio-version-selector" role="tablist" aria-label="${escapeAttribute(song.title)} audio versions">
             ${slots
@@ -1731,16 +1791,25 @@
                   >
                     <span>${slot.number}</span>
                     <strong>${escapeHtml(slot.title)}</strong>
-                    <small>placeholder</small>
+                    <small>${escapeHtml(slot.src)}</small>
                   </button>
                 `
               )
               .join("")}
           </div>
-          <div class="resource-note audio-template-note">
-            <span>音频区域</span>
-            <strong>模板版已移除真实播放器。</strong>
-            <small>后续添加你自己的授权尤克里里音频后，再在这里接回播放器。</small>
+          <div class="audio-player-shell" data-audio-player-shell>
+            <audio-speed-player
+              src="${escapeAttribute(activeSlot.src)}"
+              label="${escapeAttribute(playerLabel)}"
+              rate="1"
+              min-rate="0.5"
+              max-rate="1.5"
+              step="0.05"
+              engine="rubberband"
+              no-upload
+              version-selector
+            ></audio-speed-player>
+            <p>播放器会读取当前曲目的项目内音频资源。</p>
           </div>
         </div>
       </div>

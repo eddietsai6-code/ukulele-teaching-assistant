@@ -170,6 +170,38 @@ test('lesson detail embeds a persistent professional metronome tab', () => {
   assert.ok(css.includes('.lesson-metronome-beats button'), 'beat selectors should be styled as buttons');
 });
 
+test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
+  const html = read('index.html');
+  const app = read('assets/app.js');
+  const data = read('assets/data.js');
+  const css = read('assets/styles.css');
+
+  assert.ok(
+    html.includes('https://eddietsai6-code.github.io/audio-speed-player/dist/audio-speed-player-pro.js'),
+    'homepage head should load the EddieDrumBook audio speed player module'
+  );
+
+  for (const expected of [
+    '<audio-speed-player',
+    'version-selector',
+    'no-upload',
+    'engine="rubberband"',
+    'min-rate="0.5"',
+    'max-rate="1.5"',
+    'step="0.05"',
+    'data-audio-player-shell',
+    'activeAudioVersionIndex(song, slots)',
+  ]) {
+    assert.ok(app.includes(expected), `missing audio player integration token: ${expected}`);
+  }
+
+  assert.equal(data.includes('createPlaceholderAudio(song)'), false, 'song data should not create synthetic audio versions');
+  assert.equal(data.includes('assets/audio-placeholders/'), false, 'catalog data should not reference placeholder audio paths');
+  assert.equal(app.includes('AUDIO_VERSION_COUNT'), false, 'audio tab should not create fixed placeholder version controls');
+  assert.ok(app.includes('if (!slots.length)'), 'audio tab should show an empty state when a song has no audio');
+  assert.ok(css.includes('.audio-player-shell'), 'audio speed player should have a native frame in the detail audio area');
+});
+
 test('UkeBook Eddie logo ships as editable SVG and React component', () => {
   const html = read('index.html');
   const svg = read('ukebook_logo.svg');

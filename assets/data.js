@@ -2,12 +2,13 @@
   const levels = [
     {
       id: "debut",
-      label: "Starter",
+      label: "Debut",
       order: 0,
       core: "Open-string rhythm and first chords",
       boundary: "C, Am, F, and G7 with a steady four-count pulse.",
       techniques: ["open chords", "down strum", "4/4", "steady pulse"],
-      color: "#FFD166"
+      color: "#FFD166",
+      coverImage: "./assets/covers/ukulele-books/book-0-cover.png"
     },
     {
       id: "g1",
@@ -16,7 +17,8 @@
       core: "Basic chord changes and sing-along strumming",
       boundary: "Clean C-F-G-Am changes without stopping the beat.",
       techniques: ["chord change", "C-F-G", "sing and strum", "mute"],
-      color: "#5CC8FF"
+      color: "#5CC8FF",
+      coverImage: "./assets/covers/ukulele-books/book-1-cover.png"
     },
     {
       id: "g2",
@@ -25,7 +27,8 @@
       core: "Down-up strumming and simple rhythmic accents",
       boundary: "Eighth-note strums, basic chucking, and weak-beat entries.",
       techniques: ["down-up", "chuck", "8th strum", "syncopation"],
-      color: "#7CF6A3"
+      color: "#7CF6A3",
+      coverImage: "./assets/covers/ukulele-books/book-2-cover.png"
     },
     {
       id: "g3",
@@ -34,7 +37,8 @@
       core: "Fingerpicking patterns and simple melody work",
       boundary: "Thumb and finger separation with melody plus chord shapes.",
       techniques: ["fingerpicking", "arpeggio", "melody", "position"],
-      color: "#FF8FAB"
+      color: "#FF8FAB",
+      coverImage: "./assets/covers/ukulele-books/book-3-cover.png"
     },
     {
       id: "g4",
@@ -43,7 +47,8 @@
       core: "Style strums and dynamic control",
       boundary: "Folk, reggae, ballad, and swing-feel accompaniment basics.",
       techniques: ["reggae chop", "folk strum", "dynamics", "swing"],
-      color: "#B8F35A"
+      color: "#B8F35A",
+      coverImage: "./assets/covers/ukulele-books/book-4-cover.png"
     },
     {
       id: "g5",
@@ -52,7 +57,38 @@
       core: "Fingerstyle performance and position shifts",
       boundary: "Short performance pieces combining melody, bass, and harmony.",
       techniques: ["fingerstyle", "position shift", "bass note", "performance"],
-      color: "#2DD4BF"
+      color: "#2DD4BF",
+      coverImage: "./assets/covers/ukulele-books/book-5-cover.png"
+    },
+    {
+      id: "g6",
+      label: "Level 6",
+      order: 6,
+      core: "Extended harmony and confident groove control",
+      boundary: "Move through richer voicings, syncopated figures, and longer forms.",
+      techniques: ["extended chords", "groove control", "syncopation", "tone"],
+      color: "#FFD166",
+      coverImage: "./assets/covers/ukulele-books/book-6-cover.png"
+    },
+    {
+      id: "g7",
+      label: "Level 7",
+      order: 7,
+      core: "Advanced fingerstyle textures and ensemble awareness",
+      boundary: "Balance melody, harmony, and accompaniment with polished transitions.",
+      techniques: ["advanced fingerstyle", "voice leading", "ensemble", "phrasing"],
+      color: "#5CC8FF",
+      coverImage: "./assets/covers/ukulele-books/book-7-cover.png"
+    },
+    {
+      id: "g8",
+      label: "Level 8",
+      order: 8,
+      core: "Performance-level repertoire and expressive arranging",
+      boundary: "Shape complete performances with confident dynamics and articulation.",
+      techniques: ["arranging", "performance", "dynamics", "articulation"],
+      color: "#7CF6A3",
+      coverImage: "./assets/covers/ukulele-books/book-8-cover.png"
     }
   ];
 
@@ -236,7 +272,7 @@
   function makeSong(song) {
     return {
       ...song,
-      audio: [],
+      audio: Array.isArray(song.audio) ? song.audio : [],
       scoreImages: Array.isArray(song.scoreImages) ? song.scoreImages : [],
       teaching: {
         goal: song.goal,

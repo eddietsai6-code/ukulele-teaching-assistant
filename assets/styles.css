@@ -1357,7 +1357,7 @@ main {
 
 .level-board.circular-gallery.chroma-grid {
   position: relative;
-  height: 560px;
+  height: 660px;
   min-height: 0;
   display: block;
   max-width: 100%;
@@ -1449,9 +1449,83 @@ main {
   translate: 0 0;
 }
 
+.level-board.circular-gallery .level-label.circular-card.has-book-cover {
+  height: 560px;
+  min-height: 560px;
+  border-color: rgba(54, 45, 34, 0.82);
+  border-radius: 16px;
+  background: #fffdf8;
+  box-shadow: rgba(43, 32, 20, 0.16) 0 24px 58px;
+  color: #322112;
+  filter: none;
+}
+
+.level-board.circular-gallery .level-label.circular-card.has-book-cover:hover,
+.level-board.circular-gallery .level-label.circular-card.has-book-cover.is-active {
+  border-color: rgba(54, 45, 34, 0.94);
+  box-shadow: rgba(43, 32, 20, 0.22) 0 30px 72px;
+}
+
 .level-board.circular-gallery .chroma-overlay,
 .level-board.circular-gallery .chroma-fade {
   display: none;
+}
+
+.level-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(54, 45, 34, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: rgba(43, 32, 20, 0.18) 0 14px 30px;
+  color: #322112;
+  font-family: var(--font-geist);
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transform: translateY(-50%);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.level-gallery-arrow span {
+  display: block;
+  margin-top: -3px;
+  pointer-events: none;
+}
+
+.level-gallery-arrow:hover,
+.level-gallery-arrow:focus-visible {
+  border-color: rgba(54, 45, 34, 0.98);
+  background: #ffffff;
+  box-shadow: rgba(43, 32, 20, 0.24) 0 18px 36px;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.level-gallery-arrow:focus-visible {
+  outline: 2px solid var(--color-marker-orange);
+  outline-offset: 3px;
+}
+
+.level-gallery-arrow:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.level-gallery-prev {
+  left: max(12px, calc(50% - 244px));
+}
+
+.level-gallery-next {
+  right: max(12px, calc(50% - 244px));
 }
 
 .circular-media {
@@ -1491,6 +1565,75 @@ main {
   font-family: var(--font-geist);
   font-size: 16px;
   font-style: normal;
+}
+
+.circular-media.has-cover {
+  flex: 0 0 auto;
+  width: 88%;
+  min-height: 0;
+  aspect-ratio: 829 / 1200;
+  margin: 8px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(54, 45, 34, 0.16);
+  border-radius: 11px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: rgba(43, 32, 20, 0.12) 0 10px 24px;
+}
+
+.circular-media.has-cover::before {
+  display: none;
+}
+
+.circular-cover-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: none;
+  object-fit: cover;
+}
+
+.circular-cover-meta {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 9px 7px;
+  border: 1px solid rgba(54, 45, 34, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 249, 237, 0.94);
+  box-shadow: 0 8px 18px rgba(43, 32, 20, 0.16);
+  color: #322112;
+  text-align: center;
+}
+
+.level-board.circular-gallery .circular-cover-meta strong {
+  color: #322112;
+  font-family: var(--font-geist);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.circular-cover-meta em {
+  color: rgba(50, 33, 18, 0.78);
+  font-family: var(--font-geist);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .circular-caption {
@@ -1535,6 +1678,43 @@ main {
   margin-top: 4px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 14px;
+}
+
+.level-label.has-book-cover .circular-caption {
+  gap: 3px 14px;
+  padding: 10px 18px 12px;
+  color: #322112;
+}
+
+.level-label.has-book-cover .circular-caption .name {
+  color: #322112;
+  font-size: 25px;
+  letter-spacing: 0;
+}
+
+.level-label.has-book-cover .circular-caption .handle {
+  align-self: end;
+  color: rgba(50, 33, 18, 0.58);
+  font-size: 14px;
+}
+
+.level-label.has-book-cover .circular-caption .role {
+  color: rgba(50, 33, 18, 0.72);
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.level-label.has-book-cover .circular-caption .location {
+  color: rgba(50, 33, 18, 0.62);
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.level-label.has-book-cover .circular-caption .role,
+.level-label.has-book-cover .circular-caption .location {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .level-song-picker {
@@ -2513,6 +2693,26 @@ main {
   box-shadow:
     rgba(0, 17, 24, 0.26) 0 18px 44px,
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.audio-player-shell {
+  display: grid;
+  gap: 10px;
+  padding: 10px 8px 8px;
+}
+
+.audio-player-shell audio-speed-player {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.audio-player-shell p {
+  margin: 0;
+  color: rgba(202, 229, 224, 0.78);
+  font-family: var(--font-geist);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .score-grid {
@@ -3575,7 +3775,7 @@ main {
   }
 
   .level-board.circular-gallery.chroma-grid {
-    height: 500px;
+    height: 610px;
     padding: 0;
     --r: 220px;
   }
@@ -3586,13 +3786,70 @@ main {
     height: 350px;
   }
 
+  .level-board.circular-gallery .level-label.circular-card.has-book-cover {
+    min-height: 530px;
+    height: 530px;
+    border-radius: 14px;
+  }
+
+  .level-gallery-arrow {
+    width: 38px;
+    height: 38px;
+    font-size: 28px;
+  }
+
+  .level-gallery-prev {
+    left: 8px;
+  }
+
+  .level-gallery-next {
+    right: 8px;
+  }
+
   .circular-media {
     min-height: 204px;
     margin: 12px;
   }
 
+  .circular-media.has-cover {
+    width: 88%;
+    min-height: 0;
+    margin: 8px auto 0;
+    padding: 0;
+  }
+
+  .circular-cover-image {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+  }
+
+  .circular-cover-meta {
+    right: 10px;
+    bottom: 10px;
+    min-width: 64px;
+    padding: 7px 8px;
+  }
+
   .level-board.circular-gallery .circular-media strong {
     font-size: 72px;
+  }
+
+  .level-board.circular-gallery .circular-cover-meta strong {
+    font-size: 13px;
+  }
+
+  .level-label.has-book-cover .circular-caption {
+    padding: 10px 16px 12px;
+  }
+
+  .level-label.has-book-cover .circular-caption .name {
+    font-size: 24px;
+  }
+
+  .level-label.has-book-cover .circular-caption .role,
+  .level-label.has-book-cover .circular-caption .location {
+    font-size: 13px;
   }
 
 }

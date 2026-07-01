@@ -11,7 +11,7 @@
   },
   "homepage": "https://ukulele-teaching-assistant.pages.dev",
   "scripts": {
-    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js",
+    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js tests/rsl-ukulele-import.test.js",
     "check": "node tools/check-syntax.mjs",
     "serve": "python -m http.server 4184 --bind 127.0.0.1"
   },

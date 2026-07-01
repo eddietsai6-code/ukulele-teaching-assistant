@@ -85,7 +85,6 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
   for (const forbidden of [
     'audio/',
     'assets/support/',
-    'audio-speed-player',
     'song-tech-profiles',
   ]) {
     assert.equal(combined.includes(forbidden), false, `forbidden resource reference remained: ${forbidden}`);
@@ -170,4 +169,65 @@ test('catalog removes the visible song result card module', () => {
   assert.equal(html.includes('id="activeSummary"'), false, 'catalog active summary should be removed');
   assert.equal(html.includes('id="songList"'), false, 'catalog song card grid mount should be removed');
   assert.equal(app.includes('renderSongList(filteredSongs)'), false, 'app should not render the removed card grid');
+});
+
+test('level cards use first-page covers for all nine ukulele books', () => {
+  const html = read('index.html');
+  const data = read('assets/data.js');
+  const app = read('assets/app.js');
+  const styles = read('assets/styles.css');
+  const coverPaths = Array.from(
+    { length: 9 },
+    (_, index) => `./assets/covers/ukulele-books/book-${index}-cover.png`
+  );
+
+  for (const coverPath of coverPaths) {
+    assert.ok(data.includes(`coverImage: "${coverPath}"`), `missing level cover reference: ${coverPath}`);
+    assert.ok(fs.existsSync(path.join(root, coverPath)), `missing exported cover image: ${coverPath}`);
+  }
+
+  assert.match(data, /id: "debut"[\s\S]*?label: "Debut"/, 'first level card should be titled Debut');
+  assert.doesNotMatch(data, /id: "debut"[\s\S]*?label: "Starter"/, 'first level card should not be titled Starter');
+  assert.match(data, /id: "g8"[\s\S]*?coverImage: "\.\/assets\/covers\/ukulele-books\/book-8-cover\.png"/);
+  assert.ok(app.includes('has-book-cover'), 'level gallery cards with covers should be addressable for cover-specific styling');
+  assert.ok(app.includes('class="circular-cover-image"'), 'level gallery should render cover images');
+  assert.match(
+    app,
+    /class="circular-cover-image"[^>]*loading="eager"/,
+    'level covers should load before carousel rotation'
+  );
+  assert.ok(app.includes('data-level-gallery-prev'), 'level gallery should expose a previous slide control');
+  assert.ok(app.includes('data-level-gallery-next'), 'level gallery should expose a next slide control');
+  assert.ok(
+    app.includes('Math.round(levelGallery.target) - 1') && app.includes('Math.round(levelGallery.target) + 1'),
+    'level gallery controls should slide one book at a time'
+  );
+  assert.match(
+    styles,
+    /\.level-board\.circular-gallery \.level-label\.circular-card\.has-book-cover\s*\{[^}]*height:\s*560px;[^}]*background:\s*#fffdf8;/,
+    'real book cover cards should use a tall light book-card layout'
+  );
+  assert.match(
+    styles,
+    /\.circular-media\.has-cover\s*\{[^}]*width:\s*88%;[^}]*aspect-ratio:\s*829 \/ 1200;[^}]*margin:\s*8px auto 0;/,
+    'cover frames should match the rendered first-page cover ratio with tighter card whitespace'
+  );
+  assert.match(
+    styles,
+    /\.level-gallery-arrow\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?border-radius:\s*999px;/,
+    'level gallery should render visible round slide controls'
+  );
+  assert.match(
+    styles,
+    /\.circular-cover-image\s*\{[^}]*object-fit:\s*cover;/,
+    'cover images should fill the book-card cover frame without distortion'
+  );
+  assert.match(
+    styles,
+    /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
+    'book-card captions should stay to single-line summaries so covers do not clip text'
+  );
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached cover styles');
 });
