@@ -1038,6 +1038,10 @@ main {
   animation: pageRise 600ms ease both;
 }
 
+.rhythm-game-showcase {
+  min-height: 500px;
+}
+
 .showcase-object .scribble-caption {
   top: 0;
   left: 24px;
@@ -1080,6 +1084,186 @@ main {
 
 .notebook-pink:hover .mini-notebook {
   transform: translateX(-50%) rotate(4deg) translateY(-6px);
+}
+
+.rhythm-game-frame {
+  position: absolute;
+  left: 50%;
+  top: 54px;
+  transform: translateX(-50%) rotate(-6deg);
+  transform-origin: 50% 62%;
+  transition: transform 220ms ease;
+}
+
+.rhythm-game-showcase:hover .rhythm-game-frame {
+  transform: translateX(-50%) rotate(-3deg) translateY(-6px);
+}
+
+.rhythm-handheld {
+  position: relative;
+  width: min(304px, calc(100vw - 56px));
+  display: grid;
+  gap: 10px;
+  padding: 14px 14px 15px;
+  border: 2px solid #153047;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.78), transparent 30%),
+    linear-gradient(145deg, #fff475 0%, #7cf6a3 44%, #5cc8ff 100%);
+  box-shadow:
+    0 22px 36px rgba(15, 45, 56, 0.18),
+    inset 0 -8px 0 rgba(21, 48, 71, 0.12),
+    inset 0 3px 0 rgba(255, 255, 255, 0.42);
+  animation: cardPeelIn 520ms ease both;
+}
+
+.rhythm-handheld::before,
+.rhythm-handheld::after {
+  content: "";
+  position: absolute;
+  top: 42%;
+  width: 14px;
+  height: 72px;
+  border: 2px solid rgba(21, 48, 71, 0.72);
+  background: #fffdf8;
+}
+
+.rhythm-handheld::before {
+  left: -10px;
+  border-radius: 18px 4px 4px 18px;
+}
+
+.rhythm-handheld::after {
+  right: -10px;
+  border-radius: 4px 18px 18px 4px;
+}
+
+.rhythm-console-top {
+  display: grid;
+  grid-template-columns: 24px 1fr 36px;
+  align-items: center;
+  gap: 8px;
+  color: #153047;
+  font-family: var(--font-geist);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.rhythm-led {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(21, 48, 71, 0.82);
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 32%, #ffffff 0 16%, #ff7a59 17% 62%, #cf4539 63%);
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.16);
+}
+
+.rhythm-speaker {
+  display: block;
+  height: 16px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, #153047 0 2px, transparent 2.5px) 0 50% / 10px 10px repeat-x;
+  opacity: 0.9;
+}
+
+.rhythm-screen {
+  position: relative;
+  aspect-ratio: 430 / 560;
+  overflow: hidden;
+  border: 3px solid #153047;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 28%),
+    #ffffff;
+  box-shadow:
+    inset 0 0 0 5px rgba(21, 48, 71, 0.09),
+    0 10px 18px rgba(10, 37, 50, 0.14);
+}
+
+.rhythm-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.36) 0 18%, transparent 18% 100%);
+  mix-blend-mode: screen;
+}
+
+.rhythm-game-frame iframe {
+  display: block;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+
+.rhythm-controls {
+  display: grid;
+  grid-template-columns: 62px 1fr 74px;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+}
+
+.rhythm-dpad {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: block;
+  filter: drop-shadow(0 4px 0 rgba(21, 48, 71, 0.16));
+}
+
+.rhythm-dpad::before,
+.rhythm-dpad::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 17px;
+  height: 48px;
+  border: 2px solid #153047;
+  border-radius: 8px;
+  background: #fffdf8;
+  transform: translate(-50%, -50%);
+}
+
+.rhythm-dpad::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.rhythm-console-brand {
+  justify-self: center;
+  color: rgba(21, 48, 71, 0.8);
+  font-family: var(--font-geist);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.rhythm-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.rhythm-action-buttons i {
+  width: 27px;
+  height: 27px;
+  border: 2px solid #153047;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.78), transparent 26%),
+    #ff8fab;
+  box-shadow: 0 5px 0 rgba(21, 48, 71, 0.18);
+}
+
+.rhythm-action-buttons i:nth-child(2) {
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.78), transparent 26%),
+    #ff7a59;
 }
 
 .mini-notebook span {
@@ -3804,6 +3988,35 @@ main {
 
   .showcase-object {
     min-height: 300px;
+  }
+
+  .rhythm-game-showcase {
+    min-height: 500px;
+  }
+
+  .rhythm-game-frame {
+    top: 54px;
+  }
+
+  .rhythm-handheld {
+    width: min(292px, calc(100vw - 42px));
+    padding: 12px;
+    border-radius: 26px;
+  }
+
+  .rhythm-controls {
+    grid-template-columns: 56px 1fr 66px;
+    min-height: 42px;
+  }
+
+  .rhythm-dpad {
+    width: 46px;
+    height: 46px;
+  }
+
+  .rhythm-action-buttons i {
+    width: 24px;
+    height: 24px;
   }
 
   .level-board,

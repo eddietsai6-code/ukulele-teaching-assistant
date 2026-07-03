@@ -229,6 +229,64 @@
       ]
     }),
     makeSong({
+      id: "g1-f-diao-yin-jie",
+      title: "F调音阶",
+      artist: "乐音树艺术教育",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "音阶练习",
+      style: "Scale exercise",
+      techniques: ["F major scale", "quarter note", "half note", "melody tab"],
+      goal: "认识F调音阶，熟悉F调中Do到高音Do的指板位置。",
+      focus: "从F调Do开始读准TAB位置，练习一升一降的音阶走向和稳定节拍。",
+      practiceOrder: ["唱名读谱", "上行音阶慢速弹奏", "下行音阶慢速弹奏", "跟98 BPM稳定完成全条音阶"],
+      commonIssues: ["F调Do位置和C调Do混淆", "下行时Sol与Fa换音不稳", "高音Do收尾时二分音符时值不够"],
+      passStandard: "能在98 BPM稳定弹完整条音阶，并说出F调Do、Fa和高音Do的位置。",
+      audio: [
+        {
+          title: "F调音阶 音频",
+          src: "./assets/audio/ukulele/g1-f-diao-yin-jie/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "F调音阶 谱面 1",
+          src: "./assets/scores/ukulele/g1-f-diao-yin-jie/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-always-with-me",
+      title: "Always with me",
+      artist: "Youmi Kimura",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Anime theme",
+      techniques: ["F major", "3/4", "eighth note", "melody tab", "chord symbols"],
+      goal: "掌握F调旋律、3/4拍和带和弦标记的分句练习。",
+      focus: "在F调中读准旋律位置，保持三拍子律动，并把八分音符连接弹均匀。",
+      practiceOrder: ["唱名读谱", "分句练习右手节拍", "对照简谱确认旋律走向", "跟90 BPM稳定完成全曲"],
+      commonIssues: ["3/4拍重音不清楚", "八分音符连接忽快忽慢", "F、Bb、C和弦位置转换不够提前"],
+      passStandard: "能在90 BPM稳定弹完整曲，并说出F调主和弦与三拍子重音位置。",
+      audio: [
+        {
+          title: "Always with me 音频",
+          src: "./assets/audio/ukulele/g1-always-with-me/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "Always with me 谱面 1",
+          src: "./assets/scores/ukulele/g1-always-with-me/score-01.png"
+        },
+        {
+          title: "Always with me 简谱版",
+          src: "./assets/scores/ukulele/g1-always-with-me/score-02.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "little-island",
       title: "Little Island",
       artist: "Ukulele Template",
