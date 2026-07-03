@@ -191,10 +191,16 @@ test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
     'step="0.05"',
     'data-audio-player-shell',
     'activeAudioVersionIndex(song, slots)',
+    'compactAudioVersionTitle(song.title, title, index)',
+    '<strong>${escapeHtml(song.title)}</strong>',
+    '<em>${escapeHtml(activeSlot.displayTitle)}</em>',
+    '<strong>${escapeHtml(slot.displayTitle)}</strong>',
   ]) {
     assert.ok(app.includes(expected), `missing audio player integration token: ${expected}`);
   }
 
+  assert.equal(app.includes('<strong>${escapeHtml(activeSlot.title)}</strong>'), false, 'audio heading should not repeat the full imported audio title');
+  assert.equal(app.includes('<em>${escapeHtml(playerLabel)}</em>'), false, 'audio heading should not echo the full player label after the song title');
   assert.equal(data.includes('createPlaceholderAudio(song)'), false, 'song data should not create synthetic audio versions');
   assert.equal(data.includes('assets/audio-placeholders/'), false, 'catalog data should not reference placeholder audio paths');
   assert.equal(app.includes('AUDIO_VERSION_COUNT'), false, 'audio tab should not create fixed placeholder version controls');
@@ -202,14 +208,37 @@ test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
   assert.ok(css.includes('.audio-player-shell'), 'audio speed player should have a native frame in the detail audio area');
 });
 
-test('UkeBook Eddie logo ships as editable SVG and React component', () => {
+test('song selection opens the audio tab first when the selected song has audio', () => {
+  const app = read('assets/app.js');
+
+  assert.ok(app.includes('function preferredDetailTabForSong'), 'app should centralize the initial detail tab choice');
+  assert.match(
+    app,
+    /return\s+song\s*&&\s*Array\.isArray\(song\.audio\)\s*&&\s*song\.audio\.length\s*\?\s*"audio"\s*:\s*"lesson"/,
+    'songs with real audio should default to the audio tab'
+  );
+  assert.match(
+    app,
+    /function selectSong\(songId, shouldScroll\)[\s\S]*?state\.detailTab\s*=\s*preferredDetailTabForSong\(songId\)/,
+    'selecting a song should not force the lesson tab'
+  );
+  assert.match(
+    app,
+    /state\.selectedSongId\s*=\s*filteredSongs\[0\]\s*\?\s*filteredSongs\[0\]\.id\s*:\s*"";[\s\S]*?state\.detailTab\s*=\s*preferredDetailTabForSong\(state\.selectedSongId\)/,
+    'filter-driven song changes should also reveal audio when available'
+  );
+});
+
+test('homepage uses the provided direct PNG logo and keeps editable logo sources', () => {
   const html = read('index.html');
   const svg = read('ukebook_logo.svg');
   const component = read('UkebookLogo.tsx');
   const spec = read('ukebook_logo_codex_spec.md');
 
-  assert.ok(html.includes('src="./ukebook_logo.svg"'), 'homepage should use the SVG logo asset');
-  assert.ok(html.includes('class="ukebook-logo-stage"'), 'homepage should position the SVG logo layer');
+  assert.ok(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), 'homepage should use the provided direct PNG logo asset');
+  assert.ok(fs.existsSync(path.join(root, 'assets/brand/ukulele-logo-direct.png')), 'provided direct PNG logo should exist in project assets');
+  assert.ok(html.includes('height="1536"'), 'homepage should preserve the provided PNG logo aspect ratio');
+  assert.ok(html.includes('class="ukebook-logo-stage"'), 'homepage should position the logo layer');
 
   for (const expected of [
     'id="clip"',

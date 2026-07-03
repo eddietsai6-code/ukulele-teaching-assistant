@@ -122,10 +122,20 @@
       practiceOrder: ["唱名读谱", "拍读4分音符与2分音符", "慢速弹奏TAB", "跟80 BPM稳定完成全曲"],
       commonIssues: ["2分音符时值不够", "相同音连续弹奏时节拍不稳", "只看数字不唱音阶"],
       passStandard: "能在80 BPM稳定弹完整曲，并说出4分音符与2分音符的区别。",
+      audio: [
+        {
+          title: "小星星 音频",
+          src: "./assets/audio/ukulele/debut-xiao-xing-xing/full.mp3"
+        }
+      ],
       scoreImages: [
         {
           title: "小星星 谱面 1",
           src: "./assets/scores/ukulele/debut-xiao-xing-xing/score-01.png"
+        },
+        {
+          title: "小星星 简谱版",
+          src: "./assets/scores/ukulele/debut-xiao-xing-xing/score-02.png"
         }
       ]
     }),
@@ -143,10 +153,20 @@
       practiceOrder: ["唱名读谱", "拍读4分音符与2分音符", "慢速分句弹奏TAB", "跟160 BPM稳定完成全曲"],
       commonIssues: ["2分音符时值不够", "Do-Re-Fa-Mi-Re 乐句回弹不稳", "速度变快后只看数字不唱音阶"],
       passStandard: "能在160 BPM稳定弹完整曲，并说出4分音符与2分音符的区别。",
+      audio: [
+        {
+          title: "康康舞曲 Cancan 音频",
+          src: "./assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/full.mp3"
+        }
+      ],
       scoreImages: [
         {
           title: "康康舞曲 Cancan 谱面 1",
           src: "./assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-01.png"
+        },
+        {
+          title: "康康舞曲 Cancan 简谱版",
+          src: "./assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-02.png"
         }
       ]
     }),
@@ -156,7 +176,7 @@
       artist: "乐音树艺术教育",
       level: "debut",
       source: "用户上传曲谱",
-      category: "曲目练习",
+      category: "音阶练习",
       style: "Scale exercise",
       techniques: ["C major scale", "quarter note", "half note", "melody tab"],
       goal: "认识C调音阶，建立Do到高音Do的指板位置。",
@@ -164,6 +184,12 @@
       practiceOrder: ["唱名读谱", "上行音阶慢速弹奏", "下行音阶慢速弹奏", "跟80 BPM稳定完成全曲"],
       commonIssues: ["Sol与高音Do位置混淆", "2分音符保持不够", "下行音阶换音时节拍不稳"],
       passStandard: "能在80 BPM稳定弹完整条音阶，并说出C调音阶每个唱名的位置。",
+      audio: [
+        {
+          title: "C 调音阶 音频",
+          src: "./assets/audio/ukulele/debut-c-diao-yin-jie/full.mp3"
+        }
+      ],
       scoreImages: [
         {
           title: "C 调音阶 谱面 1",
@@ -185,10 +211,20 @@
       practiceOrder: ["唱名读谱", "拍读八分音符组合", "单独练习附点节奏", "跟120 BPM分句完成全曲"],
       commonIssues: ["八分音符连接不均匀", "附点音符拖拍或抢拍", "换到高音位置时忘记唱名"],
       passStandard: "能在120 BPM稳定弹完整曲，并说明八分音符和附点音符的时值关系。",
+      audio: [
+        {
+          title: "音乐之声 音频",
+          src: "./assets/audio/ukulele/g1-yin-yue-zhi-sheng/full.mp3"
+        }
+      ],
       scoreImages: [
         {
           title: "音乐之声 谱面 1",
           src: "./assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-01.png"
+        },
+        {
+          title: "音乐之声 简谱版",
+          src: "./assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-02.png"
         }
       ]
     }),

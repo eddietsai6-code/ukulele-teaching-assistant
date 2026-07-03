@@ -22,7 +22,10 @@ function loadData() {
 
 test('Rockschool ukulele books are imported as score-backed songs', () => {
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-  assert.ok(html.includes('assets/rsl-ukulele-data.js'), 'homepage should load Rockschool data');
+  assert.ok(
+    html.includes('assets/rsl-ukulele-data.js?v=rockschool-ukulele-chord-rhythm-category'),
+    'homepage should load the latest Rockschool data'
+  );
 
   const data = loadData();
   const levelIds = data.levels.map((level) => level.id);
@@ -42,6 +45,7 @@ test('Rockschool ukulele books are imported as score-backed songs', () => {
 
   for (const song of rslSongs) {
     assert.ok(song.id.startsWith(`${song.level}-rsl-`), `unexpected Rockschool id: ${song.id}`);
+    assert.equal(song.category, '和弦节奏练习', `unexpected Rockschool category for ${song.id}`);
     assert.ok(song.scoreImages.length > 0, `missing score images for ${song.id}`);
     for (const image of song.scoreImages) {
       assert.match(image.src, /^\.\/assets\/scores\/ukulele\/[^/]+\/score-\d{2}\.png$/);

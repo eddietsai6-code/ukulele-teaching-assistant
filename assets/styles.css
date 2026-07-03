@@ -16,6 +16,10 @@
   --color-shadow-mist: #c7d8d4;
   --font-gelica: "Fraunces", "Recoleta", "Georgia", "Microsoft YaHei", serif;
   --font-geist: "Aptos", "Segoe UI", "Microsoft YaHei", sans-serif;
+  --layout-canonical-portrait-width: 820px;
+  --layout-canonical-portrait-height: 1180px;
+  --layout-canonical-landscape-width: 1180px;
+  --layout-canonical-landscape-height: 820px;
   --page-max-width: 1200px;
   --shadow-lg: rgba(0, 0, 0, 0.06) 0 2px 20px 0;
   --shadow-subtle: rgba(0, 0, 0, 0.25) 0 1px 2px 0;
@@ -188,10 +192,16 @@ a {
 @keyframes ukebookLogoDrift {
   0%,
   100% {
-    transform: rotate(2.2deg) translate3d(0, 0, 0);
+    transform: translate3d(var(--lanyard-drag-x, 0px), var(--lanyard-drag-y, 0px), 0)
+      rotate(calc(var(--lanyard-card-rotate, 0deg) + 2deg));
   }
   50% {
-    transform: rotate(0.8deg) translate3d(-4px, -10px, 0);
+    transform: translate3d(
+        calc(var(--lanyard-drag-x, 0px) - 4px),
+        calc(var(--lanyard-drag-y, 0px) - 10px),
+        0
+      )
+      rotate(calc(var(--lanyard-card-rotate, 0deg) + 0.7deg));
   }
 }
 
@@ -422,6 +432,10 @@ main {
   z-index: 1;
   width: 100%;
   height: auto;
+  --lanyard-drag-x: 0px;
+  --lanyard-drag-y: 0px;
+  --lanyard-card-rotate: 0deg;
+  --lanyard-card-skew: 0deg;
   pointer-events: none;
   cursor: default;
   touch-action: none;
@@ -438,25 +452,93 @@ main {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.92;
   filter: drop-shadow(0 22px 28px rgba(23, 23, 23, 0.18));
 }
 
 .ukebook-logo-stage {
   position: absolute;
   z-index: 2;
-  top: clamp(4px, 2.6vw, 32px);
-  right: clamp(18px, 5.4vw, 102px);
+  top: clamp(74px, 9vw, 124px);
+  right: clamp(-118px, -6vw, -52px);
   display: block;
-  width: clamp(214px, 24vw, 348px);
-  height: auto;
-  pointer-events: none;
-  transform: rotate(2.2deg);
-  transform-origin: 52% 9%;
+  width: clamp(148px, 17vw, 230px);
+  aspect-ratio: 0.66;
+  overflow: hidden;
+  border: 2px solid rgba(255, 245, 211, 0.72);
+  border-radius: clamp(18px, 2.6vw, 32px);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(252, 245, 166, 0.42), transparent 52%),
+    #0b3d2f;
+  pointer-events: auto;
+  cursor: grab;
+  transform: translate3d(var(--lanyard-drag-x, 0px), var(--lanyard-drag-y, 0px), 0)
+    rotate(calc(var(--lanyard-card-rotate, 0deg) + 2deg))
+    skewX(var(--lanyard-card-skew, 0deg));
+  transform-origin: 50% 10.5%;
   filter:
     drop-shadow(0 26px 26px rgba(6, 32, 29, 0.18))
     drop-shadow(0 8px 0 rgba(255, 255, 255, 0.32));
-  animation: ukebookLogoDrift 5.8s ease-in-out 720ms infinite;
+  transition: transform 520ms cubic-bezier(0.18, 0.84, 0.28, 1);
+  will-change: transform;
+}
+
+.ukebook-logo-stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  width: clamp(18px, 17%, 34px);
+  height: clamp(30px, 16%, 46px);
+  border: 1.5px solid rgba(21, 48, 71, 0.38);
+  border-top: 0;
+  border-radius: 0 0 13px 13px;
+  background: #fff7df;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.34),
+    0 8px 16px rgba(3, 34, 28, 0.18);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.ukebook-logo-stage::after {
+  content: "";
+  position: absolute;
+  top: clamp(15px, 8.8%, 24px);
+  left: 50%;
+  z-index: 4;
+  width: clamp(30px, 24%, 50px);
+  height: clamp(18px, 12%, 30px);
+  border: 2px solid rgba(21, 48, 71, 0.72);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(7, 50, 42, 0.72) 0 34%, transparent 36%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(210, 218, 211, 0.86));
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.78),
+    0 4px 10px rgba(3, 34, 28, 0.18);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.ukebook-logo-art {
+  position: absolute;
+  top: -28%;
+  left: 50%;
+  display: block;
+  width: 146%;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+  transform: translateX(-50%);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ukulele-lanyard.is-dragging .ukebook-logo-stage {
+  cursor: grabbing;
+  transition: none;
 }
 
 .lanyard-a11y {
@@ -943,7 +1025,7 @@ main {
 
 .product-row {
   display: grid;
-  grid-template-columns: minmax(250px, 1fr) minmax(280px, 360px) minmax(250px, 1fr);
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
   align-items: center;
   gap: 40px;
   padding-top: 10px;
@@ -3483,14 +3565,15 @@ main {
   .ukulele-lanyard {
     inset: 0;
     width: 100%;
-    height: auto;
+    height: clamp(420px, 58vw, 520px);
     transform: none;
   }
 
   .ukebook-logo-stage {
-    top: -8px;
-    right: clamp(8px, 3vw, 28px);
-    width: clamp(148px, 24vw, 188px);
+    top: clamp(210px, 28vw, 272px);
+    right: clamp(36px, 7vw, 70px);
+    width: clamp(122px, 19vw, 152px);
+    border-radius: clamp(17px, 3vw, 24px);
   }
 
   .hero-product {
@@ -3575,19 +3658,20 @@ main {
   }
 
   .ukulele-lanyard {
-    --badge-top: 58px;
-    --badge-right: 28px;
-    --badge-width: 136px;
-    --badge-center-right: 96px;
+    --badge-top: 244px;
+    --badge-right: 36px;
+    --badge-width: 124px;
+    --badge-center-right: 98px;
     inset: 0;
-    z-index: 4;
+    z-index: 2;
     width: 100%;
-    height: 238px;
+    height: 468px;
     transform: none;
   }
 
   .ukulele-lanyard::before {
     content: "";
+    display: none;
     position: absolute;
     top: 0;
     right: var(--badge-center-right);
@@ -3607,6 +3691,7 @@ main {
   .ukulele-lanyard::after {
     content: "";
     position: absolute;
+    display: none;
     top: calc(var(--badge-top) + 7px);
     right: calc(var(--badge-center-right) - 7px);
     width: 14px;
@@ -3622,8 +3707,12 @@ main {
     top: var(--badge-top);
     right: var(--badge-right);
     width: var(--badge-width);
-    transform: rotate(0.7deg);
-    transform-origin: 52% 7%;
+    aspect-ratio: 0.66;
+    border-radius: 19px;
+    transform: translate3d(var(--lanyard-drag-x, 0px), var(--lanyard-drag-y, 0px), 0)
+      rotate(calc(var(--lanyard-card-rotate, 0deg) + 0.7deg))
+      skewX(var(--lanyard-card-skew, 0deg));
+    transform-origin: 50% 10.5%;
     filter:
       drop-shadow(0 18px 20px rgba(6, 32, 29, 0.18))
       drop-shadow(0 5px 0 rgba(255, 255, 255, 0.28));

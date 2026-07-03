@@ -102,6 +102,7 @@
     initialized: false,
     canvas: null,
     ctx: null,
+    logo: null,
     dpr: 1,
     width: 0,
     height: 0,
@@ -111,9 +112,14 @@
     hover: false,
     pointerId: null,
     pointer: { x: 0, y: 0, previousX: 0, previousY: 0 },
+    dragOffset: { x: 0, y: 0 },
     points: [],
     constraints: [],
-    card: { width: 138, height: 188, angle: 0, skew: 0 }
+    base: { x: 0, y: 0, centerX: 0, centerY: 0 },
+    gravity: 0.36,
+    linearDamping: 0.985,
+    segmentDamping: 0.965,
+    card: { width: 138, height: 188, angle: 0, skew: 0, attachY: 18 }
   };
   const chromaPalette = [
     { border: "#7CF6A3", gradient: "linear-gradient(145deg, #7CF6A3, #153047)" },
@@ -154,6 +160,11 @@
 
   function getSelectedSong() {
     return data.songs.find((song) => song.id === state.selectedSongId) || data.songs[0] || null;
+  }
+
+  function preferredDetailTabForSong(songId) {
+    const song = data.songs.find((item) => item.id === songId);
+    return song && Array.isArray(song.audio) && song.audio.length ? "audio" : "lesson";
   }
 
   function levelCount(levelId) {
@@ -407,7 +418,7 @@
 
   function selectSong(songId, shouldScroll) {
     state.selectedSongId = songId;
-    state.detailTab = "lesson";
+    state.detailTab = preferredDetailTabForSong(songId);
     state.levelPickerOpen = false;
     render();
     if (shouldScroll) document.getElementById("lesson").scrollIntoView({ behavior: "smooth" });
@@ -558,20 +569,38 @@
   function bindLanyard() {
     if (!els.heroLanyard || lanyard.initialized) return;
     const canvas = els.heroLanyard.querySelector(".lanyard-canvas");
+    const logo = els.heroLanyard.querySelector(".ukebook-logo-stage");
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !logo) return;
 
     lanyard.initialized = true;
     lanyard.canvas = canvas;
     lanyard.ctx = ctx;
+    lanyard.logo = logo;
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-    const point = (x, y, fixed) => ({ x, y, previousX: x, previousY: y, fixed: Boolean(fixed) });
+    const point = (x, y, fixed) => ({
+      x,
+      y,
+      previousX: x,
+      previousY: y,
+      lerpX: x,
+      lerpY: y,
+      fixed: Boolean(fixed)
+    });
 
     const connect = (a, b, length, stiffness) => {
       lanyard.constraints.push({ a, b, length, stiffness });
     };
     const distanceBetween = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+
+    const wakeLanyard = () => {
+      lanyard.points.forEach((item) => {
+        if (item.fixed) return;
+        item.previousX = item.x;
+        item.previousY = item.y;
+      });
+    };
 
     const resetScene = () => {
       const rect = els.heroLanyard.getBoundingClientRect();
@@ -582,36 +611,50 @@
       canvas.height = Math.round(lanyard.height * lanyard.dpr);
       ctx.setTransform(lanyard.dpr, 0, 0, lanyard.dpr, 0, 0);
 
-      const isNarrow = lanyard.width < 680;
-      const cardWidth = isNarrow
-        ? clamp(lanyard.width * 0.36, 156, 214)
-        : clamp(lanyard.width * 0.24, 190, 260);
-      const cardHeight = cardWidth * 1.18;
+      els.heroLanyard.style.setProperty("--lanyard-drag-x", "0px");
+      els.heroLanyard.style.setProperty("--lanyard-drag-y", "0px");
+      els.heroLanyard.style.setProperty("--lanyard-card-rotate", "0deg");
+      els.heroLanyard.style.setProperty("--lanyard-card-skew", "0deg");
+
+      const logoRect = logo.getBoundingClientRect();
+      const cardWidth = Math.max(1, logoRect.width);
+      const cardHeight = Math.max(1, logoRect.height);
+      const baseCenterX = logoRect.left - rect.left + logoRect.width / 2;
+      const baseCenterY = logoRect.top - rect.top + logoRect.height / 2;
+      lanyard.base = {
+        x: logoRect.left - rect.left,
+        y: logoRect.top - rect.top,
+        centerX: baseCenterX,
+        centerY: baseCenterY,
+        attachX: baseCenterX,
+        attachY: logoRect.top - rect.top + cardHeight * 0.105
+      };
       lanyard.card.width = cardWidth;
       lanyard.card.height = cardHeight;
-      lanyard.card.angle = -0.08;
+      lanyard.card.attachY = cardHeight * 0.105;
+      lanyard.card.angle = 0.02;
       lanyard.card.skew = 0;
 
       const anchorX = clamp(
-        lanyard.width * (isNarrow ? 0.82 : 0.88),
-        cardWidth * 0.78,
-        lanyard.width - cardWidth * 0.62 - 10
+        baseCenterX + cardWidth * 0.03,
+        cardWidth * 0.42,
+        lanyard.width - cardWidth * 0.2
       );
-      const anchorY = -22;
-      const topY = Math.min(lanyard.height * (isNarrow ? 0.34 : 0.32), 280);
+      const anchorY = -18;
+      const topY = clamp(lanyard.base.attachY, 38, Math.max(42, lanyard.height - cardHeight - 24));
       const drop = topY - anchorY;
       lanyard.points = [
         point(anchorX, anchorY, true),
         point(anchorX - Math.min(26, lanyard.width * 0.035), anchorY + drop * 0.28),
         point(anchorX - Math.min(12, lanyard.width * 0.018), anchorY + drop * 0.62),
-        point(anchorX, topY),
-        point(anchorX + Math.min(18, lanyard.width * 0.024), topY + cardHeight * 0.54)
+        point(lanyard.base.attachX, topY),
+        point(baseCenterX, baseCenterY)
       ];
       lanyard.constraints = [];
       connect(0, 1, distanceBetween(lanyard.points[0], lanyard.points[1]), 1);
       connect(1, 2, distanceBetween(lanyard.points[1], lanyard.points[2]), 0.95);
       connect(2, 3, distanceBetween(lanyard.points[2], lanyard.points[3]), 0.95);
-      connect(3, 4, cardHeight * 0.53, 1);
+      connect(3, 4, Math.max(34, baseCenterY - topY), 1);
     };
 
     const localPointer = (event) => {
@@ -657,6 +700,21 @@
       ctx.lineTo(last.x, last.y);
     };
 
+    const lanyardDisplayPoints = () => {
+      return lanyard.points.slice(0, 4).map((item, index) => {
+        if (index === 0) {
+          item.lerpX = item.x;
+          item.lerpY = item.y;
+          return { x: item.x, y: item.y };
+        }
+        const distance = Math.hypot(item.x - item.lerpX, item.y - item.lerpY);
+        const speed = clamp(0.12 + distance * 0.012, 0.12, 0.42);
+        item.lerpX += (item.x - item.lerpX) * speed;
+        item.lerpY += (item.y - item.lerpY) * speed;
+        return { x: item.lerpX, y: item.lerpY };
+      });
+    };
+
     const drawAnchor = () => {
       const anchor = lanyard.points[0];
       ctx.save();
@@ -681,7 +739,7 @@
     };
 
     const drawBand = () => {
-      const bandPoints = lanyard.points.slice(0, 4);
+      const bandPoints = lanyardDisplayPoints();
       ctx.save();
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
@@ -997,24 +1055,25 @@
       ctx.rotate(lanyard.card.angle);
       ctx.lineWidth = 1.4;
       ctx.strokeStyle = "rgba(23, 23, 23, 0.78)";
-      const clipWidth = Math.min(lanyard.card.width * 0.44, 108);
-      const metal = ctx.createLinearGradient(-clipWidth / 2, -38, clipWidth / 2, 10);
+      const clipWidth = Math.min(lanyard.card.width * 0.28, 68);
+      const metal = ctx.createLinearGradient(-clipWidth / 2, -28, clipWidth / 2, 10);
       metal.addColorStop(0, "#f6f1ea");
       metal.addColorStop(0.5, "#fffdf2");
       metal.addColorStop(1, "#c8c2b6");
       ctx.fillStyle = metal;
-      roundedRect(-clipWidth / 2, -44, clipWidth, 46, 16);
+      roundedRect(-clipWidth / 2, -30, clipWidth, 34, 13);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = "#0b5b52";
-      ctx.textAlign = "center";
-      ctx.font = "900 34px Aptos, Segoe UI, sans-serif";
-      ctx.fillText("E", 0, -13);
       ctx.fillStyle = "#ff8a2a";
-      roundedRect(10, -23, 17, 5, 2);
+      roundedRect(clipWidth * 0.1, -15, clipWidth * 0.22, 5, 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(0, 10, 12, 0, Math.PI * 2);
+      ctx.arc(0, 6, Math.min(11, clipWidth * 0.2), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255, 247, 223, 0.86)";
+      ctx.beginPath();
+      ctx.arc(0, 8, Math.min(6, clipWidth * 0.12), 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     };
@@ -1101,6 +1160,45 @@
       ctx.restore();
     };
 
+    const updateCardPhysics = () => {
+      const top = lanyard.points[3];
+      const center = lanyard.points[4];
+      if (!top || !center) return;
+      const angle = Math.atan2(center.y - top.y, center.x - top.x) - Math.PI / 2;
+      const sway = clamp((center.x - lanyard.points[0].x) / lanyard.width, -0.45, 0.45);
+      const speedSkew = clamp((center.x - center.previousX) * 0.012, -0.08, 0.08);
+      lanyard.card.angle += (angle - lanyard.card.angle) * 0.22;
+      lanyard.card.skew += (sway * 0.18 + speedSkew - lanyard.card.skew) * 0.18;
+    };
+
+    const applyLanyardForces = (delta) => {
+      lanyard.points.forEach((item, index) => {
+        if (item.fixed) return;
+        const damping = index === 4 ? lanyard.linearDamping : lanyard.segmentDamping;
+        const gravity = index === 4 ? lanyard.gravity : lanyard.gravity * 0.7;
+        const velocityX = (item.x - item.previousX) * damping;
+        const velocityY = (item.y - item.previousY) * damping;
+        item.previousX = item.x;
+        item.previousY = item.y;
+        item.x += velocityX;
+        item.y += velocityY + gravity * delta * delta;
+      });
+    };
+
+    const syncLogoToPhysics = () => {
+      const top = lanyard.points[3];
+      const center = lanyard.points[4];
+      if (!top || !center) return;
+      const offsetX = top.x - lanyard.base.attachX;
+      const offsetY = top.y - lanyard.base.attachY;
+      const rotation = clamp((lanyard.card.angle * 180) / Math.PI, -14, 14);
+      const skew = clamp((lanyard.card.skew * 180) / Math.PI, -6, 6);
+      els.heroLanyard.style.setProperty("--lanyard-drag-x", `${offsetX.toFixed(2)}px`);
+      els.heroLanyard.style.setProperty("--lanyard-drag-y", `${offsetY.toFixed(2)}px`);
+      els.heroLanyard.style.setProperty("--lanyard-card-rotate", `${rotation.toFixed(2)}deg`);
+      els.heroLanyard.style.setProperty("--lanyard-card-skew", `${skew.toFixed(2)}deg`);
+    };
+
     const solveConstraints = () => {
       for (let iteration = 0; iteration < 8; iteration += 1) {
         lanyard.constraints.forEach((constraint) => {
@@ -1135,31 +1233,22 @@
 
       const anchor = lanyard.points[0];
       if (anchor) {
-        const isNarrow = lanyard.width < 680;
         anchor.x = clamp(
-          lanyard.width * (isNarrow ? 0.82 : 0.88),
-          lanyard.card.width * 0.78,
-          lanyard.width - lanyard.card.width * 0.62 - 10
+          lanyard.base.centerX + lanyard.card.width * 0.03,
+          lanyard.card.width * 0.42,
+          lanyard.width - lanyard.card.width * 0.2
         );
-        anchor.y = -22;
+        anchor.y = -18;
       }
 
-      lanyard.points.forEach((item, index) => {
-        if (item.fixed) return;
-        const velocityX = (item.x - item.previousX) * 0.985;
-        const velocityY = (item.y - item.previousY) * 0.985;
-        item.previousX = item.x;
-        item.previousY = item.y;
-        item.x += velocityX;
-        item.y += velocityY + (index === 4 ? 0.34 : 0.24) * delta * delta;
-      });
+      applyLanyardForces(delta);
 
       if (lanyard.dragging) {
         const card = lanyard.points[4];
         const dragVelocityX = lanyard.pointer.x - lanyard.pointer.previousX;
         const dragVelocityY = lanyard.pointer.y - lanyard.pointer.previousY;
-        card.x = lanyard.pointer.x;
-        card.y = lanyard.pointer.y;
+        card.x = lanyard.pointer.x - lanyard.dragOffset.x;
+        card.y = lanyard.pointer.y - lanyard.dragOffset.y;
         card.previousX = card.x - dragVelocityX * 0.85;
         card.previousY = card.y - dragVelocityY * 0.85;
       }
@@ -1169,30 +1258,36 @@
       lanyard.points.forEach((item) => {
         if (item.fixed) return;
         const isCard = item === lanyard.points[4];
-        const safeX = isCard ? lanyard.card.width * 0.72 : 12;
-        const safeY = isCard ? lanyard.card.height * 0.56 : 10;
+        const safeX = isCard ? -lanyard.card.width * 0.85 : 12;
+        const safeY = isCard ? -lanyard.card.height * 0.2 : 10;
         item.x = clamp(item.x, safeX, lanyard.width - safeX);
         item.y = clamp(item.y, safeY, lanyard.height - safeY);
       });
 
+      updateCardPhysics();
       ctx.clearRect(0, 0, lanyard.width, lanyard.height);
       drawAnchor();
       drawBand();
       drawClip();
-      drawCard();
+      syncLogoToPhysics();
       lanyard.frame = requestAnimationFrame(tick);
     };
 
     const startDrag = (event) => {
       const position = localPointer(event);
-      if (!cardContains(position.x, position.y)) return;
+      const card = lanyard.points[4];
+      if (!card) return;
       lanyard.dragging = true;
       lanyard.pointerId = event.pointerId;
       lanyard.pointer.x = position.x;
       lanyard.pointer.y = position.y;
       lanyard.pointer.previousX = position.x;
       lanyard.pointer.previousY = position.y;
+      lanyard.dragOffset.x = position.x - card.x;
+      lanyard.dragOffset.y = position.y - card.y;
+      wakeLanyard();
       els.heroLanyard.classList.add("is-dragging");
+      logo.setPointerCapture?.(event.pointerId);
       document.body.style.cursor = "grabbing";
       event.preventDefault();
       event.stopPropagation();
@@ -1220,10 +1315,13 @@
       lanyard.dragging = false;
       lanyard.pointerId = null;
       els.heroLanyard.classList.remove("is-dragging");
+      if (event.pointerId !== undefined && logo.hasPointerCapture?.(event.pointerId)) {
+        logo.releasePointerCapture(event.pointerId);
+      }
       document.body.style.cursor = "";
     };
 
-    document.addEventListener("pointerdown", startDrag, true);
+    logo.addEventListener("pointerdown", startDrag);
     window.addEventListener("pointermove", movePointer);
     window.addEventListener("pointerup", releaseDrag);
     window.addEventListener("pointercancel", releaseDrag);
@@ -1726,13 +1824,32 @@
   function audioVersionSlots(song) {
     const audioItems = Array.isArray(song.audio) ? song.audio : [];
     return audioItems.map((item, index) => {
+      const title = item.title || item.label || item.name || `版本 ${index + 1}`;
       return {
         index,
         number: String(index + 1).padStart(2, "0"),
-        title: item.title || item.label || item.name || `版本 ${index + 1}`,
+        title,
+        displayTitle: compactAudioVersionTitle(song.title, title, index),
         src: item.src || ""
       };
     });
+  }
+
+  function compactAudioVersionTitle(songTitle, versionTitle, index) {
+    const fallback = `版本 ${index + 1}`;
+    const songName = String(songTitle || "").trim();
+    const rawTitle = String(versionTitle || "").trim() || fallback;
+    if (!songName) return rawTitle;
+
+    const escapedSongName = songName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const separator = "\\s*[-—–:：·|/]*\\s*";
+    const cleaned = rawTitle
+      .replace(new RegExp(`^${escapedSongName}${separator}`, "i"), "")
+      .replace(new RegExp(`${separator}${escapedSongName}$`, "i"), "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return cleaned || (rawTitle === songName ? fallback : rawTitle);
   }
 
   function activeAudioVersionIndex(song, slots) {
@@ -1768,15 +1885,15 @@
     }
     const activeIndex = activeAudioVersionIndex(song, slots);
     const activeSlot = slots[activeIndex];
-    const playerLabel = `${song.title} - ${activeSlot.title}`;
+    const playerLabel = `${song.title} - ${activeSlot.displayTitle}`;
 
     return `
       <div class="audio-workbench">
         <div class="audio-player-frame">
           <div class="audio-version-head">
             <span>播放器版本</span>
-            <strong>${escapeHtml(activeSlot.title)}</strong>
-            <em>${escapeHtml(playerLabel)}</em>
+            <strong>${escapeHtml(song.title)}</strong>
+            <em>${escapeHtml(activeSlot.displayTitle)}</em>
           </div>
           <div class="audio-version-selector" role="tablist" aria-label="${escapeAttribute(song.title)} audio versions">
             ${slots
@@ -1790,7 +1907,7 @@
                     data-audio-version="${slot.index}"
                   >
                     <span>${slot.number}</span>
-                    <strong>${escapeHtml(slot.title)}</strong>
+                    <strong>${escapeHtml(slot.displayTitle)}</strong>
                     <small>${escapeHtml(slot.src)}</small>
                   </button>
                 `
@@ -1969,7 +2086,7 @@
     const filteredSongs = getFilteredSongs();
     if (!filteredSongs.some((song) => song.id === state.selectedSongId)) {
       state.selectedSongId = filteredSongs[0] ? filteredSongs[0].id : "";
-      state.detailTab = "lesson";
+      state.detailTab = preferredDetailTabForSong(state.selectedSongId);
     }
     syncControls();
     renderHeroNotebook();

@@ -3,7 +3,7 @@
   if (!data) return;
 
   const source = "Rockschool Ukulele 2020";
-  const category = "\u66f2\u76ee\u7ec3\u4e60";
+  const category = "\u548c\u5f26\u8282\u594f\u7ec3\u4e60";
   const levelNames = {
     debut: "Debut",
     g1: "Grade 1",

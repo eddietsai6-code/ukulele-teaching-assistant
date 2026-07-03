@@ -9,6 +9,7 @@ A static UkuleleBook teaching-site framework with a fresh dopamine palette, anim
 - Browser microphone input through the Web Audio API
 - Local pitch detection and cents offset meter
 - No bundled real audio, score, support, or payment resources
+- iPad-first UI baseline documented in `docs/ui-layout-baseline.md`
 
 ## Local Use
 

@@ -25,8 +25,6 @@ test('ukulele template keeps the original interactive framework', () => {
     'class="hero-product"',
     'id="heroNotebook"',
     'class="product-row"',
-    'id="infiniteMenu"',
-    'id="orbitCanvas"',
     'class="levels-section section"',
     'id="levelBoard"',
     'id="levelSongPicker"',
@@ -39,6 +37,22 @@ test('ukulele template keeps the original interactive framework', () => {
   ]) {
     assert.ok(html.includes(expected), `missing original framework token: ${expected}`);
   }
+});
+
+test('homepage removes the old rotating level orbit module', () => {
+  const html = read('index.html');
+
+  for (const removed of [
+    'class="infinite-menu-section"',
+    'id="infiniteMenu"',
+    'id="orbitCanvas"',
+    'pick a path',
+    '原版的旋转轨道',
+  ]) {
+    assert.equal(html.includes(removed), false, `old orbit UI should not render: ${removed}`);
+  }
+
+  assert.ok(html.includes('id="levelBoard"'), 'book-cover level carousel should remain as the level path UI');
 });
 
 test('ukulele template applies fresh dopamine ukulele skin with imported score assets', () => {
@@ -83,7 +97,7 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
   );
 
   for (const forbidden of [
-    'audio/',
+    'assets/audio-placeholders/',
     'assets/support/',
     'song-tech-profiles',
   ]) {
@@ -96,17 +110,20 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'level: "debut"',
     '认识C调音阶，认识4分音符与2分音符',
     './assets/scores/ukulele/debut-xiao-xing-xing/score-01.png',
+    './assets/scores/ukulele/debut-xiao-xing-xing/score-02.png',
     'id: "debut-kang-kang-wu-qu-cancan"',
     'title: "康康舞曲 Cancan"',
     './assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-01.png',
+    './assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-02.png',
     'id: "debut-c-diao-yin-jie"',
     'title: "C 调音阶"',
-    'category: "曲目练习"',
+    'category: "音阶练习"',
     './assets/scores/ukulele/debut-c-diao-yin-jie/score-01.png',
     'id: "g1-yin-yue-zhi-sheng"',
     'title: "音乐之声"',
     '掌握八分音符，C调音阶，附点音符',
     './assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-01.png',
+    './assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-02.png',
   ]) {
     assert.ok(data.includes(expected), `missing imported score token: ${expected}`);
   }
@@ -119,9 +136,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
 
   for (const scorePath of [
     'assets/scores/ukulele/debut-xiao-xing-xing/score-01.png',
+    'assets/scores/ukulele/debut-xiao-xing-xing/score-02.png',
     'assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-01.png',
+    'assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-02.png',
     'assets/scores/ukulele/debut-c-diao-yin-jie/score-01.png',
     'assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-01.png',
+    'assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-02.png',
   ]) {
     assert.ok(fs.existsSync(path.join(root, scorePath)), `imported score image should exist: ${scorePath}`);
   }
@@ -130,18 +150,61 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
   assert.equal(html.toLowerCase().includes('drum'), false, 'HTML class names should be ukulele-facing');
 });
 
+test('uploaded melody songs expose copied project-relative audio', () => {
+  const data = read('assets/data.js');
+  const uploads = [
+    {
+      id: 'debut-xiao-xing-xing',
+      title: '小星星 音频',
+      src: './assets/audio/ukulele/debut-xiao-xing-xing/full.mp3',
+    },
+    {
+      id: 'debut-kang-kang-wu-qu-cancan',
+      title: '康康舞曲 Cancan 音频',
+      src: './assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/full.mp3',
+    },
+    {
+      id: 'debut-c-diao-yin-jie',
+      title: 'C 调音阶 音频',
+      src: './assets/audio/ukulele/debut-c-diao-yin-jie/full.mp3',
+    },
+    {
+      id: 'g1-yin-yue-zhi-sheng',
+      title: '音乐之声 音频',
+      src: './assets/audio/ukulele/g1-yin-yue-zhi-sheng/full.mp3',
+    },
+  ];
+
+  for (const item of uploads) {
+    assert.match(
+      data,
+      new RegExp(`id: "${item.id}"[\\s\\S]*?audio: \\[[\\s\\S]*?title: "${item.title}"[\\s\\S]*?src: "${item.src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`),
+      `missing uploaded audio mapping for ${item.id}`
+    );
+    assert.equal(path.isAbsolute(item.src), false, `audio path should stay project-relative for ${item.id}`);
+    assert.ok(fs.existsSync(path.join(root, item.src.replace(/^\.\//, ''))), `missing uploaded audio asset: ${item.src}`);
+  }
+
+  assert.doesNotMatch(data, /(?:[A-Z]:[\\/]|file:\/\/)/, 'uploaded audio data should not expose local Desktop paths');
+});
+
 test('mobile hero keeps the UkuleleBook heading readable with a hanging badge', () => {
   const styles = read('assets/styles.css');
 
   assert.match(
     styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard\s*\{[^}]*--badge-top:\s*58px;[^}]*--badge-width:\s*136px;/,
-    'mobile hero should pin the badge position near the top-right reference placement'
+    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard\s*\{[^}]*--badge-top:\s*244px;[^}]*--badge-right:\s*36px;[^}]*--badge-width:\s*124px;/,
+    'mobile hero should size the pendant like a hanging badge instead of a small corner sticker'
   );
   assert.match(
     styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard::before\s*\{[^}]*height:\s*calc\(var\(--badge-top\) \+ 18px\);/,
-    'mobile hero should draw a hanging cord above the badge'
+    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard::before\s*\{[^}]*display:\s*none;/,
+    'mobile hero should not draw a second static cord over the physics lanyard'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?--badge-right:\s*36px;[\s\S]*?--badge-center-right:\s*98px;/,
+    'mobile hero should align the cord through the wider pendant center'
   );
   assert.match(
     styles,
@@ -160,6 +223,31 @@ test('mobile hero keeps the UkuleleBook heading readable with a hanging badge', 
   );
 });
 
+test('UI layout baseline is iPad-first before desktop and mobile adaptation', () => {
+  const docs = read('docs/ui-layout-baseline.md');
+  const styles = read('assets/styles.css');
+
+  for (const expected of [
+    'iPad-first teaching interface',
+    '820px` wide by `1180px` high',
+    '1180px` wide by `820px` high',
+    'same information hierarchy',
+    'Validate iPad portrait at `820x1180`',
+    'Validate iPad landscape at `1180x820`',
+  ]) {
+    assert.ok(docs.includes(expected), `missing iPad-first policy token: ${expected}`);
+  }
+
+  for (const expected of [
+    '--layout-canonical-portrait-width: 820px;',
+    '--layout-canonical-portrait-height: 1180px;',
+    '--layout-canonical-landscape-width: 1180px;',
+    '--layout-canonical-landscape-height: 820px;',
+  ]) {
+    assert.ok(styles.includes(expected), `missing iPad-first layout token: ${expected}`);
+  }
+});
+
 test('catalog removes the visible song result card module', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
@@ -169,6 +257,18 @@ test('catalog removes the visible song result card module', () => {
   assert.equal(html.includes('id="activeSummary"'), false, 'catalog active summary should be removed');
   assert.equal(html.includes('id="songList"'), false, 'catalog song card grid mount should be removed');
   assert.equal(app.includes('renderSongList(filteredSongs)'), false, 'app should not render the removed card grid');
+});
+
+test('homepage hides the old fresh frame copy panel', () => {
+  const html = read('index.html');
+  const styles = read('assets/styles.css');
+
+  assert.ok(html.includes('<div class="showcase-copy" hidden>'), 'fresh frame copy panel should not render in the homepage UI');
+  assert.match(
+    styles,
+    /\.product-row\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(250px,\s*1fr\)\);/,
+    'product row should collapse to two visible teaching cards after the copy panel is hidden'
+  );
 });
 
 test('level cards use first-page covers for all nine ukulele books', () => {
@@ -227,7 +327,86 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category'), 'homepage should bust cached cover styles');
+});
+
+test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
+  const html = read('index.html');
+  const app = read('assets/app.js');
+  const styles = read('assets/styles.css');
+
+  for (const expected of [
+    'querySelector(".ukebook-logo-stage")',
+    'setPointerCapture',
+    'releasePointerCapture',
+    '--lanyard-drag-x',
+    '--lanyard-drag-y',
+    '--lanyard-card-rotate',
+    '--lanyard-card-skew',
+    'syncLogoToPhysics',
+    'updateCardPhysics',
+    'dragOffset',
+    'wakeLanyard',
+    'applyLanyardForces',
+  ]) {
+    assert.ok(app.includes(expected), `missing static lanyard behavior token: ${expected}`);
+  }
+
+  assert.equal(app.includes('drawCard();'), false, 'the canvas should not redraw a second logo over the provided PNG');
+  assert.equal(app.includes('ctx.font = "900 34px Aptos'), false, 'the canvas connector should not draw a separate floating mini badge over the card clip');
+  assert.equal(app.includes('idleX'), false, 'released lanyard card should not be forced through a fake idle sine motion');
+  assert.equal(app.includes('card.x = lanyard.base.centerX'), false, 'released card should hang from rope constraints instead of being pinned to its base center');
+  assert.ok(app.includes('position.x - card.x') && app.includes('position.y - card.y'), 'drag should keep the pointer-to-card offset like the React Bits kinematic body');
+  assert.ok(app.includes('attachX: baseCenterX') && app.includes('top.x - lanyard.base.attachX'), 'the DOM logo should move from the same top eyelet point as the canvas cord');
+  assert.ok(html.includes('class="ukebook-logo-art"'), 'the provided logo PNG should be cropped inside the hanging badge shell');
+  assert.ok(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), 'the hanging badge should still use the provided direct PNG logo');
+  assert.match(
+    styles,
+    /\.ukebook-logo-stage\s*\{[^}]*right:\s*clamp\(-118px,\s*-6vw,\s*-52px\);[^}]*aspect-ratio:\s*0\.66;[^}]*overflow:\s*hidden;[^}]*pointer-events:\s*auto;/,
+    'desktop pendant logo should crop the direct PNG inside a draggable badge shell'
+  );
+  assert.match(
+    styles,
+    /\.ukebook-logo-art\s*\{[^}]*top:\s*-28%;[^}]*width:\s*146%;/,
+    'the original PNG should be zoomed and shifted so the badge artwork connects to the clip'
+  );
+  assert.match(
+    styles,
+    /\.ukebook-logo-stage::before\s*\{[^}]*content:\s*"";[^}]*background:[^}]*#fff7df;/,
+    'the badge should draw a visible webbing tab that connects the lanyard into the card'
+  );
+  assert.match(
+    styles,
+    /\.ukebook-logo-stage::after\s*\{[^}]*content:\s*"";[^}]*border:[^}]*rgba\(21,\s*48,\s*71,\s*0\.72\);/,
+    'the badge should draw a metal eyelet that moves with the draggable card'
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.ukebook-logo-stage\s*\{[^}]*animation:\s*ukebookLogoDrift/,
+    'the badge should not drift independently from the canvas lanyard connection'
+  );
+  assert.match(
+    styles,
+    /\.lanyard-canvas\s*\{[^}]*opacity:\s*0\.92;/,
+    'lanyard canvas should remain visible for the hanging cord and clip'
+  );
+  assert.match(
+    styles,
+    /\.ukebook-logo-stage\s*\{[^}]*transform-origin:\s*50%\s*10\.5%;/,
+    'the PNG pendant should rotate from the same top eyelet used by the physics cord'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 980px\)[\s\S]*?\.ukebook-logo-stage\s*\{[^}]*right:\s*clamp\(36px,\s*7vw,\s*70px\);[^}]*width:\s*clamp\(122px,\s*19vw,\s*152px\);/,
+    'narrow desktop pendant should read as a hanging badge at the reference scale'
+  );
+  assert.match(
+    styles,
+    /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
+    'dragging state should visibly switch the logo handle'
+  );
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category'), 'homepage should bust cached connected lanyard styles');
 });
