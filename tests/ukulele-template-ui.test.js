@@ -310,16 +310,22 @@ test('homepage hides the old fresh frame copy panel', () => {
 test('homepage replaces the chord notebook slot with the rhythm chain game', () => {
   const html = read('index.html');
   const styles = read('assets/styles.css');
+  const onlineRhythmGameSrc = 'https://rhythm-chain-game.pages.dev/?v=9b2fb40e4f8464391cf81b13aaeca281f1704efd';
 
   assert.ok(
     html.includes('class="showcase-object notebook-blue rhythm-game-showcase"'),
     'the former blue chord notebook slot should remain in the product row but become the rhythm game showcase'
   );
   assert.ok(
-    html.includes('src="./assets/rhythm-chain-game/index.html?embed=showcase"'),
-    'the rhythm chain game should be embedded from copied project-relative assets'
+    html.includes(`src="${onlineRhythmGameSrc}"`),
+    'the rhythm chain game should be embedded from the pinned online release only'
   );
-  assert.ok(html.includes('scrolling="no"'), 'the embedded rhythm game iframe should not expose its own page scrollbar');
+  assert.ok(
+    html.includes('style="width:430px;height:844px;border:0;max-width:100%;"'),
+    'the embedded rhythm game iframe should keep the provided 430x844 install size'
+  );
+  assert.equal(html.includes('./assets/rhythm-chain-game/'), false, 'homepage should not point at the stale local rhythm game copy');
+  assert.equal(html.includes('embed=showcase'), false, 'homepage should not reuse the old embedded-cache query');
   assert.ok(html.includes('title="节奏卡片游戏"'), 'the embedded game should have an accessible title');
   assert.equal(html.includes('<span>chord book</span>'), false, 'the old chord book card label should be removed');
   assert.equal(html.includes('C · F · G7 · Am'), false, 'the old chord book chord sample should be removed');
@@ -336,83 +342,46 @@ test('homepage replaces the chord notebook slot with the rhythm chain game', () 
 
   assert.match(
     styles,
-    /\.rhythm-game-showcase\s*\{[^}]*min-height:\s*500px;/,
+    /\.rhythm-game-showcase\s*\{[^}]*min-height:\s*760px;/,
     'the taller rhythm game should reserve enough space in the original product row slot'
   );
   assert.match(
     styles,
-    /\.rhythm-handheld\s*\{[^}]*width:\s*min\(304px,\s*calc\(100vw - 56px\)\);[^}]*animation:\s*cardPeelIn 520ms ease both;/,
-    'the rhythm game should be wrapped in a compact handheld shell that keeps the original card reveal motion'
+    /\.rhythm-handheld\s*\{[^}]*width:\s*min\(360px,\s*calc\(100vw - 72px\)\);[^}]*animation:\s*cardPeelIn 520ms ease both;/,
+    'the rhythm game should be wrapped in a compact practice panel that keeps the original card reveal motion'
   );
   assert.match(
     styles,
-    /\.rhythm-screen\s*\{[^}]*aspect-ratio:\s*430 \/ 560;/,
-    'the handheld screen should preserve the rhythm game aspect ratio'
+    /\.rhythm-screen\s*\{[^}]*aspect-ratio:\s*430 \/ 704;/,
+    'the handheld screen should crop the remote game to its useful content height'
   );
   assert.match(
     styles,
-    /\.rhythm-game-frame iframe\s*\{[^}]*border:\s*0;[^}]*width:\s*100%;[^}]*height:\s*100%;/,
-    'the rhythm game iframe should fill the replacement card cleanly'
+    /\.rhythm-game-frame iframe\s*\{[^}]*border:\s*0;[^}]*width:\s*430px\s*!important;[^}]*height:\s*844px\s*!important;[^}]*max-width:\s*none\s*!important;[^}]*transform:\s*scale\(var\(--rhythm-frame-scale\)\);/,
+    'the rhythm game iframe should keep its requested viewport and scale into the panel cleanly'
   );
   assert.match(
     styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.rhythm-handheld\s*\{[^}]*width:\s*min\(292px,\s*calc\(100vw - 42px\)\);/,
+    /\.rhythm-controls\s*\{[^}]*grid-template-columns:\s*40px 1fr 48px;[^}]*min-height:\s*32px;/,
+    'the rhythm game panel controls should be compact enough for the tall iframe'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.rhythm-handheld\s*\{[^}]*width:\s*min\(340px,\s*calc\(100vw - 48px\)\);/,
     'the rhythm game should not collapse under the mobile showcase-object rule'
   );
-
-  for (const assetPath of [
-    'assets/rhythm-chain-game/index.html',
-    'assets/rhythm-chain-game/assets/app.js',
-    'assets/rhythm-chain-game/assets/rhythm-core.js',
-    'assets/rhythm-chain-game/assets/styles.css',
-  ]) {
-    assert.ok(fs.existsSync(path.join(root, assetPath)), `missing copied rhythm game asset: ${assetPath}`);
-  }
 });
 
-test('embedded rhythm game scales to the handheld screen without page scrolling', () => {
-  const gameHtml = read('assets/rhythm-chain-game/index.html');
-  const gameStyles = read('assets/rhythm-chain-game/assets/styles.css');
+test('rhythm game install avoids stale local cache sources', () => {
+  const html = read('index.html');
 
   assert.ok(
-    gameHtml.includes('document.documentElement.classList.toggle("is-embedded"'),
-    'the rhythm game should enable a dedicated embedded layout from the iframe query string'
+    html.includes('https://rhythm-chain-game.pages.dev/?v=9b2fb40e4f8464391cf81b13aaeca281f1704efd'),
+    'homepage should use the requested online rhythm game release'
   );
-  assert.match(
-    gameStyles,
-    /\.is-embedded body\s*\{[^}]*height:\s*100%;[^}]*overflow:\s*hidden;/,
-    'embedded rhythm game body should not create a page scrollbar inside the handheld screen'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded \.game-shell\s*\{[^}]*height:\s*100vh;[^}]*overflow:\s*hidden;/,
-    'embedded game shell should fit the iframe viewport instead of using the full standalone page height'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded \.practice-card\s*\{[^}]*height:\s*calc\(100vh - 12px\);[^}]*overflow:\s*hidden;/,
-    'embedded practice card should be locked to the handheld screen height'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded h1\s*\{[^}]*display:\s*none;/,
-    'embedded mode should remove the large standalone title so the whole game fits'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded \.beat-dots span\s*\{[^}]*width:\s*26px;/,
-    'embedded beat dots should be compact enough for the handheld screen'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded \.target-chain \.rhythm-card,[\s\S]*?\.is-embedded \.empty-slot\s*\{[^}]*min-height:\s*48px;/,
-    'embedded rhythm cards should use shorter card rows so the full game is visible'
-  );
-  assert.match(
-    gameStyles,
-    /\.is-embedded \.target-chain \.rhythm-card,[\s\S]*?\.is-embedded \.empty-slot\s*\{[^}]*aspect-ratio:\s*auto;[^}]*height:\s*48px;/,
-    'embedded rhythm cards should override the standalone square card ratio inside the handheld screen'
-  );
+  assert.equal(html.includes('assets/rhythm-chain-game/index.html'), false, 'homepage should not load the old copied game HTML');
+  assert.equal(html.includes('assets/rhythm-chain-game/assets/'), false, 'homepage should not load old copied game assets');
+  assert.equal(html.includes('?embed=showcase'), false, 'homepage should not reuse the old embedded query cache');
 });
 
 test('level cards use first-page covers for all nine ukulele books', () => {
@@ -471,9 +440,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-handheld-fit'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-handheld-fit'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-handheld-fit'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached cover styles');
 });
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
@@ -551,6 +520,6 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
     'dragging state should visibly switch the logo handle'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-handheld-fit'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-handheld-fit'), 'homepage should bust cached connected lanyard styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached connected lanyard styles');
 });

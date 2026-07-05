@@ -1039,7 +1039,7 @@ main {
 }
 
 .rhythm-game-showcase {
-  min-height: 500px;
+  min-height: 760px;
 }
 
 .showcase-object .scribble-caption {
@@ -1089,31 +1089,33 @@ main {
 .rhythm-game-frame {
   position: absolute;
   left: 50%;
-  top: 54px;
-  transform: translateX(-50%) rotate(-6deg);
-  transform-origin: 50% 62%;
+  top: 48px;
+  transform: translateX(-50%) rotate(-2.5deg);
+  transform-origin: 50% 58%;
   transition: transform 220ms ease;
 }
 
 .rhythm-game-showcase:hover .rhythm-game-frame {
-  transform: translateX(-50%) rotate(-3deg) translateY(-6px);
+  transform: translateX(-50%) rotate(-0.5deg) translateY(-6px);
 }
 
 .rhythm-handheld {
+  --rhythm-frame-scale: 0.772;
   position: relative;
-  width: min(304px, calc(100vw - 56px));
+  width: min(360px, calc(100vw - 72px));
   display: grid;
-  gap: 10px;
-  padding: 14px 14px 15px;
+  gap: 8px;
+  padding: 12px;
   border: 2px solid #153047;
-  border-radius: 30px;
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.78), transparent 30%),
-    linear-gradient(145deg, #fff475 0%, #7cf6a3 44%, #5cc8ff 100%);
+    radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.88), transparent 28%),
+    linear-gradient(150deg, #fff7a8 0%, #9df4a9 42%, #55c7f1 100%);
   box-shadow:
-    0 22px 36px rgba(15, 45, 56, 0.18),
-    inset 0 -8px 0 rgba(21, 48, 71, 0.12),
-    inset 0 3px 0 rgba(255, 255, 255, 0.42);
+    0 18px 34px rgba(15, 45, 56, 0.16),
+    0 6px 0 rgba(21, 48, 71, 0.1),
+    inset 0 -5px 0 rgba(21, 48, 71, 0.1),
+    inset 0 3px 0 rgba(255, 255, 255, 0.5);
   animation: cardPeelIn 520ms ease both;
 }
 
@@ -1121,39 +1123,39 @@ main {
 .rhythm-handheld::after {
   content: "";
   position: absolute;
-  top: 42%;
-  width: 14px;
-  height: 72px;
+  top: 45%;
+  width: 12px;
+  height: 56px;
   border: 2px solid rgba(21, 48, 71, 0.72);
   background: #fffdf8;
 }
 
 .rhythm-handheld::before {
-  left: -10px;
+  left: -9px;
   border-radius: 18px 4px 4px 18px;
 }
 
 .rhythm-handheld::after {
-  right: -10px;
+  right: -9px;
   border-radius: 4px 18px 18px 4px;
 }
 
 .rhythm-console-top {
   display: grid;
-  grid-template-columns: 24px 1fr 36px;
+  grid-template-columns: 18px 1fr 30px;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   color: #153047;
   font-family: var(--font-geist);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
   letter-spacing: 0;
   text-align: center;
 }
 
 .rhythm-led {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
   border: 2px solid rgba(21, 48, 71, 0.82);
   border-radius: 999px;
   background: radial-gradient(circle at 35% 32%, #ffffff 0 16%, #ff7a59 17% 62%, #cf4539 63%);
@@ -1162,19 +1164,19 @@ main {
 
 .rhythm-speaker {
   display: block;
-  height: 16px;
+  height: 12px;
   border-radius: 999px;
   background:
-    radial-gradient(circle, #153047 0 2px, transparent 2.5px) 0 50% / 10px 10px repeat-x;
+    radial-gradient(circle, #153047 0 1.8px, transparent 2.3px) 0 50% / 8px 8px repeat-x;
   opacity: 0.9;
 }
 
 .rhythm-screen {
   position: relative;
-  aspect-ratio: 430 / 560;
+  aspect-ratio: 430 / 704;
   overflow: hidden;
-  border: 3px solid #153047;
-  border-radius: 18px;
+  border: 2px solid #153047;
+  border-radius: 24px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 28%),
     #ffffff;
@@ -1195,23 +1197,26 @@ main {
 .rhythm-game-frame iframe {
   display: block;
   border: 0;
-  width: 100%;
-  height: 100%;
+  width: 430px !important;
+  height: 844px !important;
+  max-width: none !important;
   background: #ffffff;
+  transform: scale(var(--rhythm-frame-scale));
+  transform-origin: 0 0;
 }
 
 .rhythm-controls {
   display: grid;
-  grid-template-columns: 62px 1fr 74px;
+  grid-template-columns: 40px 1fr 48px;
   align-items: center;
-  gap: 10px;
-  min-height: 46px;
+  gap: 8px;
+  min-height: 32px;
 }
 
 .rhythm-dpad {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 32px;
+  height: 32px;
   display: block;
   filter: drop-shadow(0 4px 0 rgba(21, 48, 71, 0.16));
 }
@@ -1222,8 +1227,8 @@ main {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 17px;
-  height: 48px;
+  width: 11px;
+  height: 30px;
   border: 2px solid #153047;
   border-radius: 8px;
   background: #fffdf8;
@@ -1238,7 +1243,7 @@ main {
   justify-self: center;
   color: rgba(21, 48, 71, 0.8);
   font-family: var(--font-geist);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0;
 }
@@ -1246,12 +1251,12 @@ main {
 .rhythm-action-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 7px;
 }
 
 .rhythm-action-buttons i {
-  width: 27px;
-  height: 27px;
+  width: 20px;
+  height: 20px;
   border: 2px solid #153047;
   border-radius: 999px;
   background:
@@ -3991,32 +3996,44 @@ main {
   }
 
   .rhythm-game-showcase {
-    min-height: 500px;
+    min-height: clamp(640px, 150vw, 760px);
   }
 
   .rhythm-game-frame {
-    top: 54px;
+    top: 44px;
+    transform: translateX(-50%) rotate(-1deg);
+  }
+
+  .rhythm-game-showcase:hover .rhythm-game-frame {
+    transform: translateX(-50%) rotate(0deg) translateY(-4px);
   }
 
   .rhythm-handheld {
-    width: min(292px, calc(100vw - 42px));
-    padding: 12px;
-    border-radius: 26px;
+    --rhythm-frame-scale: 0.735;
+    width: min(340px, calc(100vw - 48px));
+    padding: 10px;
+    border-radius: 24px;
   }
 
   .rhythm-controls {
-    grid-template-columns: 56px 1fr 66px;
-    min-height: 42px;
+    grid-template-columns: 36px 1fr 44px;
+    min-height: 30px;
   }
 
   .rhythm-dpad {
-    width: 46px;
-    height: 46px;
+    width: 30px;
+    height: 30px;
   }
 
   .rhythm-action-buttons i {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (max-width: 380px) {
+    .rhythm-handheld {
+      --rhythm-frame-scale: 0.67;
+    }
   }
 
   .level-board,
