@@ -1875,10 +1875,20 @@
     if (!slots.length) {
       return `
         <div class="audio-workbench">
-          <div class="resource-note">
-            <span>音频</span>
-            <strong>歌曲音频待加入</strong>
-            <small>导入授权音频后，这里会显示可播放版本。</small>
+          <div class="audio-player-frame">
+            <div class="audio-player-shell" data-audio-player-shell>
+              <audio-speed-player
+                label="Practice pad"
+                rate="1"
+                rate-presets="0.75,0.85,1,1.25,1.5"
+                min-rate="0.75"
+                max-rate="1.5"
+                step="0.05"
+                engine="rubberband"
+                keep-pitch
+                visualizer="metaballs"
+              ></audio-speed-player>
+            </div>
           </div>
         </div>
       `;
@@ -1919,14 +1929,14 @@
               src="${escapeAttribute(activeSlot.src)}"
               label="${escapeAttribute(playerLabel)}"
               rate="1"
-              min-rate="0.5"
+              rate-presets="0.75,0.85,1,1.25,1.5"
+              min-rate="0.75"
               max-rate="1.5"
               step="0.05"
               engine="rubberband"
-              no-upload
-              version-selector
+              keep-pitch
+              visualizer="metaballs"
             ></audio-speed-player>
-            <p>播放器会读取当前曲目的项目内音频资源。</p>
           </div>
         </div>
       </div>
