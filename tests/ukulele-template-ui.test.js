@@ -440,9 +440,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-audio-player-upload'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-audio-player-upload'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-audio-player-upload'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached cover styles');
 });
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
@@ -520,6 +520,6 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
     'dragging state should visibly switch the logo handle'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-audio-player-upload'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-audio-player-upload'), 'homepage should bust cached connected lanyard styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached connected lanyard styles');
 });
