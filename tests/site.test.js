@@ -170,7 +170,7 @@ test('lesson detail embeds a persistent professional metronome tab', () => {
   assert.ok(css.includes('.lesson-metronome-beats button'), 'beat selectors should be styled as buttons');
 });
 
-test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
+test('lesson detail mounts the Audio Speed Player from fixed song audio', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
   const data = read('assets/data.js');
@@ -183,10 +183,14 @@ test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
 
   for (const expected of [
     '<audio-speed-player',
-    'version-selector',
     'no-upload',
     'engine="rubberband"',
-    'min-rate="0.5"',
+    'keep-pitch',
+    'visualizer="metaballs"',
+    'rate-presets="0.75,0.85,1,1.25,1.5"',
+    'preload="metadata"',
+    'src="${escapeAttribute(activeSlot.src)}"',
+    'min-rate="0.75"',
     'max-rate="1.5"',
     'step="0.05"',
     'data-audio-player-shell',
@@ -199,6 +203,8 @@ test('lesson detail mounts the EddieDrumBook audio speed player shell', () => {
     assert.ok(app.includes(expected), `missing audio player integration token: ${expected}`);
   }
 
+  assert.equal(app.includes('label="Practice pad"'), false, 'songs with project audio should not require the upload-only Practice pad flow');
+  assert.equal(app.includes('\n              version-selector'), false, 'the new player should receive the active fixed src instead of component-side version selection');
   assert.equal(app.includes('<strong>${escapeHtml(activeSlot.title)}</strong>'), false, 'audio heading should not repeat the full imported audio title');
   assert.equal(app.includes('<em>${escapeHtml(playerLabel)}</em>'), false, 'audio heading should not echo the full player label after the song title');
   assert.equal(data.includes('createPlaceholderAudio(song)'), false, 'song data should not create synthetic audio versions');

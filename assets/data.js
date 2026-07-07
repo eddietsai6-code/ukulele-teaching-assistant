@@ -126,6 +126,10 @@
         {
           title: "小星星 音频",
           src: "./assets/audio/ukulele/debut-xiao-xing-xing/full.mp3"
+        },
+        {
+          title: "小星星 With Click 音频",
+          src: "./assets/audio/ukulele/debut-xiao-xing-xing/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -157,6 +161,10 @@
         {
           title: "康康舞曲 Cancan 音频",
           src: "./assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/full.mp3"
+        },
+        {
+          title: "康康舞曲 Cancan With Click 音频",
+          src: "./assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -188,6 +196,10 @@
         {
           title: "C 调音阶 音频",
           src: "./assets/audio/ukulele/debut-c-diao-yin-jie/full.mp3"
+        },
+        {
+          title: "C 调音阶 With Click 音频",
+          src: "./assets/audio/ukulele/debut-c-diao-yin-jie/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -215,6 +227,10 @@
         {
           title: "音乐之声 音频",
           src: "./assets/audio/ukulele/g1-yin-yue-zhi-sheng/full.mp3"
+        },
+        {
+          title: "音乐之声 With Click 音频",
+          src: "./assets/audio/ukulele/g1-yin-yue-zhi-sheng/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -246,6 +262,10 @@
         {
           title: "F调音阶 音频",
           src: "./assets/audio/ukulele/g1-f-diao-yin-jie/full.mp3"
+        },
+        {
+          title: "F调音阶 With Click 音频",
+          src: "./assets/audio/ukulele/g1-f-diao-yin-jie/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -273,6 +293,10 @@
         {
           title: "Always with me 音频",
           src: "./assets/audio/ukulele/g1-always-with-me/full.mp3"
+        },
+        {
+          title: "Always with me With Click 音频",
+          src: "./assets/audio/ukulele/g1-always-with-me/with-click.mp3"
         }
       ],
       scoreImages: [
@@ -300,6 +324,41 @@
       practiceOrder: ["Shape F alone", "Loop C to F", "Add G", "Sing while keeping the strum"],
       commonIssues: ["Collapsed first finger on F", "Right hand stopping while singing", "Oversized G shape"],
       passStandard: "Complete one verse and chorus with a simplified strum."
+    }),
+    makeSong({
+      id: "g2-tian-kong-zhi-cheng",
+      title: "天空之城",
+      artist: "Joe Hisaishi",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Anime theme",
+      techniques: ["position shift", "eighth note", "tie", "chord symbols", "melody tab"],
+      goal: "掌握《天空之城》的G2旋律练习，稳定处理换把、连音和八分音符。",
+      focus: "读准高把位TAB位置，保持78 BPM的稳定速度，并把连音线后的延长时值弹完整。",
+      practiceOrder: ["唱名读谱", "低把位分句慢练", "高把位换把单独练习", "跟78 BPM完整弹奏"],
+      commonIssues: ["换到7品以上时找音变慢", "连音线后的时值保持不够", "八分音符连接不均匀"],
+      passStandard: "能在78 BPM稳定弹完整曲，并准确处理换把位置和连音时值。",
+      audio: [
+        {
+          title: "天空之城 音频",
+          src: "./assets/audio/ukulele/g2-tian-kong-zhi-cheng/full.mp3"
+        },
+        {
+          title: "天空之城 With Click 音频",
+          src: "./assets/audio/ukulele/g2-tian-kong-zhi-cheng/with-click.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "天空之城 谱面 1",
+          src: "./assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png"
+        },
+        {
+          title: "天空之城 简谱版",
+          src: "./assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png"
+        }
+      ]
     }),
     makeSong({
       id: "coffee-chuck",

@@ -135,6 +135,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'category: "曲目练习"',
     './assets/scores/ukulele/g1-always-with-me/score-01.png',
     './assets/scores/ukulele/g1-always-with-me/score-02.png',
+    'id: "g2-tian-kong-zhi-cheng"',
+    'title: "天空之城"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png',
+    './assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png',
   ]) {
     assert.ok(data.includes(expected), `missing imported score token: ${expected}`);
   }
@@ -157,6 +163,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'Always with me should be assigned to G1'
   );
 
+  assert.match(
+    data,
+    /id: "g2-tian-kong-zhi-cheng"[\s\S]*?level: "g2"/,
+    '天空之城 should be assigned to G2'
+  );
+
   for (const scorePath of [
     'assets/scores/ukulele/debut-xiao-xing-xing/score-01.png',
     'assets/scores/ukulele/debut-xiao-xing-xing/score-02.png',
@@ -168,6 +180,8 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'assets/scores/ukulele/g1-f-diao-yin-jie/score-01.png',
     'assets/scores/ukulele/g1-always-with-me/score-01.png',
     'assets/scores/ukulele/g1-always-with-me/score-02.png',
+    'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png',
+    'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png',
   ]) {
     assert.ok(fs.existsSync(path.join(root, scorePath)), `imported score image should exist: ${scorePath}`);
   }
@@ -185,9 +199,19 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/debut-xiao-xing-xing/full.mp3',
     },
     {
+      id: 'debut-xiao-xing-xing',
+      title: '小星星 With Click 音频',
+      src: './assets/audio/ukulele/debut-xiao-xing-xing/with-click.mp3',
+    },
+    {
       id: 'debut-kang-kang-wu-qu-cancan',
       title: '康康舞曲 Cancan 音频',
       src: './assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/full.mp3',
+    },
+    {
+      id: 'debut-kang-kang-wu-qu-cancan',
+      title: '康康舞曲 Cancan With Click 音频',
+      src: './assets/audio/ukulele/debut-kang-kang-wu-qu-cancan/with-click.mp3',
     },
     {
       id: 'debut-c-diao-yin-jie',
@@ -195,9 +219,19 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/debut-c-diao-yin-jie/full.mp3',
     },
     {
+      id: 'debut-c-diao-yin-jie',
+      title: 'C 调音阶 With Click 音频',
+      src: './assets/audio/ukulele/debut-c-diao-yin-jie/with-click.mp3',
+    },
+    {
       id: 'g1-yin-yue-zhi-sheng',
       title: '音乐之声 音频',
       src: './assets/audio/ukulele/g1-yin-yue-zhi-sheng/full.mp3',
+    },
+    {
+      id: 'g1-yin-yue-zhi-sheng',
+      title: '音乐之声 With Click 音频',
+      src: './assets/audio/ukulele/g1-yin-yue-zhi-sheng/with-click.mp3',
     },
     {
       id: 'g1-f-diao-yin-jie',
@@ -205,9 +239,29 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/g1-f-diao-yin-jie/full.mp3',
     },
     {
+      id: 'g1-f-diao-yin-jie',
+      title: 'F调音阶 With Click 音频',
+      src: './assets/audio/ukulele/g1-f-diao-yin-jie/with-click.mp3',
+    },
+    {
       id: 'g1-always-with-me',
       title: 'Always with me 音频',
       src: './assets/audio/ukulele/g1-always-with-me/full.mp3',
+    },
+    {
+      id: 'g1-always-with-me',
+      title: 'Always with me With Click 音频',
+      src: './assets/audio/ukulele/g1-always-with-me/with-click.mp3',
+    },
+    {
+      id: 'g2-tian-kong-zhi-cheng',
+      title: '天空之城 音频',
+      src: './assets/audio/ukulele/g2-tian-kong-zhi-cheng/full.mp3',
+    },
+    {
+      id: 'g2-tian-kong-zhi-cheng',
+      title: '天空之城 With Click 音频',
+      src: './assets/audio/ukulele/g2-tian-kong-zhi-cheng/with-click.mp3',
     },
   ];
 
@@ -440,9 +494,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached cover styles');
 });
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
@@ -520,6 +574,6 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
     'dragging state should visibly switch the logo handle'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6'), 'homepage should bust cached connected lanyard styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached connected lanyard styles');
 });

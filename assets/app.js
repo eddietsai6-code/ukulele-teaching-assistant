@@ -1919,12 +1919,15 @@
               src="${escapeAttribute(activeSlot.src)}"
               label="${escapeAttribute(playerLabel)}"
               rate="1"
-              min-rate="0.5"
+              rate-presets="0.75,0.85,1,1.25,1.5"
+              min-rate="0.75"
               max-rate="1.5"
               step="0.05"
               engine="rubberband"
+              preload="metadata"
+              keep-pitch
+              visualizer="metaballs"
               no-upload
-              version-selector
             ></audio-speed-player>
             <p>播放器会读取当前曲目的项目内音频资源。</p>
           </div>
