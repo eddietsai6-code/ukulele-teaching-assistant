@@ -22,12 +22,22 @@
 
   mergeSongTechProfiles();
 
+  function hasSongResources(song) {
+    const hasAudio = Array.isArray(song.audio) && song.audio.some((item) => item && item.src);
+    const hasScore = Array.isArray(song.scoreImages) && song.scoreImages.some((item) => item && item.src);
+    return hasAudio || hasScore;
+  }
+
+  function visibleSongs() {
+    return data.songs.filter(hasSongResources);
+  }
+
   const state = {
     query: "",
     level: "all",
     source: "all",
     category: "all",
-    selectedSongId: data.songs[0] ? data.songs[0].id : "",
+    selectedSongId: visibleSongs()[0] ? visibleSongs()[0].id : "",
     detailTab: "lesson",
     activeLevelPicker: "",
     levelPickerOpen: false,
@@ -155,24 +165,24 @@
   }
 
   function uniqueValues(key) {
-    return [...new Set(data.songs.map((song) => song[key]).filter(Boolean))].sort();
+    return [...new Set(visibleSongs().map((song) => song[key]).filter(Boolean))].sort();
   }
 
   function getSelectedSong() {
-    return data.songs.find((song) => song.id === state.selectedSongId) || data.songs[0] || null;
+    return visibleSongs().find((song) => song.id === state.selectedSongId) || visibleSongs()[0] || null;
   }
 
   function preferredDetailTabForSong(songId) {
-    const song = data.songs.find((item) => item.id === songId);
+    const song = visibleSongs().find((item) => item.id === songId);
     return song && Array.isArray(song.audio) && song.audio.length ? "audio" : "lesson";
   }
 
   function levelCount(levelId) {
-    return data.songs.filter((song) => song.level === levelId).length;
+    return visibleSongs().filter((song) => song.level === levelId).length;
   }
 
   function songsForLevel(levelId) {
-    return data.songs
+    return visibleSongs()
       .filter((song) => song.level === levelId)
       .sort((a, b) => a.title.localeCompare(b.title, "zh-CN"));
   }
@@ -358,7 +368,7 @@
   }
 
   function getFilteredSongs() {
-    return data.songs
+    return visibleSongs()
       .filter((song) => state.level === "all" || song.level === state.level)
       .filter((song) => state.source === "all" || song.source === state.source)
       .filter((song) => state.category === "all" || song.category === state.category)
@@ -1545,7 +1555,6 @@
                   </div>
                   <footer class="chroma-info song-picker-info">
                     <h3 class="name">${song.title}</h3>
-                    <span class="handle">${song.source.includes("2024") ? "2024" : "old"}</span>
                     <p class="role">${song.artist || "Ukulele Template"} · ${song.style}</p>
                     <span class="location">${song.techniques.slice(0, 2).join(" / ")}</span>
                   </footer>

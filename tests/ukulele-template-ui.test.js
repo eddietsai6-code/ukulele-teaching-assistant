@@ -119,6 +119,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'title: "C 调音阶"',
     'category: "音阶练习"',
     './assets/scores/ukulele/debut-c-diao-yin-jie/score-01.png',
+    'id: "debut-yao-lan-qu-lulla"',
+    'title: "摇篮曲 Lulla"',
+    'level: "debut"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/debut-yao-lan-qu-lulla/score-01.png',
+    './assets/scores/ukulele/debut-yao-lan-qu-lulla/score-02.png',
     'id: "g1-yin-yue-zhi-sheng"',
     'title: "音乐之声"',
     '掌握八分音符，C调音阶，附点音符',
@@ -141,14 +147,26 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'category: "曲目练习"',
     './assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png',
     './assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png',
+    'id: "g2-zhi-ai-li-si-for-elise"',
+    'title: "致爱丽丝 For Elise"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-01.png',
+    './assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-02.png',
   ]) {
     assert.ok(data.includes(expected), `missing imported score token: ${expected}`);
   }
 
   assert.match(
     data,
-    /id: "g1-yin-yue-zhi-sheng"[\s\S]*?level: "g1"/,
-    '音乐之声 should be assigned to G1'
+    /id: "g1-yin-yue-zhi-sheng"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '音乐之声 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "debut-yao-lan-qu-lulla"[\s\S]*?level: "debut"[\s\S]*?category: "曲目练习"/,
+    '摇篮曲 Lulla should be assigned to Debut song practice'
   );
 
   assert.match(
@@ -169,12 +187,28 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     '天空之城 should be assigned to G2'
   );
 
+  assert.match(
+    data,
+    /id: "g2-zhi-ai-li-si-for-elise"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
+    '致爱丽丝 For Elise should be assigned to G2 song practice'
+  );
+
+  const retiredCategories = [
+    'category: "' + String.fromCharCode(26059, 24459, 32451, 20064) + '"',
+    'category: "' + String.fromCharCode(21407, 21019, 32451, 20064) + '"',
+  ];
+  for (const retiredCategory of retiredCategories) {
+    assert.equal(data.includes(retiredCategory), false, 'retired practice categories should be folded into song practice');
+  }
+
   for (const scorePath of [
     'assets/scores/ukulele/debut-xiao-xing-xing/score-01.png',
     'assets/scores/ukulele/debut-xiao-xing-xing/score-02.png',
     'assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-01.png',
     'assets/scores/ukulele/debut-kang-kang-wu-qu-cancan/score-02.png',
     'assets/scores/ukulele/debut-c-diao-yin-jie/score-01.png',
+    'assets/scores/ukulele/debut-yao-lan-qu-lulla/score-01.png',
+    'assets/scores/ukulele/debut-yao-lan-qu-lulla/score-02.png',
     'assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-01.png',
     'assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-02.png',
     'assets/scores/ukulele/g1-f-diao-yin-jie/score-01.png',
@@ -182,6 +216,8 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'assets/scores/ukulele/g1-always-with-me/score-02.png',
     'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png',
     'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png',
+    'assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-01.png',
+    'assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-02.png',
   ]) {
     assert.ok(fs.existsSync(path.join(root, scorePath)), `imported score image should exist: ${scorePath}`);
   }
@@ -224,6 +260,16 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/debut-c-diao-yin-jie/with-click.mp3',
     },
     {
+      id: 'debut-yao-lan-qu-lulla',
+      title: '摇篮曲 Lulla 音频',
+      src: './assets/audio/ukulele/debut-yao-lan-qu-lulla/full.mp3',
+    },
+    {
+      id: 'debut-yao-lan-qu-lulla',
+      title: '摇篮曲 Lulla With Click 音频',
+      src: './assets/audio/ukulele/debut-yao-lan-qu-lulla/with-click.mp3',
+    },
+    {
       id: 'g1-yin-yue-zhi-sheng',
       title: '音乐之声 音频',
       src: './assets/audio/ukulele/g1-yin-yue-zhi-sheng/full.mp3',
@@ -263,6 +309,16 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       title: '天空之城 With Click 音频',
       src: './assets/audio/ukulele/g2-tian-kong-zhi-cheng/with-click.mp3',
     },
+    {
+      id: 'g2-zhi-ai-li-si-for-elise',
+      title: '致爱丽丝 For Elise 音频',
+      src: './assets/audio/ukulele/g2-zhi-ai-li-si-for-elise/full.mp3',
+    },
+    {
+      id: 'g2-zhi-ai-li-si-for-elise',
+      title: '致爱丽丝 For Elise With Click 音频',
+      src: './assets/audio/ukulele/g2-zhi-ai-li-si-for-elise/with-click.mp3',
+    },
   ];
 
   for (const item of uploads) {
@@ -276,6 +332,32 @@ test('uploaded melody songs expose copied project-relative audio', () => {
   }
 
   assert.doesNotMatch(data, /(?:[A-Z]:[\\/]|file:\/\/)/, 'uploaded audio data should not expose local Desktop paths');
+});
+
+test('level song lists hide placeholder songs without score or audio resources', () => {
+  const app = read('assets/app.js');
+  const styles = read('assets/styles.css');
+
+  assert.ok(app.includes('function hasSongResources(song)'), 'song filtering should define a resource-content gate');
+  assert.ok(app.includes('return data.songs.filter(hasSongResources);'), 'visible song lists should come from resource-backed songs only');
+
+  for (const expected of [
+    'selectedSongId: visibleSongs()[0] ? visibleSongs()[0].id : ""',
+    'return [...new Set(visibleSongs().map((song) => song[key]).filter(Boolean))].sort();',
+    'return visibleSongs().find((song) => song.id === state.selectedSongId) || visibleSongs()[0] || null;',
+    'return visibleSongs().filter((song) => song.level === levelId).length;',
+    'return visibleSongs()',
+  ]) {
+    assert.ok(app.includes(expected), `missing visible-song guard: ${expected}`);
+  }
+
+  assert.equal(app.includes('song.source.includes("2024") ? "2024" : "old"'), false, 'level song picker should not render old placeholder labels');
+  assert.equal(app.includes('<span class="handle">${song.source'), false, 'level song picker should not reserve the old handle slot');
+  assert.match(
+    styles,
+    /\.song-picker-info \.name\s*\{[^}]*grid-column:\s*1 \/ -1;/,
+    'song picker title should span the row after removing the old handle'
+  );
 });
 
 test('mobile hero keeps the UkuleleBook heading readable with a hanging badge', () => {
@@ -494,9 +576,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2'), 'homepage should bust cached cover styles');
 });
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
@@ -574,6 +656,6 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
     'dragging state should visibly switch the logo handle'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress'), 'homepage should bust cached connected lanyard styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2'), 'homepage should bust cached connected lanyard styles');
 });

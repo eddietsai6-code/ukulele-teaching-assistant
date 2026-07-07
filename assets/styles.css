@@ -2176,6 +2176,7 @@ main {
 }
 
 .song-picker-info .name {
+  grid-column: 1 / -1;
   margin: 0;
   color: #ffffff;
   font-family: var(--font-geist);

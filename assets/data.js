@@ -114,7 +114,7 @@
       artist: "Traditional",
       level: "debut",
       source: "用户上传曲谱",
-      category: "旋律练习",
+      category: "曲目练习",
       style: "Nursery melody",
       techniques: ["C major scale", "quarter note", "half note", "melody tab"],
       goal: "认识C调音阶，认识4分音符与2分音符。",
@@ -149,7 +149,7 @@
       artist: "Jacques Offenbach",
       level: "debut",
       source: "用户上传曲谱",
-      category: "旋律练习",
+      category: "曲目练习",
       style: "Classical melody",
       techniques: ["C major scale", "quarter note", "half note", "melody tab"],
       goal: "认识C调音阶，认识4分音符与2分音符。",
@@ -210,12 +210,47 @@
       ]
     }),
     makeSong({
+      id: "debut-yao-lan-qu-lulla",
+      title: "摇篮曲 Lulla",
+      artist: "Traditional",
+      level: "debut",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Lullaby",
+      techniques: ["3/4", "eighth note", "dotted note", "melody tab"],
+      goal: "练习《摇篮曲 Lulla》的预备级曲目，掌握3/4拍、八分音符和附点节奏。",
+      focus: "保持80 BPM的三拍子律动，读准TAB位置，并把长音和附点节奏弹稳定。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "分句慢练TAB", "跟80 BPM完整弹奏"],
+      commonIssues: ["三拍子重音不清楚", "八分音符连接不均匀", "附点节奏时值不稳定"],
+      passStandard: "能在80 BPM稳定弹完整曲，并准确处理3/4拍和附点节奏。",
+      audio: [
+        {
+          title: "摇篮曲 Lulla 音频",
+          src: "./assets/audio/ukulele/debut-yao-lan-qu-lulla/full.mp3"
+        },
+        {
+          title: "摇篮曲 Lulla With Click 音频",
+          src: "./assets/audio/ukulele/debut-yao-lan-qu-lulla/with-click.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "摇篮曲 Lulla 谱面 1",
+          src: "./assets/scores/ukulele/debut-yao-lan-qu-lulla/score-01.png"
+        },
+        {
+          title: "摇篮曲 Lulla 简谱版",
+          src: "./assets/scores/ukulele/debut-yao-lan-qu-lulla/score-02.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "g1-yin-yue-zhi-sheng",
       title: "音乐之声",
       artist: "Richard Rodgers",
       level: "g1",
       source: "用户上传曲谱",
-      category: "旋律练习",
+      category: "曲目练习",
       style: "Musical melody",
       techniques: ["eighth note", "C major scale", "dotted note", "melody tab"],
       goal: "掌握八分音符，C调音阶，附点音符。",
@@ -241,6 +276,41 @@
         {
           title: "音乐之声 简谱版",
           src: "./assets/scores/ukulele/g1-yin-yue-zhi-sheng/score-02.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g2-zhi-ai-li-si-for-elise",
+      title: "致爱丽丝 For Elise",
+      artist: "Ludwig van Beethoven",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Classical melody",
+      techniques: ["3/4", "eighth note", "dotted note", "melody tab", "repeat ending"],
+      goal: "练习《致爱丽丝》的G2旋律读谱，掌握3/4拍、八分音符和附点节奏。",
+      focus: "保持90 BPM的三拍子律动，读准高把位TAB数字，并把反复段落弹连贯。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "分句慢练高把位旋律", "跟90 BPM完整弹奏"],
+      commonIssues: ["高把位数字反应变慢", "八分音符连接不均匀", "反复记号处回弹位置不清楚"],
+      passStandard: "能在90 BPM稳定弹完整曲，并准确处理八分音符、附点节奏和反复段落。",
+      audio: [
+        {
+          title: "致爱丽丝 For Elise 音频",
+          src: "./assets/audio/ukulele/g2-zhi-ai-li-si-for-elise/full.mp3"
+        },
+        {
+          title: "致爱丽丝 For Elise With Click 音频",
+          src: "./assets/audio/ukulele/g2-zhi-ai-li-si-for-elise/with-click.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "致爱丽丝 For Elise 谱面 1",
+          src: "./assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-01.png"
+        },
+        {
+          title: "致爱丽丝 For Elise 简谱版",
+          src: "./assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-02.png"
         }
       ]
     }),
@@ -334,7 +404,7 @@
       category: "曲目练习",
       style: "Anime theme",
       techniques: ["position shift", "eighth note", "tie", "chord symbols", "melody tab"],
-      goal: "掌握《天空之城》的G2旋律练习，稳定处理换把、连音和八分音符。",
+      goal: "掌握《天空之城》的G2曲目练习，稳定处理换把、连音和八分音符。",
       focus: "读准高把位TAB位置，保持78 BPM的稳定速度，并把连音线后的延长时值弹完整。",
       practiceOrder: ["唱名读谱", "低把位分句慢练", "高把位换把单独练习", "跟78 BPM完整弹奏"],
       commonIssues: ["换到7品以上时找音变慢", "连音线后的时值保持不够", "八分音符连接不均匀"],
@@ -366,7 +436,7 @@
       artist: "Ukulele Template",
       level: "g2",
       source: "Rhythm Pack",
-      category: "原创练习",
+      category: "曲目练习",
       style: "Acoustic Pop",
       techniques: ["down-up", "chuck", "8th strum"],
       goal: "Place a light chuck inside an eighth-note strumming pattern.",
@@ -381,7 +451,7 @@
       artist: "Ukulele Template",
       level: "g3",
       source: "Finger Pack",
-      category: "原创练习",
+      category: "曲目练习",
       style: "Ballad",
       techniques: ["fingerpicking", "arpeggio", "melody"],
       goal: "Separate bass notes from a simple top-line melody.",
@@ -411,7 +481,7 @@
       artist: "Ukulele Template",
       level: "g5",
       source: "Performance Pack",
-      category: "原创练习",
+      category: "曲目练习",
       style: "Waltz",
       techniques: ["fingerstyle", "bass note", "position shift"],
       goal: "Combine bass, harmony, and melody in a short performance piece.",
