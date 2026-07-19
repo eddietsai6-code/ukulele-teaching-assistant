@@ -431,6 +431,33 @@
       ]
     }),
     makeSong({
+      id: "g2-chong-er-fei",
+      title: "虫儿飞",
+      artist: "陈光荣",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Chinese ballad melody",
+      techniques: ["F major", "4/4", "eighth note", "melody tab", "repeat ending"],
+      goal: "练习《虫儿飞》的二级旋律读谱，掌握F调位置、4/4拍和八分音符连接。",
+      focus: "按80 BPM保持稳定速度，读准TAB数字，并把反复段落和收尾和声音弹清楚。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "分句慢练旋律TAB", "跟80 BPM完整弹奏"],
+      commonIssues: ["八分音符连接不均匀", "F调音位和C调音位混淆", "反复记号后的回弹位置不清楚"],
+      passStandard: "能在80 BPM稳定弹完整曲，并准确处理八分音符、反复段落和最后和声音。",
+      audio: [
+        {
+          title: "虫儿飞 音频",
+          src: "./assets/audio/ukulele/g2-chong-er-fei/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "虫儿飞 谱面 1",
+          src: "./assets/scores/ukulele/g2-chong-er-fei/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "coffee-chuck",
       title: "Coffee Chuck",
       artist: "Ukulele Template",
@@ -461,6 +488,64 @@
       passStandard: "The melody stays clear while the bass remains steady."
     }),
     makeSong({
+      id: "g3-summer",
+      title: "SUMMER",
+      artist: "Joe Hisaishi",
+      level: "g3",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Film theme melody",
+      techniques: ["4/4", "75 BPM", "repeat ending", "tie", "position shift"],
+      goal: "练习《SUMMER》的三级旋律曲目，掌握75 BPM中速律动、反复段落和换把连接。",
+      focus: "保持旋律线连贯，读准休止与连音，并在第一、第二结尾之间顺畅衔接。",
+      practiceOrder: ["拍读75 BPM节奏", "分句慢练TAB旋律", "单独处理反复与第二结尾", "跟伴奏完整弹奏"],
+      commonIssues: ["休止符后进拍偏晚", "连音处理过短", "换把到高把位时音色不稳定"],
+      passStandard: "能在75 BPM稳定弹完整曲，并准确处理休止、连音、反复结尾和高把位连接。",
+      audio: [
+        {
+          title: "SUMMER Full 音频",
+          src: "./assets/audio/ukulele/g3-summer/full.mp3"
+        },
+        {
+          title: "SUMMER Backing Track 音频",
+          src: "./assets/audio/ukulele/g3-summer/backing-track.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "SUMMER 谱面 1",
+          src: "./assets/scores/ukulele/g3-summer/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g3-hei-ren-tai-guan",
+      title: "黑人抬棺",
+      artist: "Coffin Dance",
+      level: "g3",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Meme theme melody",
+      techniques: ["4/4", "120 BPM", "flat key", "eighth note", "position shift"],
+      goal: "练习《黑人抬棺》的三级旋律曲目，掌握120 BPM快速八分音符、降号调号和重复乐句。",
+      focus: "保持稳定速度，读准带降号的五线谱与TAB对应位置，并让重复段落的节奏不断线。",
+      practiceOrder: ["拍读120 BPM八分音符", "分句练习1-4小节主题", "慢练高把位重复乐句", "完整跟音频弹奏"],
+      commonIssues: ["120 BPM下手指提前紧张", "高把位8-7交替不均匀", "重复段落越弹越快"],
+      passStandard: "能在120 BPM稳定弹完整曲，并准确处理主题重复、高把位连接和收尾长音。",
+      audio: [
+        {
+          title: "黑人抬棺 音频",
+          src: "./assets/audio/ukulele/g3-hei-ren-tai-guan/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "黑人抬棺 谱面 1",
+          src: "./assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "harbor-reggae",
       title: "Harbor Reggae",
       artist: "Ukulele Template",
@@ -489,6 +574,33 @@
       practiceOrder: ["Play bass line", "Play melody line", "Add harmony notes", "Perform slowly from start to finish"],
       commonIssues: ["Unclear waltz accent", "Sound gaps during shifts", "Short melody note values"],
       passStandard: "Perform the whole piece with a clear three-beat feel."
+    }),
+    makeSong({
+      id: "g5-huan-hua-cheng-feng",
+      title: "幻化成风",
+      artist: "Ayano Tsuji",
+      level: "g5",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Anime fingerstyle",
+      techniques: ["F major", "4/4", "triplet feel", "chord melody", "position shift"],
+      goal: "练习《幻化成风》的五级指弹曲目，掌握F调和弦旋律、三连律动和高把位连接。",
+      focus: "保持轻快的4/4律动，读准F调TAB位置，并让旋律音从伴奏和弦中清楚浮出来。",
+      practiceOrder: ["唱名读谱", "单独拍读三连律动", "分句慢练高把位旋律", "连贯弹奏和弦旋律段落"],
+      commonIssues: ["三连律动弹成平均八分音符", "高把位换把时旋律断开", "和弦音量盖过主旋律"],
+      passStandard: "能稳定弹完整曲，并清楚呈现F调和弦走向、三连律动和主旋律线条。",
+      audio: [
+        {
+          title: "幻化成风 音频",
+          src: "./assets/audio/ukulele/g5-huan-hua-cheng-feng/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "幻化成风 谱面 1",
+          src: "./assets/scores/ukulele/g5-huan-hua-cheng-feng/score-01.png"
+        }
+      ]
     })
   ];
 

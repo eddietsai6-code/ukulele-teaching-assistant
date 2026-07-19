@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>节奏游戏</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2328a9f4'/%3E%3Ccircle cx='32' cy='32' r='17' fill='white'/%3E%3C/svg%3E" />
-    <script>
-      document.documentElement.classList.toggle("is-embedded", new URLSearchParams(window.location.search).has("embed"));
-    </script>
-    <link rel="stylesheet" href="./assets/styles.css?v=embedded-fit" />
+    <link rel="stylesheet" href="./assets/styles.css" />
   </head>
   <body>
     <main class="game-shell">
@@ -18,7 +15,7 @@
             <div class="brand-mark" aria-hidden="true"></div>
             <div>
               <h1>节奏游戏</h1>
-              <p id="levelTitle">第 1 / 30 关</p>
+              <p id="levelTitle">第 1 / 40 关</p>
             </div>
           </div>
           <div class="level-summary" aria-live="polite">
@@ -41,11 +38,16 @@
             </div>
             <div class="chain-row target-chain" id="targetChain"></div>
 
-            <div class="chain-label player-label">
+            <button class="chain-entry-button" id="chainEntryButton" type="button" aria-label="填写我的链条">
+              <span>我的链条</span>
+              <strong>填写 0/4</strong>
+            </button>
+
+            <div class="chain-label player-label" id="playerLabel" hidden>
               <span>我的链条</span>
               <strong id="playerBeatCount">0 拍</strong>
             </div>
-            <div class="chain-row player-chain" id="playerChain"></div>
+            <div class="chain-row player-chain" id="playerChain" hidden></div>
 
             <section class="slot-picker" id="slotPicker" aria-label="选择节拍" hidden>
               <div class="slot-picker-head">
@@ -58,9 +60,22 @@
 
           <div class="drill-footer">
             <div class="drill-progress">
-              <button class="level-nav-button prev-level-button" id="prevLevelButton" type="button" aria-label="上一关">UP</button>
-              <strong id="drillLabel">关卡 1</strong>
+              <button class="level-nav-button prev-level-button" id="prevLevelButton" type="button" aria-label="上一关">BACK</button>
+              <button
+                class="drill-label-button"
+                id="drillLabel"
+                type="button"
+                aria-label="选择关卡"
+                aria-controls="levelJumpPanel"
+                aria-expanded="false"
+              >
+                关卡 1
+              </button>
               <button class="level-nav-button next-level-button" id="nextLevelButton" type="button" aria-label="下一关">NEXT</button>
+            </div>
+            <div class="level-jump-panel" id="levelJumpPanel" hidden>
+              <div class="panel-label">选择关卡</div>
+              <div class="level-grid" id="levelList"></div>
             </div>
             <span id="statusText" aria-live="polite">准备</span>
           </div>
@@ -74,7 +89,7 @@
               <span>速度</span>
               <select id="speedSelect" aria-label="选择速度"></select>
             </label>
-            <button class="play-control" id="playControlButton" type="button" aria-label="播放目标节奏">
+            <button class="play-control" id="playControlButton" type="button" aria-label="播放目标节奏" aria-pressed="false">
               <span aria-hidden="true">▶</span>
               <strong>播放</strong>
             </button>
@@ -121,13 +136,9 @@
           <div class="pattern-library" id="patternLibrary"></div>
         </aside>
 
-        <aside class="level-panel" hidden>
-          <div class="panel-label">30 关</div>
-          <div class="level-grid" id="levelList"></div>
-        </aside>
       </section>
     </main>
 
-    <script type="module" src="./assets/app.js?v=embedded-fit"></script>
+    <script type="module" src="./assets/app.js"></script>
   </body>
 </html>

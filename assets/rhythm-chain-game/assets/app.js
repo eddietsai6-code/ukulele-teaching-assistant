@@ -20,6 +20,7 @@ const storageKey = "rhythm-chain-game-progress-v1";
 const REST_SYMBOLS = new Set(["𝄽", "𝄾", "𝄿"]);
 const svgNamespace = "http://www.w3.org/2000/svg";
 const selectors = {
+  practiceCard: document.querySelector(".practice-card"),
   levelTitle: document.querySelector("#levelTitle"),
   levelMeta: document.querySelector("#levelMeta"),
   comboReadout: document.querySelector("#comboReadout"),
@@ -28,6 +29,8 @@ const selectors = {
   levelList: document.querySelector("#levelList"),
   beatDots: document.querySelectorAll(".beat-dots span"),
   targetChain: document.querySelector("#targetChain"),
+  chainEntryButton: document.querySelector("#chainEntryButton"),
+  playerLabel: document.querySelector("#playerLabel"),
   playerChain: document.querySelector("#playerChain"),
   slotPicker: document.querySelector("#slotPicker"),
   slotPickerTitle: document.querySelector("#slotPickerTitle"),
@@ -37,6 +40,7 @@ const selectors = {
   playerBeatCount: document.querySelector("#playerBeatCount"),
   statusText: document.querySelector("#statusText"),
   drillLabel: document.querySelector("#drillLabel"),
+  levelJumpPanel: document.querySelector("#levelJumpPanel"),
   prevLevelButton: document.querySelector("#prevLevelButton"),
   nextLevelButton: document.querySelector("#nextLevelButton"),
   libraryCount: document.querySelector("#libraryCount"),
@@ -72,6 +76,7 @@ const state = {
   playbackTimers: [],
   audioNodes: [],
   audioContext: null,
+  playbackKind: null,
 };
 
 function init() {
@@ -105,18 +110,45 @@ function renderControls() {
 function bindControls() {
   selectors.soundSelect.addEventListener("change", handleSoundChange);
   selectors.speedSelect.addEventListener("change", handleSpeedChange);
-  selectors.playControlButton.addEventListener("click", () => playChain("target"));
+  selectors.playControlButton.addEventListener("click", handlePlayControl);
   selectors.tapButton.addEventListener("click", handleTap);
+  selectors.chainEntryButton.addEventListener("click", openNextOpenSlot);
   selectors.closeSlotPickerButton.addEventListener("click", closeSlotPicker);
   selectors.playTargetButton.addEventListener("click", () => playChain("target"));
   selectors.playPlayerButton.addEventListener("click", () => playChain("player"));
   selectors.checkButton.addEventListener("click", checkPlayerChain);
   selectors.undoButton.addEventListener("click", undoLastCard);
   selectors.clearButton.addEventListener("click", clearPlayerChain);
+  selectors.drillLabel.addEventListener("click", toggleLevelJumpPanel);
   selectors.prevLevelButton.addEventListener("click", () => goToPreviousLevel());
   selectors.nextLevelButton.addEventListener("click", () => goToNextLevel());
   selectors.nextButton.addEventListener("click", () => goToNextLevel());
   selectors.previewDeckButton.addEventListener("click", previewDeck);
+  document.addEventListener("click", closeLevelJumpPanelFromOutside);
+  document.addEventListener("keydown", closePanelsFromKeyboard);
+}
+
+function handlePlayControl() {
+  if (state.playbackKind) {
+    clearPlayback("stopped");
+    return;
+  }
+
+  playChain(getPlayControlKind());
+}
+
+function getPlayControlKind() {
+  return getFilledPlayerPatterns().length > 0 ? "player" : "target";
+}
+
+function openNextOpenSlot() {
+  const firstEmptySlot = findFirstEmptySlot();
+  if (firstEmptySlot === -1) {
+    setStatus("链条已满", "warn");
+    return;
+  }
+
+  openSlotPicker(firstEmptySlot);
 }
 
 async function handleSoundChange() {
@@ -160,6 +192,7 @@ function loadLevel(levelNumber) {
   state.tapBpm = null;
   state.selectedSlotIndex = null;
   closeSlotPicker();
+  closeLevelJumpPanel();
   state.tapTracker.reset();
   selectors.tapTempoLabel.textContent = "-- BPM";
   state.activeTargetIndex = null;
@@ -198,23 +231,63 @@ function renderLevelList() {
   );
 }
 
+function toggleLevelJumpPanel() {
+  setLevelJumpPanelOpen(selectors.levelJumpPanel.hidden);
+}
+
+function closeLevelJumpPanel() {
+  setLevelJumpPanelOpen(false);
+}
+
+function setLevelJumpPanelOpen(isOpen) {
+  selectors.levelJumpPanel.hidden = !isOpen;
+  selectors.drillLabel.setAttribute("aria-expanded", String(isOpen));
+}
+
+function closeLevelJumpPanelFromOutside(event) {
+  if (selectors.levelJumpPanel.hidden) return;
+  if (selectors.drillLabel.contains(event.target) || selectors.levelJumpPanel.contains(event.target)) return;
+  closeLevelJumpPanel();
+}
+
+function closePanelsFromKeyboard(event) {
+  if (event.key !== "Escape") return;
+  closeSlotPicker();
+  closeLevelJumpPanel();
+}
+
 function renderReadouts() {
   const targetBeats = calculateChainBeats(state.targetChain);
   const filledPlayerPatterns = getFilledPlayerPatterns();
   const playerBeats = calculateChainBeats(filledPlayerPatterns);
   const accuracy = state.lastResult ? `${Math.round(state.lastResult.accuracy * 100)}%` : "0%";
   const bpm = getPlaybackBpm();
+  const chainEntryStrong = selectors.chainEntryButton.querySelector("strong");
+  const chainEntryLabel = selectors.chainEntryButton.querySelector("span");
+  const filledCount = filledPlayerPatterns.length;
 
+  selectors.practiceCard.dataset.comboTier = String(state.config.comboCount);
   selectors.levelTitle.textContent = `第 ${state.level} / ${LEVEL_COUNT} 关`;
   selectors.levelMeta.textContent = `${state.config.comboCount} 组合 / ${bpm} BPM`;
-  selectors.comboReadout.textContent = `${filledPlayerPatterns.length} / ${state.config.comboCount}`;
+  selectors.comboReadout.textContent = `${filledCount} / ${state.config.comboCount}`;
   selectors.beatReadout.textContent = String(targetBeats);
   selectors.accuracyReadout.textContent = accuracy;
   selectors.targetBeatCount.textContent = `${targetBeats} 拍`;
   selectors.playerBeatCount.textContent = `${playerBeats} 拍`;
+  selectors.chainEntryButton.disabled = filledCount >= state.config.comboCount;
+  selectors.chainEntryButton.setAttribute(
+    "aria-label",
+    filledCount >= state.config.comboCount ? "我的链条已填满" : `填写我的链条 ${filledCount}/${state.config.comboCount}`
+  );
+  if (chainEntryLabel) chainEntryLabel.textContent = "我的链条";
+  if (chainEntryStrong) {
+    chainEntryStrong.textContent =
+      filledCount >= state.config.comboCount ? `${filledCount}/${state.config.comboCount}` : `填写 ${filledCount}/${state.config.comboCount}`;
+  }
   selectors.drillLabel.textContent = `关卡 ${state.level}`;
   selectors.prevLevelButton.disabled = state.level <= 1;
   selectors.nextLevelButton.disabled = state.level >= LEVEL_COUNT;
+  updatePlayControl(Boolean(state.playbackKind), state.playbackKind || getPlayControlKind());
 }
 
 function renderChain(container, chain, role) {
@@ -240,7 +313,17 @@ function renderChain(container, chain, role) {
 }
 
 function renderPlayerChain() {
-  const slots = Array.from({ length: state.config.comboCount }, (_, index) => {
+  const showPlayerChain = shouldShowPlayerChain();
+  selectors.playerLabel.hidden = !showPlayerChain;
+  selectors.playerChain.hidden = !showPlayerChain;
+
+  if (!showPlayerChain) {
+    selectors.playerChain.replaceChildren();
+    renderReadouts();
+    return;
+  }
+
+  const slots = getVisiblePlayerSlotIndexes().map((index) => {
     const patternId = state.playerChain[index];
     if (!patternId) {
       const empty = document.createElement("button");
@@ -266,6 +349,24 @@ function renderPlayerChain() {
 
   selectors.playerChain.replaceChildren(...slots);
   renderReadouts();
+}
+
+function shouldShowPlayerChain() {
+  return state.selectedSlotIndex !== null || state.playerChain.some(Boolean);
+}
+
+function getVisiblePlayerSlotIndexes() {
+  const indexes = new Set();
+  state.playerChain.forEach((patternId, index) => {
+    if (patternId) indexes.add(index);
+  });
+
+  if (state.selectedSlotIndex !== null) indexes.add(state.selectedSlotIndex);
+
+  const firstEmptySlot = findFirstEmptySlot();
+  if (firstEmptySlot !== -1) indexes.add(firstEmptySlot);
+
+  return [...indexes].sort((first, second) => first - second);
 }
 
 function renderLibrary() {
@@ -303,6 +404,7 @@ function renderSlotPicker() {
 
 function openSlotPicker(slotIndex) {
   state.selectedSlotIndex = Math.min(state.config.comboCount - 1, Math.max(0, Number(slotIndex) || 0));
+  renderPlayerChain();
   renderSlotPicker();
   setStatus(`选择第 ${state.selectedSlotIndex + 1} 格`, "idle");
   selectors.slotPicker.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -312,6 +414,7 @@ function closeSlotPicker() {
   state.selectedSlotIndex = null;
   selectors.slotPicker.hidden = true;
   selectors.slotPickerGrid.replaceChildren();
+  if (state.config) renderPlayerChain();
 }
 
 function setSlotPattern(slotIndex, patternId) {
@@ -337,7 +440,9 @@ function createPatternTile(pattern, options = {}) {
   if (options.active) button.classList.add("active");
   if (options.compact) button.classList.add("compact");
   if (pattern.beats > 1) button.classList.add("wide-rhythm");
-  if (Array.from(pattern.symbol).length > 2 || pattern.id === "fourSixteenths") button.classList.add("dense-rhythm");
+  if (Array.from(pattern.symbol).length > 2 || pattern.id === "fourSixteenths" || pattern.family === "syncopation") {
+    button.classList.add("dense-rhythm");
+  }
 
   const number = document.createElement("span");
   number.className = "combo-number";
@@ -361,8 +466,18 @@ function createPatternTile(pattern, options = {}) {
 }
 
 function appendSymbolNodes(symbol, pattern) {
+  if (pattern.glyph === "eighth-two-sixteenths" || pattern.glyph === "two-sixteenths-eighth") {
+    symbol.append(createMixedSixteenthGlyph(pattern.glyph));
+    return;
+  }
+
   if (pattern.glyph === "four-sixteenth-run") {
     symbol.append(createFourSixteenthGlyph());
+    return;
+  }
+
+  if (pattern.glyph === "sixteenth-eighth-sixteenth" || pattern.glyph === "sixteenth-rest-three-sixteenths") {
+    symbol.append(createSyncopationGlyph(pattern.glyph));
     return;
   }
 
@@ -461,6 +576,243 @@ function createFourSixteenthGlyph() {
   return svg;
 }
 
+function createMixedSixteenthGlyph(glyph) {
+  const svg = document.createElementNS(svgNamespace, "svg");
+  svg.classList.add("mixed-sixteenth-glyph");
+  svg.classList.add(glyph);
+  svg.setAttribute("viewBox", "0 0 96 64");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  const lowerBeamStart = glyph === "eighth-two-sixteenths" ? 50 : 21;
+  const lowerBeamEnd = glyph === "eighth-two-sixteenths" ? 82 : 53;
+
+  svg.append(
+    createSvgElement("path", { d: "M22 12 L84 12 L84 19 L22 19 Z", fill: "currentColor" }),
+    createSvgElement("path", {
+      d: `M${lowerBeamStart} 25 L${lowerBeamEnd} 25 L${lowerBeamEnd} 32 L${lowerBeamStart} 32 Z`,
+      fill: "currentColor",
+    }),
+    createSvgElement("line", {
+      x1: "22",
+      y1: "16",
+      x2: "22",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("line", {
+      x1: "53",
+      y1: "16",
+      x2: "53",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("line", {
+      x1: "83",
+      y1: "16",
+      x2: "83",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("ellipse", {
+      cx: "14",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 14 50)",
+    }),
+    createSvgElement("ellipse", {
+      cx: "45",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 45 50)",
+    }),
+    createSvgElement("ellipse", {
+      cx: "75",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 75 50)",
+    })
+  );
+  return svg;
+}
+
+function createSyncopationGlyph(glyph) {
+  const svg = document.createElementNS(svgNamespace, "svg");
+  svg.classList.add("syncopation-glyph");
+  svg.classList.add(glyph);
+  svg.setAttribute("viewBox", "0 0 104 64");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  if (glyph === "sixteenth-rest-three-sixteenths") {
+    svg.append(
+      createSvgElement("circle", {
+        class: "sixteenth-rest-flag-upper syncopation-sixteenth-rest-flag-upper",
+        cx: "16",
+        cy: "16",
+        r: "5.5",
+        fill: "currentColor",
+      }),
+      createSvgElement("circle", {
+        class: "sixteenth-rest-flag-lower syncopation-sixteenth-rest-flag-lower",
+        cx: "23",
+        cy: "29",
+        r: "5.5",
+        fill: "currentColor",
+      }),
+      createSvgElement("path", {
+        class: "sixteenth-rest-stem syncopation-sixteenth-rest-stem",
+        d: "M30 7 C36 19 33 31 27 42 C24 48 20 54 16 58",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "6",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }),
+      createSvgElement("path", {
+        class: "syncopation-sixteenth-rest-hook-upper",
+        d: "M22 16 C31 19 36 25 33 32",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("path", {
+        class: "syncopation-sixteenth-rest-hook-lower",
+        d: "M28 29 C36 33 37 41 30 48",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("path", { d: "M48 12 L94 12 L94 19 L48 19 Z", fill: "currentColor" }),
+      createSvgElement("path", { d: "M48 25 L94 25 L94 32 L48 32 Z", fill: "currentColor" }),
+      createSvgElement("line", {
+        x1: "48",
+        y1: "16",
+        x2: "48",
+        y2: "49",
+        stroke: "currentColor",
+        "stroke-width": "5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("line", {
+        x1: "71",
+        y1: "16",
+        x2: "71",
+        y2: "49",
+        stroke: "currentColor",
+        "stroke-width": "5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("line", {
+        x1: "94",
+        y1: "16",
+        x2: "94",
+        y2: "49",
+        stroke: "currentColor",
+        "stroke-width": "5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("ellipse", {
+        cx: "40",
+        cy: "50",
+        rx: "9",
+        ry: "6",
+        fill: "currentColor",
+        transform: "rotate(-18 40 50)",
+      }),
+      createSvgElement("ellipse", {
+        cx: "63",
+        cy: "50",
+        rx: "9",
+        ry: "6",
+        fill: "currentColor",
+        transform: "rotate(-18 63 50)",
+      }),
+      createSvgElement("ellipse", {
+        cx: "86",
+        cy: "50",
+        rx: "9",
+        ry: "6",
+        fill: "currentColor",
+        transform: "rotate(-18 86 50)",
+      })
+    );
+    return svg;
+  }
+
+  svg.append(
+    createSvgElement("path", { d: "M24 12 L84 12 L84 19 L24 19 Z", fill: "currentColor" }),
+    createSvgElement("path", { d: "M24 25 L42 25 L42 32 L24 32 Z", fill: "currentColor" }),
+    createSvgElement("path", { d: "M70 25 L84 25 L84 32 L70 32 Z", fill: "currentColor" }),
+    createSvgElement("line", {
+      x1: "24",
+      y1: "16",
+      x2: "24",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("line", {
+      x1: "54",
+      y1: "16",
+      x2: "54",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("line", {
+      x1: "84",
+      y1: "16",
+      x2: "84",
+      y2: "49",
+      stroke: "currentColor",
+      "stroke-width": "5",
+      "stroke-linecap": "round",
+    }),
+    createSvgElement("ellipse", {
+      cx: "16",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 16 50)",
+    }),
+    createSvgElement("ellipse", {
+      cx: "46",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 46 50)",
+    }),
+    createSvgElement("ellipse", {
+      cx: "76",
+      cy: "50",
+      rx: "9",
+      ry: "6",
+      fill: "currentColor",
+      transform: "rotate(-18 76 50)",
+    })
+  );
+  return svg;
+}
+
 function createRestGlyph(restSymbol) {
   const svg = document.createElementNS(svgNamespace, "svg");
   svg.classList.add("rest-glyph");
@@ -486,13 +838,31 @@ function createRestGlyph(restSymbol) {
   if (restSymbol === "𝄿") {
     svg.classList.add("sixteenth-rest-glyph");
     svg.append(
-      createSvgElement("circle", { cx: "19", cy: "17", r: "6", fill: "currentColor" }),
-      createSvgElement("circle", { cx: "27", cy: "31", r: "6", fill: "currentColor" }),
+      createSvgElement("circle", { class: "sixteenth-rest-flag-upper", cx: "17", cy: "17", r: "5.8", fill: "currentColor" }),
+      createSvgElement("circle", { class: "sixteenth-rest-flag-lower", cx: "23", cy: "31", r: "5.8", fill: "currentColor" }),
       createSvgElement("path", {
-        d: "M30 18 C39 27 31 44 18 58",
+        class: "sixteenth-rest-stem",
+        d: "M31 8 C37 20 34 32 28 43 C25 49 21 54 17 59",
         fill: "none",
         stroke: "currentColor",
-        "stroke-width": "7",
+        "stroke-width": "6.5",
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+      }),
+      createSvgElement("path", {
+        class: "sixteenth-rest-hook-upper",
+        d: "M23 17 C33 20 38 26 34 33",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "5.5",
+        "stroke-linecap": "round",
+      }),
+      createSvgElement("path", {
+        class: "sixteenth-rest-hook-lower",
+        d: "M29 31 C38 35 39 43 31 50",
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-width": "5.5",
         "stroke-linecap": "round",
       })
     );
@@ -599,6 +969,8 @@ async function playChain(kind) {
 
   clearPlayback();
   const audioContext = await getAudioContext();
+  state.playbackKind = kind;
+  updatePlayControl(true, kind);
   const bpm = getPlaybackBpm();
   const beatDuration = 60 / bpm;
   const countInStartTime = audioContext.currentTime + 0.08;
@@ -864,9 +1236,11 @@ function scheduleHighlights(events, kind, startTime) {
   });
 
   const lastEvent = events.at(-1);
-  const endDelay = Math.max(0, (lastEvent.timeSeconds - startTime) * 1000 + 900);
+  const endDelay = Math.max(0, (lastEvent.timeSeconds - audioContext.currentTime) * 1000 + 900);
   state.playbackTimers.push(
     window.setTimeout(() => {
+      state.playbackKind = null;
+      updatePlayControl(false);
       state.activeTargetIndex = null;
       state.activePlayerIndex = null;
       renderChain(selectors.targetChain, state.targetChain, "target");
@@ -905,7 +1279,7 @@ function clearDeckHighlight() {
   selectors.patternLibrary.querySelectorAll(".active").forEach((card) => card.classList.remove("active"));
 }
 
-function clearPlayback() {
+function clearPlayback(reason = "reset") {
   state.playbackTimers.forEach((timer) => window.clearTimeout(timer));
   state.playbackTimers = [];
   state.audioNodes.forEach((node) => {
@@ -916,15 +1290,36 @@ function clearPlayback() {
     }
   });
   state.audioNodes = [];
+  state.playbackKind = null;
   state.activeTargetIndex = null;
   state.activePlayerIndex = null;
   clearCountInDots();
   clearDeckHighlight();
+  updatePlayControl(false);
+
+  if (reason === "stopped") {
+    setStatus("准备", "idle");
+  }
 }
 
 function setStatus(message, variant) {
   selectors.statusText.textContent = message;
   selectors.statusText.dataset.variant = variant;
+}
+
+function updatePlayControl(isPlaying, kind = getPlayControlKind()) {
+  const icon = selectors.playControlButton.querySelector("span");
+  const strong = selectors.playControlButton.querySelector("strong");
+  const label = kind === "player" ? "播放我的链条" : "播放目标节奏";
+
+  selectors.playControlButton.dataset.playing = String(isPlaying);
+  selectors.playControlButton.dataset.kind = kind;
+  selectors.playControlButton.setAttribute("aria-pressed", String(isPlaying));
+  selectors.playControlButton.setAttribute("aria-label", isPlaying ? "停止播放" : label);
+  if (icon) icon.textContent = isPlaying ? "Ⅱ" : "▶";
+  if (strong) {
+    strong.textContent = isPlaying ? "暂停" : "播放";
+  }
 }
 
 function getPlaybackBpm() {
