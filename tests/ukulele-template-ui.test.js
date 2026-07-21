@@ -168,6 +168,11 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'level: "g3"',
     'category: "曲目练习"',
     './assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png',
+    'id: "g4-ai-de-luo-man-shi"',
+    'title: "爱的罗曼史"',
+    'level: "g4"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png',
     'id: "g5-huan-hua-cheng-feng"',
     'title: "幻化成风"',
     'level: "g5"',
@@ -233,6 +238,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
 
   assert.match(
     data,
+    /id: "g4-ai-de-luo-man-shi"[\s\S]*?level: "g4"[\s\S]*?category: "曲目练习"/,
+    '爱的罗曼史 should be assigned to G4 song practice'
+  );
+
+  assert.match(
+    data,
     /id: "g5-huan-hua-cheng-feng"[\s\S]*?level: "g5"[\s\S]*?category: "曲目练习"/,
     '幻化成风 should be assigned to G5 song practice'
   );
@@ -266,6 +277,7 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'assets/scores/ukulele/g2-chong-er-fei/score-01.png',
     'assets/scores/ukulele/g3-summer/score-01.png',
     'assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png',
+    'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png',
     'assets/scores/ukulele/g5-huan-hua-cheng-feng/score-01.png',
   ]) {
     assert.ok(fs.existsSync(path.join(root, scorePath)), `imported score image should exist: ${scorePath}`);
@@ -653,9 +665,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached level rendering');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached cover styles');
 });
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
@@ -733,6 +745,6 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
     'dragging state should visibly switch the logo handle'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3'), 'homepage should bust cached connected lanyard styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached lanyard physics');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached connected lanyard styles');
 });

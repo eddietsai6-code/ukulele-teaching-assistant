@@ -561,6 +561,27 @@
       passStandard: "Offbeats are clear, short, and consistent."
     }),
     makeSong({
+      id: "g4-ai-de-luo-man-shi",
+      title: "爱的罗曼史",
+      artist: "Traditional",
+      level: "g4",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Classical arpeggio",
+      techniques: ["3/4", "80 BPM", "Am", "triplet arpeggio", "position shift"],
+      goal: "练习《爱的罗曼史》的四级古典分解和弦曲目，掌握3/4拍三连音琶音和高把位旋律连接。",
+      focus: "保持每组三连音均匀流动，突出上声部旋律，并在Am、Dm、E、E7之间稳定换位。",
+      practiceOrder: ["空弦拍读三连音", "分句慢练Am段旋律", "单独练习高把位换把", "完整连接和声段落"],
+      commonIssues: ["三连音不均匀", "高把位换把时断音", "低音和伴奏音盖过旋律"],
+      passStandard: "能以80 BPM稳定弹完整曲，三连音均匀，上声部旋律清楚，并准确处理高把位换把。",
+      scoreImages: [
+        {
+          title: "爱的罗曼史 谱面 1",
+          src: "./assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "tiny-waltz",
       title: "Tiny Waltz",
       artist: "Ukulele Template",
