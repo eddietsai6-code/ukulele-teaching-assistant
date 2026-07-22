@@ -533,7 +533,7 @@ test('homepage hides the old fresh frame copy panel', () => {
 test('homepage replaces the chord notebook slot with the rhythm chain game', () => {
   const html = read('index.html');
   const styles = read('assets/styles.css');
-  const localRhythmGameSrc = './assets/rhythm-chain-game/index.html?v=20260710-local-dist';
+  const localRhythmGameSrc = './assets/rhythm-chain-game/index.html?v=20260722-ipad-scroll-reset';
 
   assert.ok(
     html.includes('class="showcase-object notebook-blue rhythm-game-showcase"'),
@@ -599,13 +599,29 @@ test('rhythm game install uses the refreshed local dist copy', () => {
   const html = read('index.html');
   const gameHtml = read('assets/rhythm-chain-game/index.html');
   const gameApp = read('assets/rhythm-chain-game/assets/app.js');
+  const gameStyles = read('assets/rhythm-chain-game/assets/styles.css');
 
   assert.ok(
-    html.includes('./assets/rhythm-chain-game/index.html?v=20260710-local-dist'),
+    html.includes('./assets/rhythm-chain-game/index.html?v=20260722-ipad-scroll-reset'),
     'homepage should use the refreshed local rhythm game build'
   );
   assert.ok(gameHtml.includes('<main class="game-shell">'), 'local rhythm game HTML should be present');
+  assert.ok(gameHtml.includes('./assets/styles.css?v=ipad-scroll-reset'), 'local rhythm game should bust cached iPad scroll styles');
+  assert.ok(gameHtml.includes('./assets/app.js?v=ipad-scroll-reset'), 'local rhythm game should bust cached iPad scroll behavior');
   assert.ok(gameApp.includes('const storageKey = "rhythm-chain-game-progress-v1";'), 'local rhythm game app bundle should be present');
+  assert.ok(gameApp.includes('function resetGameViewport()'), 'slot picker interactions should keep the embedded game viewport anchored');
+  assert.ok(gameApp.includes('window.scrollTo({ top: 0, left: 0, behavior: "auto" });'), 'embedded game should restore its own scroll position after picker changes');
+  assert.equal(gameApp.includes('selectors.slotPicker.scrollIntoView'), false, 'slot picker should not force-scroll the iframe on iPad');
+  assert.match(
+    gameStyles,
+    /body\s*\{[^}]*overscroll-behavior-y:\s*none;/,
+    'embedded rhythm game should not rubber-band the iframe body under iPad touch scrolling'
+  );
+  assert.match(
+    gameStyles,
+    /\.slot-picker-grid\s*\{[^}]*-webkit-overflow-scrolling:\s*touch;[^}]*overscroll-behavior:\s*auto;/,
+    'slot picker should keep smooth local touch scrolling without trapping the page'
+  );
   assert.equal(html.includes('?embed=showcase'), false, 'homepage should not reuse the old embedded query cache');
 });
 

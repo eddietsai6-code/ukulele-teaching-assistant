@@ -402,12 +402,20 @@ function renderSlotPicker() {
   );
 }
 
+function resetGameViewport() {
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
+}
+
 function openSlotPicker(slotIndex) {
   state.selectedSlotIndex = Math.min(state.config.comboCount - 1, Math.max(0, Number(slotIndex) || 0));
   renderPlayerChain();
   renderSlotPicker();
   setStatus(`选择第 ${state.selectedSlotIndex + 1} 格`, "idle");
-  selectors.slotPicker.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  resetGameViewport();
 }
 
 function closeSlotPicker() {
@@ -415,6 +423,7 @@ function closeSlotPicker() {
   selectors.slotPicker.hidden = true;
   selectors.slotPickerGrid.replaceChildren();
   if (state.config) renderPlayerChain();
+  resetGameViewport();
 }
 
 function setSlotPattern(slotIndex, patternId) {
