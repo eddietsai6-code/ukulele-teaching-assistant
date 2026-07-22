@@ -99,24 +99,29 @@ export async function buildPublishPlan(manifestPathValue, options = {}) {
 }
 
 function runWranglerUpload({ bucket, upload }) {
-  const executable = process.platform === "win32" ? "npx.cmd" : "npx";
+  const wranglerArgs = [
+    "--yes",
+    "wrangler@latest",
+    "r2",
+    "object",
+    "put",
+    `${bucket}/${upload.key}`,
+    "--file",
+    upload.filePath,
+    "--content-type",
+    upload.contentType,
+    "--remote"
+  ];
+  const executable = process.platform === "win32" ? "cmd.exe" : "npx";
+  const args = process.platform === "win32" ? ["/d", "/c", "npx.cmd", ...wranglerArgs] : wranglerArgs;
   const result = spawnSync(
     executable,
-    [
-      "--yes",
-      "wrangler@latest",
-      "r2",
-      "object",
-      "put",
-      `${bucket}/${upload.key}`,
-      "--file",
-      upload.filePath,
-      "--content-type",
-      upload.contentType,
-      "--remote"
-    ],
-    { cwd: process.cwd(), env: process.env, stdio: "inherit" }
+    args,
+    { cwd: process.cwd(), env: process.env, encoding: "utf8" }
   );
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+  if (result.error) throw new Error(`R2 upload failed: ${upload.key}; ${result.error.message}`);
   if (result.status !== 0) throw new Error(`R2 upload failed: ${upload.key}`);
 }
 
