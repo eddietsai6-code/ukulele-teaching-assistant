@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      HAS_CF_SECRETS: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,8 +28,13 @@ jobs:
         run: npm run build
 
       - name: Deploy to Cloudflare Pages
+        if: env.HAS_CF_SECRETS == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name ukulele-teaching-assistant --branch main
+
+      - name: Skip Cloudflare deploy without secrets
+        if: env.HAS_CF_SECRETS != 'true'
+        run: echo "Cloudflare deploy skipped because CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not configured."
