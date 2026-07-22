@@ -1,0 +1,12 @@
+name = "ukulele-teaching-assistant"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-07-23"
+
+[[d1_databases]]
+binding = "UKEBOOK_DB"
+database_name = "ukulelebook-content"
+database_id = "05f2841f-3524-4366-9c03-006cb2dc3a03"
+
+[[r2_buckets]]
+binding = "UKEBOOK_MEDIA"
+bucket_name = "ukulelebook-media"

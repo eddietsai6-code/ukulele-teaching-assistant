@@ -11,9 +11,12 @@
   },
   "homepage": "https://ukulele-teaching-assistant.pages.dev",
   "scripts": {
-    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js tests/rsl-ukulele-import.test.js",
+    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js tests/rsl-ukulele-import.test.js tests/content-config.test.mjs tests/catalog-runtime.test.mjs tests/content-api.test.mjs tests/content-publisher.test.mjs tests/build-site.test.mjs",
     "check": "node tools/check-syntax.mjs",
-    "serve": "python -m http.server 4184 --bind 127.0.0.1"
+    "serve": "python -m http.server 4184 --bind 127.0.0.1",
+    "build": "node scripts/build-site.mjs",
+    "content:publish": "node scripts/publish-content.mjs",
+    "content:activate": "node scripts/publish-content.mjs --activate"
   },
   "keywords": [
     "ukulele",
