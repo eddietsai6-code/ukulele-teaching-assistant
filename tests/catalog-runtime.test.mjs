@@ -45,11 +45,11 @@ test("dynamic songs are normalized for UkuleleBook and require immutable media U
   );
 });
 
-test("dynamic catalog merges after static songs and skips duplicate static IDs", () => {
+test("dynamic catalog can replace static songs with the same stable ID", () => {
   const catalog = mergeCatalog(staticData, {
     releaseId: "release-20260723-a",
     songs: [
-      { ...dynamicSong, id: "duplicate", title: "Should Not Override", sortOrder: 1 },
+      { ...dynamicSong, id: "duplicate", title: "Dynamic Replacement", sortOrder: 1 },
       dynamicSong
     ]
   });
@@ -57,6 +57,9 @@ test("dynamic catalog merges after static songs and skips duplicate static IDs",
   assert.equal(catalog.releaseId, "release-20260723-a");
   assert.deepEqual(catalog.songs.map((song) => song.id), ["static-a", "duplicate", "dynamic-song"]);
   assert.equal(catalog.songs[0].catalogOrigin, "static");
+  assert.equal(catalog.songs[1].title, "Dynamic Replacement");
+  assert.equal(catalog.songs[1].catalogOrigin, "dynamic");
+  assert.equal(catalog.songs[1].replacedStatic, true);
   assert.equal(catalog.songs[2].catalogOrigin, "dynamic");
 });
 

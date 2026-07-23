@@ -87,15 +87,24 @@ export function mergeCatalog(staticData, manifest = null) {
     catalogOrigin: "static",
     catalogOrder: index
   }));
-  const knownIds = new Set(staticSongs.map((song) => song.id));
-  const dynamicSongs = [];
+  const mergedSongs = [...staticSongs];
+  const idToIndex = new Map(staticSongs.map((song, index) => [song.id, index]));
 
   for (const candidate of manifest?.songs || []) {
     try {
       const song = normalizeDynamicSong(candidate);
-      if (knownIds.has(song.id)) continue;
-      knownIds.add(song.id);
-      dynamicSongs.push(song);
+      if (idToIndex.has(song.id)) {
+        const index = idToIndex.get(song.id);
+        const previous = mergedSongs[index];
+        mergedSongs[index] = {
+          ...song,
+          catalogOrder: previous.catalogOrder ?? index,
+          replacedStatic: previous.catalogOrigin === "static" || previous.replacedStatic === true
+        };
+        continue;
+      }
+      idToIndex.set(song.id, mergedSongs.length);
+      mergedSongs.push(song);
     } catch (error) {
       console.warn("Skipped invalid UkuleleBook content record.", error);
     }
@@ -103,7 +112,7 @@ export function mergeCatalog(staticData, manifest = null) {
 
   return {
     levels: staticData?.levels || [],
-    songs: [...staticSongs, ...dynamicSongs],
+    songs: mergedSongs,
     releaseId: manifest?.releaseId || null
   };
 }
