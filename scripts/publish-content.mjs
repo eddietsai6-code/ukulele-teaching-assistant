@@ -66,23 +66,24 @@ async function compileMedia(items, kind, manifestDirectory, releaseId, songId) {
 }
 
 export async function buildPublishPlan(manifestPathValue, options = {}) {
-  const manifestPath = path.resolve(manifestPathValue);
-  const manifestDirectory = path.dirname(manifestPath);
-  const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
-  const song = manifest.song || {};
+  const manifestPaths = (Array.isArray(manifestPathValue) ? manifestPathValue : [manifestPathValue])
+    .filter(Boolean)
+    .map((item) => path.resolve(item));
+  if (!manifestPaths.length) throw new Error("Usage: npm run content:publish -- <path-to-song.json> [more-song.json ...]");
   const now = options.now || new Date();
   const suffix = options.releaseSuffix || randomBytes(6).toString("hex");
   const releaseId = `release-${compactTimestamp(now)}-${suffix}`;
 
-  const audio = await compileMedia(manifest.audio || [], "audio", manifestDirectory, releaseId, song.id);
-  const scores = await compileMedia(manifest.scores || [], "score", manifestDirectory, releaseId, song.id);
-  const uploads = [...audio.uploads, ...scores.uploads];
-  if (!uploads.length) throw new Error("A publication must contain at least one audio or score file.");
-
-  const payload = validatePublishBatchPayload({
-    releaseId,
-    createdAt: now.toISOString(),
-    songs: [{
+  const uploads = [];
+  const songs = [];
+  for (const manifestPath of manifestPaths) {
+    const manifestDirectory = path.dirname(manifestPath);
+    const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
+    const song = manifest.song || {};
+    const audio = await compileMedia(manifest.audio || [], "audio", manifestDirectory, releaseId, song.id);
+    const scores = await compileMedia(manifest.scores || [], "score", manifestDirectory, releaseId, song.id);
+    uploads.push(...audio.uploads, ...scores.uploads);
+    songs.push({
       ...song,
       source: song.source || "Teacher Upload",
       category: song.category || "Teaching Piece",
@@ -90,12 +91,19 @@ export async function buildPublishPlan(manifestPathValue, options = {}) {
       techniques: song.techniques || [],
       audio: audio.records,
       scoreImages: scores.records
-    }],
+    });
+  }
+  if (!uploads.length) throw new Error("A publication must contain at least one audio or score file.");
+
+  const payload = validatePublishBatchPayload({
+    releaseId,
+    createdAt: now.toISOString(),
+    songs,
     media: uploads.map(({ key, sha256, size, contentType }) => ({ key, sha256, size, contentType })),
     replaceAll: options.replaceAll === true
   });
 
-  return { manifestPath, uploads, payload, dryRun: options.dryRun === true };
+  return { manifestPath: manifestPaths[0], manifestPaths, uploads, payload, dryRun: options.dryRun === true };
 }
 
 function runWranglerUpload({ bucket, upload }) {
@@ -176,9 +184,9 @@ async function main() {
     return;
   }
 
-  if (!commandOrManifest) throw new Error("Usage: npm run content:publish -- <path-to-song.json>");
+  if (!commandOrManifest) throw new Error("Usage: npm run content:publish -- <path-to-song.json> [more-song.json ...]");
   const bucket = process.env.UKEBOOK_R2_BUCKET || "ukulelebook-media";
-  const plan = await buildPublishPlan(commandOrManifest, { dryRun, replaceAll });
+  const plan = await buildPublishPlan(filteredArgs, { dryRun, replaceAll });
   if (plan.dryRun) {
     console.log(JSON.stringify({
       releaseId: plan.payload.releaseId,
