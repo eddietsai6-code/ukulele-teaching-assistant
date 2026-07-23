@@ -122,15 +122,24 @@ function runWranglerUpload({ bucket, upload }) {
   ];
   const executable = process.platform === "win32" ? "cmd.exe" : "npx";
   const args = process.platform === "win32" ? ["/d", "/c", "npx.cmd", ...wranglerArgs] : wranglerArgs;
-  const result = spawnSync(
-    executable,
-    args,
-    { cwd: process.cwd(), env: process.env, encoding: "utf8" }
-  );
-  if (result.stdout) process.stdout.write(result.stdout);
-  if (result.stderr) process.stderr.write(result.stderr);
-  if (result.error) throw new Error(`R2 upload failed: ${upload.key}; ${result.error.message}`);
-  if (result.status !== 0) throw new Error(`R2 upload failed: ${upload.key}`);
+  const maxAttempts = Number(process.env.UKEBOOK_UPLOAD_ATTEMPTS || 4);
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const result = spawnSync(
+      executable,
+      args,
+      { cwd: process.cwd(), env: process.env, encoding: "utf8" }
+    );
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    if (!result.error && result.status === 0) return;
+    if (attempt === maxAttempts) {
+      if (result.error) throw new Error(`R2 upload failed: ${upload.key}; ${result.error.message}`);
+      throw new Error(`R2 upload failed: ${upload.key}`);
+    }
+    const waitMs = attempt * 2000;
+    console.warn(`R2 upload failed for ${upload.key}; retrying ${attempt + 1}/${maxAttempts} in ${waitMs}ms.`);
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, waitMs);
+  }
 }
 
 async function signedPost({ siteUrl, endpoint, secret, payload }) {
