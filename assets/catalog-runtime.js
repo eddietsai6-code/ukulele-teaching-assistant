@@ -97,7 +97,15 @@ export function mergeCatalog(staticData, manifest = null) {
         const index = idToIndex.get(song.id);
         const previous = mergedSongs[index];
         mergedSongs[index] = {
+          ...previous,
           ...song,
+          audio: song.audio.length ? song.audio : previous.audio || [],
+          scoreImages: song.scoreImages.length ? song.scoreImages : previous.scoreImages || [],
+          scoreImageCount: song.scoreImages.length ? song.scoreImages.length : previous.scoreImages?.length || 0,
+          teaching: {
+            ...(previous.teaching || {}),
+            ...(song.teaching || {})
+          },
           catalogOrder: previous.catalogOrder ?? index,
           replacedStatic: previous.catalogOrigin === "static" || previous.replacedStatic === true
         };

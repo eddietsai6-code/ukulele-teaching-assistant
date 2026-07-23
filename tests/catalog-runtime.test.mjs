@@ -7,7 +7,18 @@ const staticData = {
   levels: [{ id: "debut" }, { id: "g1" }, { id: "g2" }],
   songs: [
     { id: "static-a", title: "Static A", artist: "Teacher", level: "debut", source: "Static", category: "Song", style: "Starter", techniques: [], audio: [], scoreImages: [] },
-    { id: "duplicate", title: "Static Duplicate", artist: "Teacher", level: "g1", source: "Static", category: "Song", style: "Starter", techniques: [], audio: [], scoreImages: [] }
+    {
+      id: "duplicate",
+      title: "Static Duplicate",
+      artist: "Teacher",
+      level: "g1",
+      source: "Static",
+      category: "Song",
+      style: "Starter",
+      techniques: [],
+      audio: [{ title: "Static Audio", src: "./assets/audio/static/full.mp3" }],
+      scoreImages: []
+    }
   ]
 };
 
@@ -61,6 +72,26 @@ test("dynamic catalog can replace static songs with the same stable ID", () => {
   assert.equal(catalog.songs[1].catalogOrigin, "dynamic");
   assert.equal(catalog.songs[1].replacedStatic, true);
   assert.equal(catalog.songs[2].catalogOrigin, "dynamic");
+});
+
+test("dynamic score-only replacement keeps existing static audio", () => {
+  const catalog = mergeCatalog(staticData, {
+    releaseId: "release-20260723-a",
+    songs: [
+      {
+        ...dynamicSong,
+        id: "duplicate",
+        title: "Dynamic Score Update",
+        audio: [],
+        scoreImages: [{ title: "New Page", src: "/media/release-20260723-a/duplicate/score-01-new-123456789abc.png" }]
+      }
+    ]
+  });
+
+  assert.equal(catalog.songs[1].title, "Dynamic Score Update");
+  assert.equal(catalog.songs[1].audio[0].title, "Static Audio");
+  assert.equal(catalog.songs[1].scoreImages[0].title, "New Page");
+  assert.equal(catalog.songs[1].scoreImageCount, 1);
 });
 
 test("catalog loader reads active release manifest and falls back to cached or static data", async () => {
