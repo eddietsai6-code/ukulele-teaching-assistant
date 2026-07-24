@@ -19,6 +19,20 @@ function compactTimestamp(date) {
   return date.toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 15);
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function resolveReleaseId(options, now) {
+  if (options.releaseId) {
+    const value = String(options.releaseId).trim();
+    if (!/^release-[a-z0-9-]+$/i.test(value)) throw new Error(`Invalid release id: ${value}`);
+    return value;
+  }
+  const suffix = options.releaseSuffix || randomBytes(6).toString("hex");
+  return `release-${compactTimestamp(now)}-${suffix}`;
+}
+
 function safeLocalFile(baseDirectory, fileValue) {
   const raw = String(fileValue || "").trim();
   if (!raw) throw new Error("Every audio and score item needs a file path.");
@@ -71,8 +85,7 @@ export async function buildPublishPlan(manifestPathValue, options = {}) {
     .map((item) => path.resolve(item));
   if (!manifestPaths.length) throw new Error("Usage: npm run content:publish -- <path-to-song.json> [more-song.json ...]");
   const now = options.now || new Date();
-  const suffix = options.releaseSuffix || randomBytes(6).toString("hex");
-  const releaseId = `release-${compactTimestamp(now)}-${suffix}`;
+  const releaseId = resolveReleaseId(options, now);
 
   const uploads = [];
   const songs = [];
@@ -144,22 +157,62 @@ function runWranglerUpload({ bucket, upload }) {
 
 async function signedPost({ siteUrl, endpoint, secret, payload }) {
   const body = JSON.stringify(payload);
-  const timestamp = String(Date.now());
-  const nonce = randomBytes(18).toString("base64url");
-  const signature = await createSignature({ secret, timestamp, nonce, body });
-  const response = await fetch(new URL(endpoint, siteUrl), {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-ukebook-timestamp": timestamp,
-      "x-ukebook-nonce": nonce,
-      "x-ukebook-signature": signature
-    },
-    body
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || `Publish API failed with HTTP ${response.status}.`);
-  return result;
+  const maxAttempts = Number(process.env.UKEBOOK_API_ATTEMPTS || 6);
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const timestamp = String(Date.now());
+      const nonce = randomBytes(18).toString("base64url");
+      const signature = await createSignature({ secret, timestamp, nonce, body });
+      const response = await fetch(new URL(endpoint, siteUrl), {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-ukebook-timestamp": timestamp,
+          "x-ukebook-nonce": nonce,
+          "x-ukebook-signature": signature
+        },
+        body
+      });
+      const result = await response.json().catch(() => ({}));
+      if (response.ok) return result;
+      const error = new Error(result.error || `Publish API failed with HTTP ${response.status}.`);
+      error.retryable = response.status >= 500;
+      throw error;
+    } catch (error) {
+      if (error?.retryable === false || attempt === maxAttempts) throw error;
+      const waitMs = attempt * 2000;
+      console.warn(`Publish API request failed; retrying ${attempt + 1}/${maxAttempts} in ${waitMs}ms.`);
+      await sleep(waitMs);
+    }
+  }
+  throw new Error("Publish API request failed.");
+}
+
+function parseCliArgs(args) {
+  const options = { dryRun: false, replaceAll: false, skipUpload: false };
+  const positional = [];
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--dry-run") {
+      options.dryRun = true;
+    } else if (arg === "--replace-all") {
+      options.replaceAll = true;
+    } else if (arg === "--skip-upload") {
+      options.skipUpload = true;
+    } else if (arg === "--release-id") {
+      const value = args[index + 1];
+      if (!value) throw new Error("Usage: --release-id <release-id>");
+      options.releaseId = value;
+      index += 1;
+    } else if (arg === "--activate") {
+      positional.push(arg);
+    } else if (arg.startsWith("--")) {
+      throw new Error(`Unknown option: ${arg}`);
+    } else {
+      positional.push(arg);
+    }
+  }
+  return { options, positional };
 }
 
 async function loadLocalEnvironment() {
@@ -177,11 +230,8 @@ async function loadLocalEnvironment() {
 
 async function main() {
   await loadLocalEnvironment();
-  const args = process.argv.slice(2);
-  const dryRun = args.includes("--dry-run");
-  const replaceAll = args.includes("--replace-all");
-  const filteredArgs = args.filter((arg) => arg !== "--dry-run" && arg !== "--replace-all");
-  const [commandOrManifest, value] = filteredArgs;
+  const { options, positional } = parseCliArgs(process.argv.slice(2));
+  const [commandOrManifest, value] = positional;
   const secret = process.env.UKEBOOK_PUBLISH_SECRET;
   const siteUrl = process.env.UKEBOOK_SITE_URL || "https://ukulele-teaching-assistant.pages.dev";
 
@@ -195,7 +245,7 @@ async function main() {
 
   if (!commandOrManifest) throw new Error("Usage: npm run content:publish -- <path-to-song.json> [more-song.json ...]");
   const bucket = process.env.UKEBOOK_R2_BUCKET || "ukulelebook-media";
-  const plan = await buildPublishPlan(filteredArgs, { dryRun, replaceAll });
+  const plan = await buildPublishPlan(positional, options);
   if (plan.dryRun) {
     console.log(JSON.stringify({
       releaseId: plan.payload.releaseId,
@@ -205,7 +255,9 @@ async function main() {
     return;
   }
   if (!secret) throw new Error("Set UKEBOOK_PUBLISH_SECRET before publishing content.");
-  for (const upload of plan.uploads) runWranglerUpload({ bucket, upload });
+  if (!options.skipUpload) {
+    for (const upload of plan.uploads) runWranglerUpload({ bucket, upload });
+  }
   const result = await signedPost({ siteUrl, endpoint: "/api/admin/publish-batch", secret, payload: plan.payload });
   console.log(`Published ${(result.songIds || plan.payload.songs.map((song) => song.id)).join(", ")} as ${result.releaseId}.`);
   console.log(`${siteUrl.replace(/\/$/, "")}/api/catalog/releases/${result.releaseId}`);

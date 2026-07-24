@@ -52,6 +52,10 @@ test("local publisher builds immutable hash-addressed upload plans", async () =>
   assert.equal(plan.uploads[0].contentType, "audio/mpeg");
   assert.equal(plan.uploads[1].contentType, "image/png");
   assert.equal(plan.uploads.every((item) => item.size > 0 && /^[a-f0-9]{64}$/.test(item.sha256)), true);
+
+  const fixedPlan = await buildPublishPlan(manifestPath, { releaseId: "release-manual-retry-123" });
+  assert.equal(fixedPlan.payload.releaseId, "release-manual-retry-123");
+  assert.match(fixedPlan.uploads[0].key, /^release-manual-retry-123\/dynamic-song\/audio-01-full-[a-f0-9]{12}\.mp3$/);
 });
 
 test("local publisher supports dry-run plans and rejects files outside manifest directory", async () => {
