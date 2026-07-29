@@ -1,8 +1,12 @@
 import { filterSongs } from "./app/catalog/filtering.js";
 import { getPublicDomRoots } from "./app/core/dom-roots.js";
-import { escapeAttribute, escapeHtml } from "./app/shared/escape.js";
+import { renderAudioPane } from "./app/detail/audio-pane.js";
+import { renderDetailShell } from "./app/detail/detail-shell.js";
+import { applyDetailTab } from "./app/detail/detail-tabs.js";
+import { renderLessonPane } from "./app/detail/lesson-pane.js";
+import { renderMetronomePane } from "./app/detail/metronome-pane.js";
+import { renderScorePane } from "./app/detail/score-pane.js";
 import { levelShort } from "./app/shared/formatting.js";
-import { activeAudioVersionIndex, audioVersionSlots } from "./app/shared/media.js";
 import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
 
 (function () {
@@ -1763,142 +1767,6 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     });
   }
 
-  function bindAudioProgress() {
-    // Template build: audio playback is intentionally disabled until licensed ukulele media is added.
-  }
-
-  function renderAudio(song) {
-    const slots = audioVersionSlots(song);
-    if (!slots.length) {
-      return `
-        <div class="audio-workbench">
-          <div class="resource-note">
-            <span>音频</span>
-            <strong>歌曲音频待加入</strong>
-            <small>导入授权音频后，这里会显示可播放版本。</small>
-          </div>
-        </div>
-      `;
-    }
-    const activeIndex = activeAudioVersionIndex(song, slots, state.audioVersionBySong);
-    const activeSlot = slots[activeIndex];
-    const playerLabel = `${song.title} - ${activeSlot.displayTitle}`;
-
-    return `
-      <div class="audio-workbench">
-        <div class="audio-player-frame">
-          <div class="audio-version-head">
-            <span>播放器版本</span>
-            <strong>${escapeHtml(song.title)}</strong>
-            <em>${escapeHtml(activeSlot.displayTitle)}</em>
-          </div>
-          <div class="audio-version-selector" role="tablist" aria-label="${escapeAttribute(song.title)} audio versions">
-            ${slots
-              .map(
-                (slot) => `
-                  <button
-                    type="button"
-                    class="audio-version-button${slot.index === activeIndex ? " is-active" : ""}"
-                    role="tab"
-                    aria-selected="${slot.index === activeIndex ? "true" : "false"}"
-                    data-audio-version="${slot.index}"
-                  >
-                    <span>${slot.number}</span>
-                    <strong>${escapeHtml(slot.displayTitle)}</strong>
-                    <small>${escapeHtml(slot.src)}</small>
-                  </button>
-                `
-              )
-              .join("")}
-          </div>
-          <div class="audio-player-shell" data-audio-player-shell>
-            <audio-speed-player
-              src="${escapeAttribute(activeSlot.src)}"
-              label="${escapeAttribute(playerLabel)}"
-              rate="1"
-              rate-presets="0.75,0.85,1,1.25,1.5"
-              min-rate="0.75"
-              max-rate="1.5"
-              step="0.05"
-              engine="rubberband"
-              preload="metadata"
-              keep-pitch
-              visualizer="metaballs"
-              no-upload
-            ></audio-speed-player>
-            <p>播放器会读取当前曲目的项目内音频资源。</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderScores(song) {
-    if (!song.scoreImages.length) {
-      return `
-        <div class="resource-note">
-          <span>谱面图片</span>
-          <strong>谱面图片待加入</strong>
-          <small>后续可按 Intro、Verse、Chorus、Fill 等段落上传。</small>
-        </div>
-      `;
-    }
-    return song.scoreImages
-      .map(
-        (item) => `
-          <figure class="score-card score-sheet">
-            <div class="score-image-frame">
-              <img src="${item.src}" alt="${item.title || song.title}" loading="eager" decoding="async" />
-            </div>
-          </figure>
-        `
-      )
-      .join("");
-  }
-
-  function renderLesson(song, level) {
-    return `
-      <div class="practice-steps">
-        ${song.teaching.practiceOrder
-          .map(
-            (step, index) => `
-              <div>
-                <span>${String(index + 1).padStart(2, "0")}</span>
-                <strong>${step}</strong>
-              </div>
-            `
-          )
-          .join("")}
-      </div>
-      <dl class="lesson-list">
-        <dt>教学目标</dt><dd>${song.teaching.goal}</dd>
-        <dt>技术要点</dt><dd>${song.teaching.focus}</dd>
-        <dt>常见问题</dt><dd>${song.teaching.commonIssues.join("；")}</dd>
-        <dt>通过标准</dt><dd>${song.teaching.passStandard}</dd>
-        <dt>等级依据</dt><dd>${level.label} · ${level.core}</dd>
-      </dl>
-    `;
-  }
-
-  function renderEvidence(song, level) {
-    return `
-      <div class="evidence-tags">
-        <div><span>grade</span><strong>${level.label}</strong><small>${level.core}</small></div>
-        <div><span>source</span><strong>${song.source}</strong><small>${song.category}</small></div>
-        <div><span>style</span><strong>${song.style}</strong><small>${song.artist || "Ukulele Template"}</small></div>
-      </div>
-      <p>${level.boundary}</p>
-      <div class="song-tags">${techButtonMarkup(song.techniques)}</div>
-    `;
-  }
-
-  function renderContentPane(song, level) {
-    if (state.detailTab === "score") return `<div class="score-grid">${renderScores(song)}</div>`;
-    if (state.detailTab === "metronome") return `<div class="lesson-metronome-host" data-metronome-host></div>`;
-    if (state.detailTab === "evidence") return renderEvidence(song, level);
-    return renderLesson(song, level);
-  }
-
   function mountLessonMetronome(root = els.songDetail) {
     const host = root?.querySelector("[data-metronome-host]");
     if (!host) return;
@@ -1911,23 +1779,33 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     });
   }
 
-  function updateSongDetailTab(song, level) {
-    const audioPane = els.songDetail.querySelector("[data-audio-pane]");
-    const contentPane = els.songDetail.querySelector("[data-content-pane]");
+  function normalizeDetailTab(tab) {
+    return ["lesson", "audio", "score", "metronome"].includes(tab) ? tab : "lesson";
+  }
 
-    els.songDetail.querySelectorAll("[data-tab]").forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.tab === state.detailTab);
+  function refreshAudioPane(song) {
+    const audioPane = els.songDetail.querySelector('[data-detail-pane="audio"]');
+    if (!audioPane) return;
+    audioPane.innerHTML = renderAudioPane({ song, audioVersionBySong: state.audioVersionBySong });
+    bindAudioVersionButtons(audioPane, song);
+  }
+
+  function bindAudioVersionButtons(root, song) {
+    root.querySelectorAll("[data-audio-version]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        state.audioVersionBySong[song.id] = Number(button.dataset.audioVersion || 0);
+        state.detailTab = "audio";
+        updateSongDetailTab();
+        refreshAudioPane(song);
+      });
     });
+  }
 
-    if (audioPane) audioPane.hidden = state.detailTab !== "audio";
-    if (contentPane) {
-      contentPane.hidden = state.detailTab === "audio";
-      if (state.detailTab !== "audio") {
-        contentPane.innerHTML = renderContentPane(song, level);
-        bindDetailTechButtons(contentPane);
-        mountLessonMetronome(contentPane);
-      }
-    }
+  function updateSongDetailTab() {
+    state.detailTab = normalizeDetailTab(state.detailTab);
+    applyDetailTab(els.songDetail, state.detailTab);
   }
 
   function renderSongDetail() {
@@ -1938,6 +1816,15 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
       return;
     }
     const level = levelById[song.level];
+    state.detailTab = normalizeDetailTab(state.detailTab);
+    const detailShell = renderDetailShell({
+      activeTab: state.detailTab,
+      audioHtml: renderAudioPane({ song, audioVersionBySong: state.audioVersionBySong }),
+      lessonHtml: renderLessonPane({ song, level }),
+      scoreHtml: `<div class="score-grid">${renderScorePane({ song })}</div>`,
+      metronomeHtml: renderMetronomePane()
+    });
+
     els.songDetail.innerHTML = `
       <div class="lesson-cover">
         <span class="label-field">Song</span>
@@ -1950,35 +1837,18 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
         </div>
         <div class="song-tags">${techButtonMarkup(song.techniques)}</div>
       </div>
-      <div class="lesson-tabs" role="tablist" aria-label="歌曲详情">
-        <button type="button" class="${state.detailTab === "lesson" ? "is-active" : ""}" data-tab="lesson">教学</button>
-        <button type="button" class="${state.detailTab === "audio" ? "is-active" : ""}" data-tab="audio">音频</button>
-        <button type="button" class="${state.detailTab === "score" ? "is-active" : ""}" data-tab="score">谱面</button>
-        <button type="button" class="${state.detailTab === "metronome" ? "is-active" : ""}" data-tab="metronome">节拍器</button>
-      </div>
-      <div class="lesson-pane lesson-audio-pane" data-audio-pane ${state.detailTab === "audio" ? "" : "hidden"}>${renderAudio(song)}</div>
-      <div class="lesson-pane" data-content-pane ${state.detailTab === "audio" ? "hidden" : ""}>${state.detailTab === "audio" ? "" : renderContentPane(song, level)}</div>
+      ${detailShell}
     `;
 
     els.songDetail.querySelectorAll("[data-tab]").forEach((button) => {
       button.addEventListener("click", () => {
         state.detailTab = button.dataset.tab;
-        updateSongDetailTab(song, level);
+        updateSongDetailTab();
       });
     });
 
-    els.songDetail.querySelectorAll("[data-audio-version]").forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        state.audioVersionBySong[song.id] = Number(button.dataset.audioVersion || 0);
-        state.detailTab = "audio";
-        renderSongDetail();
-      });
-    });
-
+    bindAudioVersionButtons(els.songDetail, song);
     bindDetailTechButtons(els.songDetail);
-    bindAudioProgress(els.songDetail);
     mountLessonMetronome(els.songDetail);
   }
 

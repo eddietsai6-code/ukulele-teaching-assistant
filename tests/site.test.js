@@ -128,15 +128,17 @@ test('ukulele tuner assets keep microphone tuning behavior', () => {
 test('lesson detail embeds a persistent professional metronome tab', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
+  const detailShell = read('assets/app/detail/detail-shell.js');
+  const metronomePane = read('assets/app/detail/metronome-pane.js');
   const metronome = read('assets/lesson-metronome.js');
   const core = read('assets/professional-metronome-core.js');
   const css = read('assets/styles.css');
 
   assert.ok(html.includes('assets/lesson-metronome.js'), 'homepage should load the metronome module');
-  assert.ok(app.includes('data-tab="metronome"'), 'detail tabs should include the metronome tab');
-  assert.ok(app.includes('data-metronome-host'), 'detail pane should expose a metronome mount point');
+  assert.ok(detailShell.includes('renderTabButton("metronome"'), 'detail tabs should include the metronome tab');
+  assert.ok(metronomePane.includes('data-metronome-host'), 'detail pane should expose a metronome mount point');
   assert.ok(app.includes('window.UkeBookMetronome?.mount'), 'app shell should mount the persistent metronome controller');
-  assert.equal(app.includes('data-tab="evidence">依据'), false, 'old evidence tab should be replaced');
+  assert.equal(detailShell.includes('data-tab="evidence"'), false, 'old evidence tab should be replaced');
 
   for (const expected of [
     '__UKEBOOK_LESSON_METRONOME__',
@@ -173,6 +175,7 @@ test('lesson detail embeds a persistent professional metronome tab', () => {
 test('lesson detail mounts the Audio Speed Player from fixed song audio', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
+  const audioPane = read('assets/app/detail/audio-pane.js');
   const media = read('assets/app/shared/media.js');
   const data = read('assets/data.js');
   const css = read('assets/styles.css');
@@ -195,22 +198,23 @@ test('lesson detail mounts the Audio Speed Player from fixed song audio', () => 
     'max-rate="1.5"',
     'step="0.05"',
     'data-audio-player-shell',
-    'activeAudioVersionIndex(song, slots, state.audioVersionBySong)',
+    'activeAudioVersionIndex(song, slots, audioVersionBySong)',
     '<strong>${escapeHtml(song.title)}</strong>',
     '<em>${escapeHtml(activeSlot.displayTitle)}</em>',
     '<strong>${escapeHtml(slot.displayTitle)}</strong>',
   ]) {
-    assert.ok(app.includes(expected), `missing audio player integration token: ${expected}`);
+    assert.ok(audioPane.includes(expected), `missing audio player integration token: ${expected}`);
   }
 
-  assert.equal(app.includes('label="Practice pad"'), false, 'songs with project audio should not require the upload-only Practice pad flow');
-  assert.equal(app.includes('\n              version-selector'), false, 'the new player should receive the active fixed src instead of component-side version selection');
-  assert.equal(app.includes('<strong>${escapeHtml(activeSlot.title)}</strong>'), false, 'audio heading should not repeat the full imported audio title');
-  assert.equal(app.includes('<em>${escapeHtml(playerLabel)}</em>'), false, 'audio heading should not echo the full player label after the song title');
+  assert.equal(audioPane.includes('label="Practice pad"'), false, 'songs with project audio should not require the upload-only Practice pad flow');
+  assert.equal(audioPane.includes('\n              version-selector'), false, 'the new player should receive the active fixed src instead of component-side version selection');
+  assert.equal(audioPane.includes('<strong>${escapeHtml(activeSlot.title)}</strong>'), false, 'audio heading should not repeat the full imported audio title');
+  assert.equal(audioPane.includes('<em>${escapeHtml(playerLabel)}</em>'), false, 'audio heading should not echo the full player label after the song title');
   assert.equal(data.includes('createPlaceholderAudio(song)'), false, 'song data should not create synthetic audio versions');
   assert.equal(data.includes('assets/audio-placeholders/'), false, 'catalog data should not reference placeholder audio paths');
-  assert.equal(app.includes('AUDIO_VERSION_COUNT'), false, 'audio tab should not create fixed placeholder version controls');
-  assert.ok(app.includes('if (!slots.length)'), 'audio tab should show an empty state when a song has no audio');
+  assert.equal(audioPane.includes('AUDIO_VERSION_COUNT'), false, 'audio tab should not create fixed placeholder version controls');
+  assert.ok(audioPane.includes('if (!slots.length)'), 'audio tab should show an empty state when a song has no audio');
+  assert.ok(app.includes('renderAudioPane({ song, audioVersionBySong: state.audioVersionBySong })'), 'app shell should feed selected song audio into the audio pane module');
   assert.ok(media.includes('compactAudioVersionTitle(song.title, title, index)'), 'audio version titles should be normalized in the media helper module');
   assert.ok(css.includes('.audio-player-shell'), 'audio speed player should have a native frame in the detail audio area');
 });
