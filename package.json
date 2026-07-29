@@ -11,7 +11,7 @@
   },
   "homepage": "https://ukulele-teaching-assistant.pages.dev",
   "scripts": {
-    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js tests/rsl-ukulele-import.test.js tests/content-config.test.mjs tests/catalog-runtime.test.mjs tests/content-api.test.mjs tests/content-publisher.test.mjs tests/build-site.test.mjs tests/frontend-modules.test.mjs tests/detail-modules.test.mjs",
+    "test": "node --test tests/site.test.js tests/ukulele-template-ui.test.js tests/rsl-ukulele-import.test.js tests/content-config.test.mjs tests/catalog-runtime.test.mjs tests/content-api.test.mjs tests/content-publisher.test.mjs tests/build-site.test.mjs tests/frontend-modules.test.mjs tests/detail-modules.test.mjs tests/home-level-modules.test.mjs",
     "check": "node tools/check-syntax.mjs",
     "serve": "python -m http.server 4184 --bind 127.0.0.1",
     "build": "node scripts/build-site.mjs",

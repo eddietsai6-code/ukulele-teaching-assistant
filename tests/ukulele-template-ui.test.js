@@ -59,8 +59,9 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
   const html = read('index.html');
   const styles = read('assets/styles.css');
   const app = read('assets/app.js');
+  const lanyard = read('assets/app/home/lanyard.js');
   const data = read('assets/data.js');
-  const combined = [html, styles, app, data].join('\n');
+  const combined = [html, styles, app, lanyard, data].join('\n');
 
   for (const expected of [
     'UkuleleBook',
@@ -72,10 +73,7 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     '清新多巴胺',
     'uke-fresh-theme',
     'ukulele-lanyard',
-    'drawTropicalBadgeScene',
-    'drawBadgeUkulele',
-    'drawPalmTree',
-    'drawHibiscus',
+    'src="./assets/brand/ukulele-logo-direct.png"',
   ]) {
     assert.ok(combined.includes(expected), `missing ukulele skin token: ${expected}`);
   }
@@ -629,6 +627,7 @@ test('level cards use first-page covers for all nine ukulele books', () => {
   const html = read('index.html');
   const data = read('assets/data.js');
   const app = read('assets/app.js');
+  const levelViews = read('assets/app/levels/level-views.js');
   const styles = read('assets/styles.css');
   const coverPaths = Array.from(
     { length: 9 },
@@ -643,15 +642,15 @@ test('level cards use first-page covers for all nine ukulele books', () => {
   assert.match(data, /id: "debut"[\s\S]*?label: "Debut"/, 'first level card should be titled Debut');
   assert.doesNotMatch(data, /id: "debut"[\s\S]*?label: "Starter"/, 'first level card should not be titled Starter');
   assert.match(data, /id: "g8"[\s\S]*?coverImage: "\.\/assets\/covers\/ukulele-books\/book-8-cover\.png"/);
-  assert.ok(app.includes('has-book-cover'), 'level gallery cards with covers should be addressable for cover-specific styling');
-  assert.ok(app.includes('class="circular-cover-image"'), 'level gallery should render cover images');
+  assert.ok(levelViews.includes('has-book-cover'), 'level gallery cards with covers should be addressable for cover-specific styling');
+  assert.ok(levelViews.includes('class="circular-cover-image"'), 'level gallery should render cover images');
   assert.match(
-    app,
+    levelViews,
     /class="circular-cover-image"[^>]*loading="eager"/,
     'level covers should load before carousel rotation'
   );
-  assert.ok(app.includes('data-level-gallery-prev'), 'level gallery should expose a previous slide control');
-  assert.ok(app.includes('data-level-gallery-next'), 'level gallery should expose a next slide control');
+  assert.ok(levelViews.includes('data-level-gallery-prev'), 'level gallery should expose a previous slide control');
+  assert.ok(levelViews.includes('data-level-gallery-next'), 'level gallery should expose a next slide control');
   assert.ok(
     app.includes('Math.round(levelGallery.target) - 1') && app.includes('Math.round(levelGallery.target) + 1'),
     'level gallery controls should slide one book at a time'
@@ -688,7 +687,7 @@ test('level cards use first-page covers for all nine ukulele books', () => {
 
 test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
   const html = read('index.html');
-  const app = read('assets/app.js');
+  const lanyard = read('assets/app/home/lanyard.js');
   const styles = read('assets/styles.css');
 
   for (const expected of [
@@ -705,15 +704,15 @@ test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo
     'wakeLanyard',
     'applyLanyardForces',
   ]) {
-    assert.ok(app.includes(expected), `missing static lanyard behavior token: ${expected}`);
+    assert.ok(lanyard.includes(expected), `missing static lanyard behavior token: ${expected}`);
   }
 
-  assert.equal(app.includes('drawCard();'), false, 'the canvas should not redraw a second logo over the provided PNG');
-  assert.equal(app.includes('ctx.font = "900 34px Aptos'), false, 'the canvas connector should not draw a separate floating mini badge over the card clip');
-  assert.equal(app.includes('idleX'), false, 'released lanyard card should not be forced through a fake idle sine motion');
-  assert.equal(app.includes('card.x = lanyard.base.centerX'), false, 'released card should hang from rope constraints instead of being pinned to its base center');
-  assert.ok(app.includes('position.x - card.x') && app.includes('position.y - card.y'), 'drag should keep the pointer-to-card offset like the React Bits kinematic body');
-  assert.ok(app.includes('attachX: baseCenterX') && app.includes('top.x - lanyard.base.attachX'), 'the DOM logo should move from the same top eyelet point as the canvas cord');
+  assert.equal(lanyard.includes('drawCard();'), false, 'the canvas should not redraw a second logo over the provided PNG');
+  assert.equal(lanyard.includes('ctx.font = "900 34px Aptos'), false, 'the canvas connector should not draw a separate floating mini badge over the card clip');
+  assert.equal(lanyard.includes('idleX'), false, 'released lanyard card should not be forced through a fake idle sine motion');
+  assert.equal(lanyard.includes('card.x = lanyard.base.centerX'), false, 'released card should hang from rope constraints instead of being pinned to its base center');
+  assert.ok(lanyard.includes('position.x - card.x') && lanyard.includes('position.y - card.y'), 'drag should keep the pointer-to-card offset like the React Bits kinematic body');
+  assert.ok(lanyard.includes('attachX: baseCenterX') && lanyard.includes('top.x - lanyard.base.attachX'), 'the DOM logo should move from the same top eyelet point as the canvas cord');
   assert.ok(html.includes('class="ukebook-logo-art"'), 'the provided logo PNG should be cropped inside the hanging badge shell');
   assert.ok(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), 'the hanging badge should still use the provided direct PNG logo');
   assert.match(
