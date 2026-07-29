@@ -173,6 +173,7 @@ test('lesson detail embeds a persistent professional metronome tab', () => {
 test('lesson detail mounts the Audio Speed Player from fixed song audio', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
+  const media = read('assets/app/shared/media.js');
   const data = read('assets/data.js');
   const css = read('assets/styles.css');
 
@@ -194,8 +195,7 @@ test('lesson detail mounts the Audio Speed Player from fixed song audio', () => 
     'max-rate="1.5"',
     'step="0.05"',
     'data-audio-player-shell',
-    'activeAudioVersionIndex(song, slots)',
-    'compactAudioVersionTitle(song.title, title, index)',
+    'activeAudioVersionIndex(song, slots, state.audioVersionBySong)',
     '<strong>${escapeHtml(song.title)}</strong>',
     '<em>${escapeHtml(activeSlot.displayTitle)}</em>',
     '<strong>${escapeHtml(slot.displayTitle)}</strong>',
@@ -211,6 +211,7 @@ test('lesson detail mounts the Audio Speed Player from fixed song audio', () => 
   assert.equal(data.includes('assets/audio-placeholders/'), false, 'catalog data should not reference placeholder audio paths');
   assert.equal(app.includes('AUDIO_VERSION_COUNT'), false, 'audio tab should not create fixed placeholder version controls');
   assert.ok(app.includes('if (!slots.length)'), 'audio tab should show an empty state when a song has no audio');
+  assert.ok(media.includes('compactAudioVersionTitle(song.title, title, index)'), 'audio version titles should be normalized in the media helper module');
   assert.ok(css.includes('.audio-player-shell'), 'audio speed player should have a native frame in the detail audio area');
 });
 

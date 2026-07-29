@@ -1,3 +1,10 @@
+import { filterSongs } from "./app/catalog/filtering.js";
+import { getPublicDomRoots } from "./app/core/dom-roots.js";
+import { escapeAttribute, escapeHtml } from "./app/shared/escape.js";
+import { levelShort } from "./app/shared/formatting.js";
+import { activeAudioVersionIndex, audioVersionSlots } from "./app/shared/media.js";
+import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
+
 (function () {
   const data = window.UKULELE_LEVEL_DATA;
   const songTechProfiles = window.UKULELE_SONG_TECH_PROFILES || {};
@@ -44,24 +51,7 @@
     audioVersionBySong: {}
   };
 
-  const els = {
-    heroNotebook: document.getElementById("heroNotebook"),
-    infiniteMenu: document.getElementById("infiniteMenu"),
-    orbitCanvas: document.getElementById("orbitCanvas"),
-    orbitTitle: document.getElementById("orbitTitle"),
-    orbitDescription: document.getElementById("orbitDescription"),
-    orbitAction: document.getElementById("orbitAction"),
-    heroPressure: document.getElementById("heroPressure"),
-    heroLanyard: document.getElementById("heroLanyard"),
-    levelBoard: document.getElementById("levelBoard"),
-    levelSongPicker: document.getElementById("levelSongPicker"),
-    queryInput: document.getElementById("queryInput"),
-    sourceFilter: document.getElementById("sourceFilter"),
-    categoryFilter: document.getElementById("categoryFilter"),
-    levelFilter: document.getElementById("levelFilter"),
-    techCloud: document.getElementById("techCloud"),
-    songDetail: document.getElementById("songDetail")
-  };
+  const els = getPublicDomRoots(document);
 
   const levelById = Object.fromEntries(data.levels.map((level) => [level.id, level]));
   const orbit = {
@@ -147,23 +137,6 @@
     return String(value || "").toLowerCase().trim();
   }
 
-  function escapeAttribute(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/"/g, "&quot;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
-
   function uniqueValues(key) {
     return [...new Set(visibleSongs().map((song) => song[key]).filter(Boolean))].sort();
   }
@@ -185,10 +158,6 @@
     return visibleSongs()
       .filter((song) => song.level === levelId)
       .sort((a, b) => a.title.localeCompare(b.title, "zh-CN"));
-  }
-
-  function levelShort(level) {
-    return level.order === 0 ? "Debut" : `G${level.order}`;
   }
 
   function renderLevelMedia(level) {
@@ -344,40 +313,15 @@
     syncLevelSongSplashSize();
   }
 
-  function matchesQuery(song) {
-    const query = normalize(state.query);
-    if (!query) return true;
-    const level = levelById[song.level];
-    const haystack = [
-      song.title,
-      song.artist,
-      song.style,
-      song.source,
-      song.category,
-      level.label,
-      song.teaching.goal,
-      song.teaching.focus,
-      ...(song.teaching.practiceOrder || []),
-      ...(song.teaching.commonIssues || []),
-      song.teaching.passStandard,
-      ...song.techniques
-    ]
-      .map(normalize)
-      .join(" ");
-    return haystack.includes(query);
-  }
-
   function getFilteredSongs() {
-    return visibleSongs()
-      .filter((song) => state.level === "all" || song.level === state.level)
-      .filter((song) => state.source === "all" || song.source === state.source)
-      .filter((song) => state.category === "all" || song.category === state.category)
-      .filter(matchesQuery)
-      .sort((a, b) => {
-        const levelDiff = levelById[a.level].order - levelById[b.level].order;
-        if (levelDiff !== 0) return levelDiff;
-        return a.title.localeCompare(b.title, "zh-CN");
-      });
+    return filterSongs({
+      songs: visibleSongs(),
+      levels: data.levels,
+      query: state.query,
+      level: state.level,
+      source: state.source,
+      category: state.category
+    });
   }
 
   function initFilters() {
@@ -447,17 +391,6 @@
   function closeLevelSongPicker() {
     state.levelPickerOpen = false;
     render();
-  }
-
-  function tagMarkup(tags, limit) {
-    return tags
-      .slice(0, limit)
-      .map((tag) => `<span class="tag-chip">${tag}</span>`)
-      .join("");
-  }
-
-  function techButtonMarkup(tags) {
-    return tags.map((tag) => `<button type="button" class="tag-chip" data-tech="${tag}">${tag}</button>`).join("");
   }
 
   function renderHeroNotebook() {
@@ -1830,51 +1763,6 @@
     });
   }
 
-  function audioVersionSlots(song) {
-    const audioItems = Array.isArray(song.audio) ? song.audio : [];
-    return audioItems.map((item, index) => {
-      const title = item.title || item.label || item.name || `版本 ${index + 1}`;
-      return {
-        index,
-        number: String(index + 1).padStart(2, "0"),
-        title,
-        displayTitle: compactAudioVersionTitle(song.title, title, index),
-        src: item.src || ""
-      };
-    });
-  }
-
-  function compactAudioVersionTitle(songTitle, versionTitle, index) {
-    const fallback = `版本 ${index + 1}`;
-    const songName = String(songTitle || "").trim();
-    const rawTitle = String(versionTitle || "").trim() || fallback;
-    if (!songName) return rawTitle;
-
-    const escapedSongName = songName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const separator = "\\s*[-—–:：·|/]*\\s*";
-    const cleaned = rawTitle
-      .replace(new RegExp(`^${escapedSongName}${separator}`, "i"), "")
-      .replace(new RegExp(`${separator}${escapedSongName}$`, "i"), "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    return cleaned || (rawTitle === songName ? fallback : rawTitle);
-  }
-
-  function activeAudioVersionIndex(song, slots) {
-    const value = Number(state.audioVersionBySong[song.id] || 0);
-    if (!Number.isFinite(value)) return 0;
-    return Math.max(0, Math.min(slots.length - 1, value));
-  }
-
-  function formatAudioDuration(seconds) {
-    if (!Number.isFinite(seconds) || seconds <= 0) return "--:--";
-    const totalSeconds = Math.round(seconds);
-    const minutes = Math.floor(totalSeconds / 60);
-    const rest = String(totalSeconds % 60).padStart(2, "0");
-    return `${minutes}:${rest}`;
-  }
-
   function bindAudioProgress() {
     // Template build: audio playback is intentionally disabled until licensed ukulele media is added.
   }
@@ -1892,7 +1780,7 @@
         </div>
       `;
     }
-    const activeIndex = activeAudioVersionIndex(song, slots);
+    const activeIndex = activeAudioVersionIndex(song, slots, state.audioVersionBySong);
     const activeSlot = slots[activeIndex];
     const playerLabel = `${song.title} - ${activeSlot.displayTitle}`;
 
