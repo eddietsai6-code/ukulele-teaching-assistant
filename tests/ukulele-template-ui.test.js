@@ -15,13 +15,20 @@ test('ukulele template keeps the original interactive framework', () => {
     './assets/styles.css',
     './assets/data.js',
     './assets/app.js',
-    'class="hero"',
-    'hero-copy',
-    'text-pressure-stage hero-pressure-stage',
+    'class="hero tailark-hero"',
+    'tailark-nav',
+    'tailark-hero-stage',
+    'tailark-hero-copy',
+    'text-pressure-stage hero-pressure-stage tailark-pressure-stage',
     'id="heroPressure"',
-    'id="heroLanyard"',
-    'lanyard-wrapper',
-    'lanyard-canvas',
+    'id="heroPrincipleFocus"',
+    'tailark-principle-focus',
+    'id="heroSongSearchForm"',
+    'id="tailarkSongSearch"',
+    'id="heroSongSearchResults"',
+    'id="heroTextTypeList"',
+    'tailark-book-accordion',
+    'tailark-carousel-row-mini',
     'class="hero-product"',
     'id="heroNotebook"',
     'class="product-row"',
@@ -33,10 +40,72 @@ test('ukulele template keeps the original interactive framework', () => {
     'id="techCloud"',
     'class="lesson-section section"',
     'id="songDetail"',
-    'class="footer-band sponsor-footer"',
+    'class="footer-band activation-footer"',
   ]) {
     assert.ok(html.includes(expected), `missing original framework token: ${expected}`);
   }
+
+  assert.equal(html.includes('id="heroLanyard"'), false, 'GuitarBook-style hero should not render the hanging badge');
+  assert.equal(html.includes('class="ukulele-lanyard lanyard-wrapper"'), false, 'GuitarBook-style hero should not reserve a pendant layer');
+});
+
+test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', () => {
+  const html = read('index.html');
+  const styles = read('assets/styles.css');
+  const app = read('assets/app.js');
+  const heroSearch = read('assets/app/home/hero-song-search.js');
+
+  for (const expected of [
+    'aria-label="UkuleleBook"',
+    'data-text="UkuleleBook"',
+    'Motivation',
+    'Practice',
+    'Method',
+    'Search songs',
+    './assets/covers/ukulele-books/book-0-cover.png',
+    './assets/covers/ukulele-books/book-8-cover.png',
+    'activation-footer-card',
+    'activation-footer-logo',
+    'Resources',
+    'Company',
+    'About UkuleleBook',
+  ]) {
+    assert.ok(html.includes(expected), `missing UkuleleBook Tailark token: ${expected}`);
+  }
+
+  assert.equal(html.includes('data-text="UkeBook"'), false, 'hero title should not abbreviate UkuleleBook to UkeBook');
+  assert.equal(html.includes('>UkeBook<'), false, 'visible brand copy should not abbreviate UkuleleBook to UkeBook');
+
+  for (const expected of [
+    '.hero.tailark-hero',
+    '.tailark-book-panel.is-featured',
+    '@keyframes tailarkHeroCarousel',
+    '.activation-footer-card',
+    '.footer-tape-left',
+    '.footer-tape-right',
+  ]) {
+    assert.ok(styles.includes(expected), `missing UkuleleBook Tailark style: ${expected}`);
+  }
+
+  for (const expected of [
+    'heroSongSearchForm',
+    'heroSongSearchInput',
+    'tailark-song-result',
+    'selectHeroSong',
+  ]) {
+    assert.ok(heroSearch.includes(expected), `missing hero search behavior: ${expected}`);
+  }
+
+  assert.ok(
+    html.indexOf('data-tailark-book-accordion') < html.indexOf('id="heroTextTypeList"'),
+    'Tailark hero should place the book accordion before the benefit copy'
+  );
+  assert.ok(
+    html.indexOf('id="heroTextTypeList"') < html.indexOf('class="tailark-carousel-row tailark-carousel-row-mini"'),
+    'Tailark hero should keep the image carousel after the benefit copy'
+  );
+
+  assert.equal(html.includes('class="footer-band sponsor-footer"'), false, 'old sponsor footer should be replaced');
 });
 
 test('homepage removes the old rotating level orbit module', () => {
@@ -59,9 +128,8 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
   const html = read('index.html');
   const styles = read('assets/styles.css');
   const app = read('assets/app.js');
-  const lanyard = read('assets/app/home/lanyard.js');
   const data = read('assets/data.js');
-  const combined = [html, styles, app, lanyard, data].join('\n');
+  const combined = [html, styles, app, data].join('\n');
 
   for (const expected of [
     'UkuleleBook',
@@ -72,8 +140,10 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     '节拍',
     '清新多巴胺',
     'uke-fresh-theme',
-    'ukulele-lanyard',
-    'src="./assets/brand/ukulele-logo-direct.png"',
+    'tailark-book-accordion',
+    'tailark-carousel-row-mini',
+    'tailark-song-result',
+    'activation-footer-card',
   ]) {
     assert.ok(combined.includes(expected), `missing ukulele skin token: ${expected}`);
   }
@@ -166,11 +236,24 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'level: "g3"',
     'category: "曲目练习"',
     './assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png',
+    'id: "g3-yue-liang-dai-biao-wo-de-xin"',
+    'title: "月亮代表我的心"',
+    'level: "g3"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-01.png',
+    './assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-02.png',
+    'id: "g3-tian-kong-zhi-cheng-du-zou-ban"',
+    'title: "天空之城（独奏版）"',
+    'level: "g3"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png',
     'id: "g4-ai-de-luo-man-shi"',
     'title: "爱的罗曼史"',
     'level: "g4"',
     'category: "曲目练习"',
     './assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png',
+    './assets/scores/ukulele/g4-ai-de-luo-man-shi/score-02.png',
+    './assets/scores/ukulele/g4-ai-de-luo-man-shi/score-03.png',
     'id: "g5-huan-hua-cheng-feng"',
     'title: "幻化成风"',
     'level: "g5"',
@@ -236,6 +319,18 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
 
   assert.match(
     data,
+    /id: "g3-yue-liang-dai-biao-wo-de-xin"[\s\S]*?level: "g3"[\s\S]*?category: "曲目练习"/,
+    '月亮代表我的心 should be assigned to G3 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g3-tian-kong-zhi-cheng-du-zou-ban"[\s\S]*?level: "g3"[\s\S]*?category: "曲目练习"/,
+    '天空之城（独奏版） should be assigned to G3 song practice'
+  );
+
+  assert.match(
+    data,
     /id: "g4-ai-de-luo-man-shi"[\s\S]*?level: "g4"[\s\S]*?category: "曲目练习"/,
     '爱的罗曼史 should be assigned to G4 song practice'
   );
@@ -275,7 +370,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'assets/scores/ukulele/g2-chong-er-fei/score-01.png',
     'assets/scores/ukulele/g3-summer/score-01.png',
     'assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png',
+    'assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-01.png',
+    'assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-02.png',
+    'assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png',
     'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png',
+    'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-02.png',
+    'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-03.png',
     'assets/scores/ukulele/g5-huan-hua-cheng-feng/score-01.png',
   ]) {
     assert.ok(fs.existsSync(path.join(root, scorePath)), `imported score image should exist: ${scorePath}`);
@@ -400,6 +500,21 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/g3-hei-ren-tai-guan/full.mp3',
     },
     {
+      id: 'g3-yue-liang-dai-biao-wo-de-xin',
+      title: '月亮代表我的心 音频',
+      src: './assets/audio/ukulele/g3-yue-liang-dai-biao-wo-de-xin/full.mp3',
+    },
+    {
+      id: 'g3-tian-kong-zhi-cheng-du-zou-ban',
+      title: '天空之城（独奏版） 音频',
+      src: './assets/audio/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/full.mp3',
+    },
+    {
+      id: 'g4-ai-de-luo-man-shi',
+      title: '爱的罗曼史 音频',
+      src: './assets/audio/ukulele/g4-ai-de-luo-man-shi/full.mp3',
+    },
+    {
       id: 'g5-huan-hua-cheng-feng',
       title: '幻化成风 音频',
       src: './assets/audio/ukulele/g5-huan-hua-cheng-feng/full.mp3',
@@ -445,38 +560,76 @@ test('level song lists hide placeholder songs without score or audio resources',
   );
 });
 
-test('mobile hero keeps the UkuleleBook heading readable with a hanging badge', () => {
+test('mobile hero keeps the UkuleleBook heading readable without the hanging badge', () => {
   const styles = read('assets/styles.css');
+  const textPressure = read('assets/app/home/text-pressure.js');
 
-  assert.match(
-    styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard\s*\{[^}]*--badge-top:\s*244px;[^}]*--badge-right:\s*36px;[^}]*--badge-width:\s*124px;/,
-    'mobile hero should size the pendant like a hanging badge instead of a small corner sticker'
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.ukulele-lanyard::before\s*\{[^}]*display:\s*none;/,
-    'mobile hero should not draw a second static cord over the physics lanyard'
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 640px\)[\s\S]*?--badge-right:\s*36px;[\s\S]*?--badge-center-right:\s*98px;/,
-    'mobile hero should align the cord through the wider pendant center'
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.ukebook-logo-stage\s*\{[^}]*display:\s*block;[^}]*top:\s*var\(--badge-top\);[^}]*right:\s*var\(--badge-right\);[^}]*width:\s*var\(--badge-width\);/,
-    'mobile hero should show the badge instead of hiding it'
-  );
-  assert.match(
+  assert.doesNotMatch(styles, /\.tailark-hero \.ukulele-lanyard/, 'Tailark hero should not position the old pendant');
+  assert.doesNotMatch(
     styles,
     /@media \(max-width: 640px\)[\s\S]*?\.text-pressure-title\s*\{[^}]*font-size:\s*42px\s*!important;/,
-    'mobile hero should cap the JS-driven pressure title size'
+    'mobile hero should not force a 42px title because the GuitarBook master lets JS calculate the pressure font size'
+  );
+  assert.doesNotMatch(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.text-pressure-title span\s*\{[^}]*font-variation-settings:[^}]*!important;/,
+    'mobile hero should not freeze pressure-letter width because the title needs the GuitarBook dynamic font effect'
   );
   assert.match(
     styles,
-    /@media \(max-width: 640px\)[\s\S]*?\.text-pressure-title span\s*\{[^}]*font-variation-settings:[^;}]*'wdth' 72[^}]*!important;/,
-    'mobile hero should freeze pressure-letter width so the title cannot expand out of view'
+    /\.tailark-hero \.tailark-principle-focus \.true-focus-word\s*\{[^}]*justify-self:\s*start;/,
+    'true-focus words should not stretch across the mobile grid because the corner frame must lock to the active word'
+  );
+  assert.match(
+    styles,
+    /\.tailark-hero \.text-pressure-title\.flex\s*\{[^}]*justify-content:\s*flex-start;[^}]*gap:\s*clamp\(2px,\s*0\.72vw,\s*9px\);/,
+    'UkuleleBook pressure letters should stay locked as a word across desktop and iPad widths'
+  );
+  assert.match(
+    styles,
+    /\.tailark-hero \.tailark-principle-focus \.true-focus-word\s*\{[^}]*width:\s*max-content;[^}]*font-size:\s*clamp\(32px,\s*4vw,\s*46px\);/,
+    'desktop hero focus words should fit on one locked row instead of forcing Method downward'
+  );
+  assert.match(
+    styles,
+    /\.tailark-hero \.tailark-principle-focus \.true-focus-word:nth-child\(3\)\s*\{[^}]*transform:\s*translate\(0,\s*0\);/,
+    'desktop and iPad Method should stay in the same focus row'
+  );
+  assert.match(
+    styles,
+    /\.tailark-hero \.tailark-principle-focus \.true-focus-word\.is-active:nth-child\(3\)\s*\{[^}]*transform:\s*translateY\(-1px\);/,
+    'active Method should only use the normal focus lift, not the old lower-row offset'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-hero \.tailark-pressure-stage\s*\{[^}]*height:\s*clamp\(84px,\s*24vw,\s*106px\);[^}]*margin-bottom:\s*8px;/,
+    'mobile hero title row should keep the GuitarBook pressure-stage height and spacing'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-principle-copy,\s*\.hero-principle-copy\.tailark-principle-copy\s*\{[^}]*min-height:\s*52px;[^}]*margin-bottom:\s*8px;/,
+    'mobile hero focus row should not reserve the old tall vertical stack space'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-hero \.tailark-principle-focus\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*max-content\);[^}]*gap:\s*clamp\(10px,\s*3vw,\s*18px\);/,
+    'mobile Motivation Practice Method row should stay on one line like the GuitarBook reference'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-hero \.tailark-principle-focus \.true-focus-word\s*\{[^}]*min-height:\s*44px;[^}]*font-size:\s*clamp\(22px,\s*6vw,\s*34px\);/,
+    'mobile hero focus words should keep the reference font-size ratio'
+  );
+  assert.ok(textPressure.includes("span.style.fontVariationSettings = settings"), 'hero pressure title should keep the master variable-font animation loop');
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-email-card\s*\{[^}]*grid-template-columns:\s*34px minmax\(0,\s*1fr\) 128px;[^}]*min-height:\s*66px;/,
+    'mobile hero search should keep the master inline input and compact button layout'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width: 640px\)[\s\S]*?\.tailark-search-submit-wrap\s*\{[^}]*grid-column:\s*auto;[^}]*width:\s*128px;[^}]*margin-top:\s*0;/,
+    'mobile hero search button should stay on the right instead of spanning a second row'
   );
 });
 
@@ -680,86 +833,119 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached level rendering');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3'), 'homepage should bust cached level rendering preload');
+  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3'), 'homepage should bust cached cover styles');
 });
 
-test('hero lanyard adapts the React Bits pendant behavior to the static PNG logo', () => {
+test('GuitarBook-style hero removes the pendant and keeps books on the right', () => {
   const html = read('index.html');
-  const lanyard = read('assets/app/home/lanyard.js');
   const styles = read('assets/styles.css');
+  const app = read('assets/app.js');
+  const heroSearch = read('assets/app/home/hero-song-search.js');
+  const heroScale = read('assets/app/home/tailark-hero-scale.js');
+  const textPressure = read('assets/app/home/text-pressure.js');
 
-  for (const expected of [
-    'querySelector(".ukebook-logo-stage")',
-    'setPointerCapture',
-    'releasePointerCapture',
-    '--lanyard-drag-x',
-    '--lanyard-drag-y',
-    '--lanyard-card-rotate',
-    '--lanyard-card-skew',
-    'syncLogoToPhysics',
-    'updateCardPhysics',
-    'dragOffset',
-    'wakeLanyard',
-    'applyLanyardForces',
-  ]) {
-    assert.ok(lanyard.includes(expected), `missing static lanyard behavior token: ${expected}`);
-  }
-
-  assert.equal(lanyard.includes('drawCard();'), false, 'the canvas should not redraw a second logo over the provided PNG');
-  assert.equal(lanyard.includes('ctx.font = "900 34px Aptos'), false, 'the canvas connector should not draw a separate floating mini badge over the card clip');
-  assert.equal(lanyard.includes('idleX'), false, 'released lanyard card should not be forced through a fake idle sine motion');
-  assert.equal(lanyard.includes('card.x = lanyard.base.centerX'), false, 'released card should hang from rope constraints instead of being pinned to its base center');
-  assert.ok(lanyard.includes('position.x - card.x') && lanyard.includes('position.y - card.y'), 'drag should keep the pointer-to-card offset like the React Bits kinematic body');
-  assert.ok(lanyard.includes('attachX: baseCenterX') && lanyard.includes('top.x - lanyard.base.attachX'), 'the DOM logo should move from the same top eyelet point as the canvas cord');
-  assert.ok(html.includes('class="ukebook-logo-art"'), 'the provided logo PNG should be cropped inside the hanging badge shell');
-  assert.ok(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), 'the hanging badge should still use the provided direct PNG logo');
+  assert.equal(html.includes('id="heroLanyard"'), false, 'Tailark hero should not render the old hanging badge');
+  assert.equal(html.includes('class="ukebook-logo-art"'), false, 'Tailark hero should not reserve the old pendant image');
+  assert.ok(html.includes('class="tailark-visual-fade"'), 'hero should keep the same visual shell layering as the GuitarBook master');
+  assert.ok(html.includes('data-fit-chars="11"'), 'UkuleleBook title should fit from its full eleven-letter brand name');
+  assert.ok(app.includes('mountTailarkHeroScale(document, window)'), 'hero should mount the GuitarBook master scaling behavior');
+  assert.ok(heroScale.includes('designWidth: 1228') && heroScale.includes('designHeight: 770'), 'hero scale should use the GuitarBook master design frame');
+  assert.ok(textPressure.includes('dataset.fitChars') && textPressure.includes('visualCharCount'), 'title fitting should support the GuitarBook visual character count');
   assert.match(
     styles,
-    /\.ukebook-logo-stage\s*\{[^}]*right:\s*clamp\(-118px,\s*-6vw,\s*-52px\);[^}]*aspect-ratio:\s*0\.66;[^}]*overflow:\s*hidden;[^}]*pointer-events:\s*auto;/,
-    'desktop pendant logo should crop the direct PNG inside a draggable badge shell'
+    /\.tailark-hero-stage\s*\{[^}]*width:\s*min\(100%,\s*1024px\);[^}]*min-height:\s*698px;[^}]*padding:\s*28px 0 0;/,
+    'hero stage should match the GuitarBook master frame'
   );
   assert.match(
     styles,
-    /\.ukebook-logo-art\s*\{[^}]*top:\s*-28%;[^}]*width:\s*146%;/,
-    'the original PNG should be zoomed and shifted so the badge artwork connects to the clip'
+    /\.tailark-hero-copy\s*\{[^}]*width:\s*min\(100%,\s*480px\);/,
+    'left copy column should match the GuitarBook master width'
   );
   assert.match(
     styles,
-    /\.ukebook-logo-stage::before\s*\{[^}]*content:\s*"";[^}]*background:[^}]*#fff7df;/,
-    'the badge should draw a visible webbing tab that connects the lanyard into the card'
+    /\.tailark-visual-shell\s*\{[^}]*top:\s*22px;[^}]*left:\s*650px;[^}]*width:\s*728px;[^}]*height:\s*660px;/,
+    'book accordion should sit in the same right-side coordinate system as the GuitarBook master'
   );
   assert.match(
     styles,
-    /\.ukebook-logo-stage::after\s*\{[^}]*content:\s*"";[^}]*border:[^}]*rgba\(21,\s*48,\s*71,\s*0\.72\);/,
-    'the badge should draw a metal eyelet that moves with the draggable card'
-  );
-  assert.doesNotMatch(
-    styles,
-    /\.ukebook-logo-stage\s*\{[^}]*animation:\s*ukebookLogoDrift/,
-    'the badge should not drift independently from the canvas lanyard connection'
+    /\.tailark-book-accordion\s*\{[^}]*top:\s*168px;[^}]*left:\s*578px;[^}]*width:\s*min\(588px,\s*calc\(100vw - 452px\)\);[^}]*min-width:\s*520px;[^}]*height:\s*360px;/,
+    'featured book stack should move independently of the image carousel'
   );
   assert.match(
     styles,
-    /\.lanyard-canvas\s*\{[^}]*opacity:\s*0\.92;/,
-    'lanyard canvas should remain visible for the hanging cord and clip'
+    /@media \(max-width:\s*640px\)[\s\S]*?\.tailark-book-accordion\s*\{[^}]*position:\s*relative;[^}]*top:\s*auto;[^}]*left:\s*auto;[^}]*margin:\s*8px 16px 0;/,
+    'mobile book stack should occupy its own slot before the benefit copy'
   );
   assert.match(
     styles,
-    /\.ukebook-logo-stage\s*\{[^}]*transform-origin:\s*50%\s*10\.5%;/,
-    'the PNG pendant should rotate from the same top eyelet used by the physics cord'
+    /@media \(max-width:\s*640px\)[\s\S]*?\.tailark-visual-shell\s*\{[^}]*height:\s*116px;[^}]*margin:\s*12px -16px 0;/,
+    'mobile carousel shell should not keep the old accordion-sized blank space'
   );
   assert.match(
     styles,
-    /@media \(max-width: 980px\)[\s\S]*?\.ukebook-logo-stage\s*\{[^}]*right:\s*clamp\(36px,\s*7vw,\s*70px\);[^}]*width:\s*clamp\(122px,\s*19vw,\s*152px\);/,
-    'narrow desktop pendant should read as a hanging badge at the reference scale'
+    /\.tailark-carousel-row-mini\s*\{[^}]*top:\s*530px;[^}]*left:\s*-300px;[^}]*height:\s*116px;/,
+    'mini cover strip should remain below the book stack on the right'
   );
   assert.match(
     styles,
-    /\.ukulele-lanyard\.is-dragging \.ukebook-logo-stage\s*\{[^}]*cursor:\s*grabbing;/,
-    'dragging state should visibly switch the logo handle'
+    /@media \(max-width:\s*640px\)[\s\S]*?\.tailark-carousel-row-mini\s*\{[^}]*top:\s*0;[^}]*left:\s*-150px;[^}]*height:\s*96px;/,
+    'mobile carousel strip should start at the top of its trimmed shell'
   );
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached lanyard physics');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4'), 'homepage should bust cached connected lanyard styles');
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-hero-stage\s*\{[^}]*width:\s*1024px;[^}]*min-height:\s*698px;/,
+    'tablet and narrow desktop widths should scale the master layout instead of reflowing it'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.text-pressure-title\.flex\s*\{[^}]*justify-content:\s*space-between;[^}]*gap:\s*0;/,
+    'iPad hero title should use the GuitarBook wide pressure-title proportion'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-principle-focus\s*\{[^}]*gap:\s*clamp\(28px,\s*3\.8vw,\s*52px\);/,
+    'iPad hero focus row should keep the GuitarBook word spacing'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-principle-focus \.true-focus-word\s*\{[^}]*min-height:\s*72px;[^}]*font-size:\s*clamp\(54px,\s*5\.8vw,\s*72px\);/,
+    'iPad hero focus words should keep the GuitarBook word scale'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-principle-focus \.true-focus-word:nth-child\(3\)\s*\{[^}]*transform:\s*translate\(clamp\(-410px,\s*-35vw,\s*-360px\),\s*clamp\(76px,\s*7vw,\s*92px\)\);/,
+    'iPad Method word should sit on the GuitarBook lower focus line'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-song-search-shell\s*\{[^}]*width:\s*min\(100%,\s*560px\);[^}]*margin-top:\s*88px;[^}]*margin-bottom:\s*38px;/,
+    'iPad search bar should keep the GuitarBook spacing below the focus line'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-book-accordion\s*\{[^}]*top:\s*168px;[^}]*left:\s*578px;[^}]*width:\s*min\(588px,\s*calc\(100vw - 452px\)\);[^}]*height:\s*360px;/,
+    'iPad book accordion should keep the GuitarBook right-side coordinates and size'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-carousel-row-mini\s*\{[^}]*top:\s*530px;[^}]*left:\s*-300px;[^}]*height:\s*116px;/,
+    'iPad mini carousel should keep the GuitarBook bottom strip position'
+  );
+  assert.match(
+    styles,
+    /@media \(min-width:\s*641px\) and \(max-width:\s*1227px\)[\s\S]*?\.hero\.tailark-hero\.is-tailark-scaled \.tailark-typed-benefits\s*\{[^}]*margin-top:\s*88px;[^}]*font-size:\s*clamp\(22px,\s*2\.2vw,\s*26px\);[^}]*font-weight:\s*700;/,
+    'iPad benefit copy should read larger and sit lower after the scaled master layout is applied'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*640px\)[\s\S]*?\.tailark-links\s*\{[^}]*display:\s*none;/,
+    'only phone widths should hide the reference navigation'
+  );
+  assert.match(
+    styles,
+    /@media \(max-width:\s*640px\)[\s\S]*?\.tailark-typed-benefits\s*\{[^}]*font-size:\s*15px;/,
+    'phone benefit copy should keep the previously locked mobile scale'
+  );
 });

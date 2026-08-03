@@ -14,9 +14,10 @@ test('site uses the UkuleleBook framework as the published homepage', () => {
   for (const expected of [
     'UkuleleBook',
     '尤克里里教学助手',
-    'class="hero"',
+    'class="hero tailark-hero"',
     'id="heroPressure"',
-    'id="heroLanyard"',
+    'id="heroSongSearchForm"',
+    'tailark-book-accordion',
     'id="levelBoard"',
     'id="songDetail"',
     './assets/styles.css',
@@ -27,16 +28,17 @@ test('site uses the UkuleleBook framework as the published homepage', () => {
   }
 
   for (const expected of [
-    '零基础入门',
-    '弹唱提高',
-    '中级进阶',
-    '高阶指弹',
-    '四个阶段',
-    '0-8 级共 9 个等级',
+    'data-text="UkuleleBook"',
+    'Motivation',
+    'Practice',
+    'Method',
+    'Search songs',
+    './assets/covers/ukulele-books/book-0-cover.png',
   ]) {
     assert.ok(html.includes(expected), `missing hero stage copy: ${expected}`);
   }
 
+  assert.equal(html.includes('id="heroLanyard"'), false, 'hero pendant should be removed from the GuitarBook-style layout');
   assert.equal(html.includes('not just'), false);
   assert.equal(html.includes('难度 1-2'), false);
 });
@@ -240,16 +242,15 @@ test('song selection opens the audio tab first when the selected song has audio'
   );
 });
 
-test('homepage uses the provided direct PNG logo and keeps editable logo sources', () => {
+test('project keeps the provided logo sources while the hero removes the pendant', () => {
   const html = read('index.html');
   const svg = read('ukebook_logo.svg');
   const component = read('UkebookLogo.tsx');
   const spec = read('ukebook_logo_codex_spec.md');
 
-  assert.ok(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), 'homepage should use the provided direct PNG logo asset');
+  assert.equal(html.includes('src="./assets/brand/ukulele-logo-direct.png"'), false, 'homepage should not render the removed pendant PNG in the hero');
   assert.ok(fs.existsSync(path.join(root, 'assets/brand/ukulele-logo-direct.png')), 'provided direct PNG logo should exist in project assets');
-  assert.ok(html.includes('height="1536"'), 'homepage should preserve the provided PNG logo aspect ratio');
-  assert.ok(html.includes('class="ukebook-logo-stage"'), 'homepage should position the logo layer');
+  assert.equal(html.includes('class="ukebook-logo-stage"'), false, 'homepage should not position the removed logo layer');
 
   for (const expected of [
     'id="clip"',

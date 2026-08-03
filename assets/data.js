@@ -546,6 +546,64 @@
       ]
     }),
     makeSong({
+      id: "g3-yue-liang-dai-biao-wo-de-xin",
+      title: "月亮代表我的心",
+      artist: "Weng Ching-hsi",
+      level: "g3",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Pop chord melody",
+      techniques: ["4/4", "70 BPM", "flat key", "eighth note", "chord melody"],
+      goal: "练习《月亮代表我的心》的三级和弦旋律曲目，掌握降号调号、八分音符律动和旋律声部突出。",
+      focus: "保持70 BPM稳定节拍，读准五线谱与TAB对应位置，并让和弦中的旋律音清楚突出。",
+      practiceOrder: ["拍读70 BPM八分音符", "分句练习和弦旋律", "单独处理滑音与连音", "完整连接两页谱面"],
+      commonIssues: ["和弦音压过旋律", "八分音符连接不均匀", "滑音和连音处理不够自然"],
+      passStandard: "能在70 BPM稳定弹完整曲，并保持旋律清楚、和弦饱满、两页衔接顺畅。",
+      audio: [
+        {
+          title: "月亮代表我的心 音频",
+          src: "./assets/audio/ukulele/g3-yue-liang-dai-biao-wo-de-xin/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "月亮代表我的心 谱面 1",
+          src: "./assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-01.png"
+        },
+        {
+          title: "月亮代表我的心 谱面 2",
+          src: "./assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-02.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g3-tian-kong-zhi-cheng-du-zou-ban",
+      title: "天空之城（独奏版）",
+      artist: "Joe Hisaishi",
+      level: "g3",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Solo chord melody",
+      techniques: ["1=C", "4/4", "chord melody", "eighth note", "position shift"],
+      goal: "练习《天空之城（独奏版）》的三级独奏曲目，掌握旋律与和弦同弹、八分音符连接和中高把位换把。",
+      focus: "保持旋律声部清楚，和弦下压要整齐，并在换把时维持稳定拍点。",
+      practiceOrder: ["先拍读八分音符节奏", "拆分旋律音与和弦框架", "慢练中高把位移动", "完整连接独奏版谱面"],
+      commonIssues: ["和弦按下不整齐", "旋律音被伴奏音盖住", "高把位移动时节拍变慢"],
+      passStandard: "能稳定弹完整首独奏版，并保持旋律清楚、和弦干净、换把不断拍。",
+      audio: [
+        {
+          title: "天空之城（独奏版） 音频",
+          src: "./assets/audio/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "天空之城（独奏版）谱面 1",
+          src: "./assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "harbor-reggae",
       title: "Harbor Reggae",
       artist: "Ukulele Template",
@@ -574,10 +632,24 @@
       practiceOrder: ["空弦拍读三连音", "分句慢练Am段旋律", "单独练习高把位换把", "完整连接和声段落"],
       commonIssues: ["三连音不均匀", "高把位换把时断音", "低音和伴奏音盖过旋律"],
       passStandard: "能以80 BPM稳定弹完整曲，三连音均匀，上声部旋律清楚，并准确处理高把位换把。",
+      audio: [
+        {
+          title: "爱的罗曼史 音频",
+          src: "./assets/audio/ukulele/g4-ai-de-luo-man-shi/full.mp3"
+        }
+      ],
       scoreImages: [
         {
           title: "爱的罗曼史 谱面 1",
           src: "./assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png"
+        },
+        {
+          title: "爱的罗曼史 谱面 2",
+          src: "./assets/scores/ukulele/g4-ai-de-luo-man-shi/score-02.png"
+        },
+        {
+          title: "爱的罗曼史 谱面 3",
+          src: "./assets/scores/ukulele/g4-ai-de-luo-man-shi/score-03.png"
         }
       ]
     }),

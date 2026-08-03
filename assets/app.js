@@ -2,6 +2,8 @@ import { filterSongs } from "./app/catalog/filtering.js";
 import { getPublicDomRoots } from "./app/core/dom-roots.js";
 import { renderHeroNotebookView } from "./app/home/hero-notebook.js";
 import { mountHeroLanyard } from "./app/home/lanyard.js";
+import { mountHeroSongSearch } from "./app/home/hero-song-search.js";
+import { mountTailarkHeroScale } from "./app/home/tailark-hero-scale.js";
 import { mountTextPressure } from "./app/home/text-pressure.js";
 import { createLevelSongSplash } from "./app/levels/level-song-splash.js";
 import { renderLevelBoardView, renderLevelSongPickerView } from "./app/levels/level-views.js";
@@ -191,6 +193,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     els.heroNotebook.innerHTML = renderHeroNotebookView({ song, level });
   }
 
+  mountTailarkHeroScale(document, window);
   mountTextPressure(els.heroPressure);
 
 
@@ -687,6 +690,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
   }
 
   initFilters();
+  mountHeroSongSearch({ els, visibleSongs, levelById, selectSong, setQuery, documentRef: document });
   bindEvents();
   render();
   initDecryptedText();

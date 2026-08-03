@@ -12,15 +12,19 @@ export function mountTextPressure(root, options = {}) {
   };
 
   const text = root.dataset.text || "UkuleleBook";
+  const fitChars = Number.parseFloat(root.dataset.fitChars || "");
+  const minSize = Number.parseFloat(root.dataset.minSize || "");
   root.innerHTML = text
     .split("")
     .map((char) => `<span data-char="${char}">${char}</span>`)
     .join("");
   pressure.chars = [...root.querySelectorAll("span")];
+  const visualCharCount = Number.isFinite(fitChars) && fitChars > 0 ? fitChars : pressure.chars.length;
+  const minimumFontSize = Number.isFinite(minSize) && minSize > 0 ? minSize : 24;
 
   const setSize = () => {
     const rect = pressure.container.getBoundingClientRect();
-    const fontSize = Math.max(rect.width / (pressure.chars.length / 2), 24);
+    const fontSize = Math.max(rect.width / (visualCharCount / 2), minimumFontSize);
     root.style.fontSize = `${fontSize}px`;
     root.style.lineHeight = "1";
     root.style.transform = "scale(1, 1)";
