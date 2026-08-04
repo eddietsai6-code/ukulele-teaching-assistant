@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
+import { realpathSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const PUBLIC_ENTRIES = ["index.html", "assets", "_routes.json"];
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,7 +42,18 @@ export async function buildSite({ sourceRoot = projectRoot, outputRoot = path.jo
   return { outputRoot: resolvedOutput, fileCount: await countFiles(resolvedOutput) };
 }
 
-const isMain = process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url;
+export function isDirectlyInvoked(invokedPath = process.argv[1], moduleUrl = import.meta.url) {
+  if (!invokedPath) return false;
+  try {
+    const invokedRealPath = realpathSync.native(path.resolve(invokedPath));
+    const moduleRealPath = realpathSync.native(fileURLToPath(moduleUrl));
+    return invokedRealPath.toLowerCase() === moduleRealPath.toLowerCase();
+  } catch {
+    return false;
+  }
+}
+
+const isMain = isDirectlyInvoked();
 if (isMain) {
   buildSite()
     .then((result) => console.log(`Built ${result.fileCount} public files in ${result.outputRoot}.`))

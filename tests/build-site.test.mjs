@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { buildSite } from "../scripts/build-site.mjs";
+import { buildSite, isDirectlyInvoked } from "../scripts/build-site.mjs";
 
 test("site build copies only public static assets to dist", async () => {
   const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -20,4 +20,12 @@ test("site build copies only public static assets to dist", async () => {
   assert.equal(entries.includes("functions"), false);
   assert.equal(entries.includes(".env.ukebook-content"), false);
   assert.equal(result.fileCount > 10, true);
+});
+
+test("build script direct-run detection survives mapped project paths", async () => {
+  const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const scriptPath = path.join(projectRoot, "scripts", "build-site.mjs");
+  const realScriptUrl = pathToFileURL(await fs.realpath(scriptPath)).href;
+
+  assert.equal(isDirectlyInvoked(scriptPath, realScriptUrl), true);
 });
