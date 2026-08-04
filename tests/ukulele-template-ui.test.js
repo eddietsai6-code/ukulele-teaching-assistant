@@ -53,7 +53,11 @@ test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', (
   const html = read('index.html');
   const styles = read('assets/styles.css');
   const app = read('assets/app.js');
+  const bootstrap = read('assets/bootstrap.js');
+  const domRoots = read('assets/app/core/dom-roots.js');
   const heroSearch = read('assets/app/home/hero-song-search.js');
+  const trueFocusPath = 'assets/app/home/true-focus.js';
+  const trueFocus = fs.existsSync(path.join(root, trueFocusPath)) ? read(trueFocusPath) : '';
 
   for (const expected of [
     'aria-label="UkuleleBook"',
@@ -94,6 +98,20 @@ test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', (
     'selectHeroSong',
   ]) {
     assert.ok(heroSearch.includes(expected), `missing hero search behavior: ${expected}`);
+  }
+
+  assert.ok(domRoots.includes('heroPrincipleFocus: documentRef.getElementById("heroPrincipleFocus")'), 'DOM roots should expose the true-focus headline row');
+  assert.ok(app.includes('import { mountTrueFocus } from "./app/home/true-focus.js";'), 'homepage should import the GuitarBook true-focus behavior');
+  assert.ok(app.includes('mountTrueFocus(els.heroPrincipleFocus)'), 'homepage should mount the focus frame animation');
+  assert.ok(bootstrap.includes('benefits-scale-lower4'), 'bootstrap should import the uncached app bundle with the true-focus behavior');
+  for (const expected of [
+    'export function mountTrueFocus',
+    'querySelector(".true-focus-frame")',
+    'getBoundingClientRect()',
+    'frame.style.opacity = "1"',
+    'ResizeObserver',
+  ]) {
+    assert.ok(trueFocus.includes(expected), `missing true-focus frame behavior: ${expected}`);
   }
 
   assert.ok(
@@ -834,7 +852,7 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
   assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3'), 'homepage should bust cached level rendering preload');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower4'), 'homepage should bust cached level rendering preload');
   assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3'), 'homepage should bust cached cover styles');
 });
 

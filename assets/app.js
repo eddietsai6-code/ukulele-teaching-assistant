@@ -5,6 +5,7 @@ import { mountHeroLanyard } from "./app/home/lanyard.js";
 import { mountHeroSongSearch } from "./app/home/hero-song-search.js";
 import { mountTailarkHeroScale } from "./app/home/tailark-hero-scale.js";
 import { mountTextPressure } from "./app/home/text-pressure.js";
+import { mountTrueFocus } from "./app/home/true-focus.js";
 import { createLevelSongSplash } from "./app/levels/level-song-splash.js";
 import { renderLevelBoardView, renderLevelSongPickerView } from "./app/levels/level-views.js";
 import { renderAudioPane } from "./app/detail/audio-pane.js";
@@ -195,6 +196,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
 
   mountTailarkHeroScale(document, window);
   mountTextPressure(els.heroPressure);
+  mountTrueFocus(els.heroPrincipleFocus);
 
 
 
