@@ -1,0 +1,268 @@
+import { ENGINE_RUBBERBAND } from "./audio-speed-player.js";
+
+export const RUBBERBAND_PROCESSOR_NAME = "audio-speed-player-rubberband";
+export const RUBBERBAND_WORKLET_MESSAGE_TYPES = new Set([
+  "init-rubberband",
+  "load-buffer",
+  "set-rate",
+  "set-preserve-pitch",
+  "play",
+  "pause",
+  "seek"
+]);
+
+export function createRubberBandMessage(type, payload = {}) {
+  if (!RUBBERBAND_WORKLET_MESSAGE_TYPES.has(type)) {
+    throw new Error(`Unsupported Rubber Band worklet message: ${type}`);
+  }
+
+  return {
+    type,
+    ...payload
+  };
+}
+
+export function createLoadBufferMessage(audioBuffer) {
+  if (!audioBuffer || typeof audioBuffer.getChannelData !== "function") {
+    throw new Error("Decoded AudioBuffer is required");
+  }
+
+  const channelData = Array.from({ length: audioBuffer.numberOfChannels }, (_, index) => {
+    return new Float32Array(audioBuffer.getChannelData(index));
+  });
+
+  return createRubberBandMessage("load-buffer", {
+    channelData,
+    sampleRate: audioBuffer.sampleRate
+  });
+}
+
+export function getRubberBandMessageTransfers(message) {
+  if (message?.type !== "load-buffer") {
+    return [];
+  }
+
+  return (message.channelData || []).map((channel) => channel.buffer).filter(Boolean);
+}
+
+async function fetchArrayBuffer(source, hooks) {
+  if (source instanceof ArrayBuffer) {
+    return source;
+  }
+
+  if (source?.arrayBuffer) {
+    return source.arrayBuffer();
+  }
+
+  if (!hooks.fetch) {
+    throw new Error("fetch unavailable");
+  }
+
+  const response = await hooks.fetch(source);
+  return response.arrayBuffer();
+}
+
+function waitForPortMessage(port, type) {
+  if (!port?.addEventListener) {
+    return Promise.resolve(null);
+  }
+
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      port.removeEventListener("message", handleMessage);
+      reject(new Error(`Timed out waiting for ${type}`));
+    }, 5000);
+
+    function handleMessage(event) {
+      if (event.data?.type !== type) return;
+      clearTimeout(timer);
+      port.removeEventListener("message", handleMessage);
+      resolve(event.data);
+    }
+
+    port.addEventListener("message", handleMessage);
+    port.start?.();
+  });
+}
+
+export function createRubberBandEngine(options = {}) {
+  const audioContext = options.audioContext || null;
+  const workletUrl = options.workletUrl || "";
+  const wasmUrl = options.wasmUrl || "";
+  const hooks = options.hooks || globalThis;
+  let unavailableReason = !audioContext ? "AudioContext unavailable" : "";
+  let workletNode = null;
+  let analyserNode = null;
+  let rate = 1;
+  let preservePitch = true;
+  let duration = 0;
+  let currentTime = 0;
+  let startedAt = 0;
+  let playing = false;
+
+  function now() {
+    return (hooks.performance?.now?.() ?? Date.now()) / 1000;
+  }
+
+  function clampEngineTime(seconds) {
+    const safeSeconds = Math.max(0, Number(seconds) || 0);
+    return duration > 0 ? Math.min(safeSeconds, duration) : safeSeconds;
+  }
+
+  function syncCurrentTime() {
+    if (playing) {
+      const nextTime = currentTime + Math.max(0, now() - startedAt) * rate;
+      currentTime = clampEngineTime(nextTime);
+      startedAt = now();
+      if (duration > 0 && currentTime >= duration) {
+        playing = false;
+      }
+    }
+
+    return currentTime;
+  }
+
+  function connectWorkletOutput() {
+    if (!workletNode) return false;
+
+    try {
+      workletNode.disconnect?.();
+    } catch (error) {
+      // Some browsers throw when disconnecting a node with no current outputs.
+    }
+
+    if (analyserNode) {
+      analyserNode.disconnect?.();
+      workletNode.connect?.(analyserNode);
+      analyserNode.connect?.(audioContext.destination);
+      return true;
+    }
+
+    workletNode.connect?.(audioContext.destination);
+    return true;
+  }
+
+  async function ensureWorkletNode() {
+    if (!audioContext) {
+      throw new Error("AudioContext unavailable");
+    }
+
+    if (!workletUrl) {
+      throw new Error("Rubber Band worklet URL is required");
+    }
+
+    if (!audioContext.audioWorklet?.addModule) {
+      throw new Error("AudioWorklet unavailable");
+    }
+
+    if (workletNode) {
+      return workletNode;
+    }
+
+    const AudioWorkletNodeCtor = hooks.AudioWorkletNode || globalThis.AudioWorkletNode;
+    if (!AudioWorkletNodeCtor) {
+      throw new Error("AudioWorkletNode unavailable");
+    }
+
+    await audioContext.audioWorklet.addModule(workletUrl);
+    workletNode = new AudioWorkletNodeCtor(audioContext, RUBBERBAND_PROCESSOR_NAME);
+    connectWorkletOutput();
+    return workletNode;
+  }
+
+  return {
+    name: ENGINE_RUBBERBAND,
+    get unavailableReason() {
+      return unavailableReason;
+    },
+    workletUrl,
+    wasmUrl,
+    async loadSource(source) {
+      try {
+        const node = await ensureWorkletNode();
+        const bytes = await fetchArrayBuffer(source, hooks);
+        const decoded = await audioContext.decodeAudioData(bytes);
+        duration = Number(decoded.duration) || decoded.getChannelData(0).length / decoded.sampleRate || 0;
+        currentTime = 0;
+        startedAt = now();
+        playing = false;
+
+        if (wasmUrl) {
+          const wasmBinary = await fetchArrayBuffer(wasmUrl, hooks);
+          const ready = waitForPortMessage(node.port, "rubberband-ready");
+          node.port.postMessage(
+            createRubberBandMessage("init-rubberband", {
+              wasmBinary,
+              sampleRate: decoded.sampleRate,
+              channels: decoded.numberOfChannels,
+              rate,
+              preservePitch
+            }),
+            [wasmBinary]
+          );
+          await ready;
+        }
+
+        const loaded = waitForPortMessage(node.port, "buffer-loaded");
+        const message = createLoadBufferMessage(decoded);
+        node.port.postMessage(message, getRubberBandMessageTransfers(message));
+        await loaded;
+        unavailableReason = "";
+        return source || "";
+      } catch (error) {
+        unavailableReason = error.message || "Professional engine unavailable";
+        throw error;
+      }
+    },
+    async play() {
+      syncCurrentTime();
+      playing = true;
+      startedAt = now();
+      workletNode?.port?.postMessage(createRubberBandMessage("play"));
+    },
+    pause() {
+      syncCurrentTime();
+      playing = false;
+      workletNode?.port?.postMessage(createRubberBandMessage("pause"));
+    },
+    setRate(value) {
+      const nextRate = Number(value);
+      if (Number.isFinite(nextRate)) {
+        syncCurrentTime();
+        rate = nextRate;
+        startedAt = now();
+        workletNode?.port?.postMessage(createRubberBandMessage("set-rate", { rate: nextRate }));
+      }
+      return nextRate;
+    },
+    setPreservePitch(value) {
+      preservePitch = Boolean(value);
+      workletNode?.port?.postMessage(createRubberBandMessage("set-preserve-pitch", { preservePitch }));
+      return preservePitch;
+    },
+    getDuration() {
+      return duration;
+    },
+    getCurrentTime() {
+      return syncCurrentTime();
+    },
+    seek(seconds) {
+      currentTime = clampEngineTime(seconds);
+      startedAt = now();
+      workletNode?.port?.postMessage(createRubberBandMessage("seek", { seconds: currentTime }));
+      return currentTime;
+    },
+    connectAnalyser(analyser) {
+      if (!analyser || !audioContext) return false;
+      analyserNode = analyser;
+      return connectWorkletOutput();
+    },
+    destroy() {
+      workletNode?.disconnect?.();
+      analyserNode?.disconnect?.();
+      workletNode = null;
+      analyserNode = null;
+      playing = false;
+    }
+  };
+}
