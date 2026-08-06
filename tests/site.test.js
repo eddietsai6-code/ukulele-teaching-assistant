@@ -181,10 +181,25 @@ test('lesson detail mounts the Audio Speed Player from fixed song audio', () => 
   const media = read('assets/app/shared/media.js');
   const data = read('assets/data.js');
   const css = read('assets/styles.css');
+  const proEntry = read('assets/vendor/audio-speed-player/audio-speed-player-pro.js');
+  const proWorklet = read('assets/vendor/audio-speed-player/audio-speed-player-pro.worklet.js');
+  const rubberBandModulePath = path.join(root, 'assets/vendor/audio-speed-player/audio-speed-player-rubberband.mjs');
 
   assert.ok(
-    html.includes('https://eddietsai6-code.github.io/audio-speed-player/dist/audio-speed-player-pro.js'),
-    'homepage head should load the EddieDrumBook audio speed player module'
+    html.includes('./assets/vendor/audio-speed-player/audio-speed-player-pro.js'),
+    'homepage head should load the vendored Audio Speed Player Pro module'
+  );
+  assert.ok(
+    proEntry.includes('audio-speed-player-rubberband.wasm'),
+    'vendored Pro entry should register the Rubber Band wasm asset'
+  );
+  assert.ok(
+    proWorklet.includes('audio-speed-player-rubberband.mjs'),
+    'vendored Pro worklet should import the Rubber Band module wrapper'
+  );
+  assert.ok(
+    fs.existsSync(rubberBandModulePath),
+    'vendored Pro player should include the Rubber Band module wrapper required by the worklet'
   );
 
   for (const expected of [
