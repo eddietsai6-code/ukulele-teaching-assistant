@@ -4,6 +4,7 @@ import test from "node:test";
 import { mountHeroLanyard } from "../assets/app/home/lanyard.js";
 import { mountTextPressure } from "../assets/app/home/text-pressure.js";
 import { renderHeroNotebookView } from "../assets/app/home/hero-notebook.js";
+import { createLevelController } from "../assets/app/levels/level-controller.js";
 import { createLevelSongSplash } from "../assets/app/levels/level-song-splash.js";
 import { renderLevelBoardView, renderLevelSongPickerView } from "../assets/app/levels/level-views.js";
 
@@ -73,4 +74,32 @@ test("level song picker view renders songs in input order", () => {
   assert.ok(html.includes("level-song-picker-panel"));
   assert.ok(html.includes('data-song="song-a"'));
   assert.ok(html.includes("Song A"));
+});
+
+test("level controller skips safely when level roots are missing", () => {
+  const controller = createLevelController({
+    els: { levelBoard: null, levelSongPicker: null },
+    data: { levels: [level], songs: [song] },
+    state: { level: "all", activeLevelPicker: "", levelPickerOpen: false, detailTab: "lesson" },
+    levelById: { g2: level },
+    visibleSongs: () => [song],
+    selectSong: () => {
+      throw new Error("missing DOM should not select songs");
+    },
+    renderApp: () => {
+      throw new Error("missing DOM should not request app render");
+    },
+    documentRef: { elementFromPoint: () => null },
+    windowRef: {
+      matchMedia: () => ({ matches: true }),
+      cancelAnimationFrame: () => {},
+      requestAnimationFrame: () => 0,
+      devicePixelRatio: 1,
+      setTimeout: () => 0
+    }
+  });
+
+  assert.doesNotThrow(() => controller.render());
+  assert.doesNotThrow(() => controller.openLevelSongPicker("g2"));
+  assert.doesNotThrow(() => controller.closeLevelSongPicker());
 });

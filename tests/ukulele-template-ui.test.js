@@ -617,6 +617,7 @@ test('uploaded melody songs expose copied project-relative audio', () => {
 
 test('level song lists hide placeholder songs without score or audio resources', () => {
   const app = read('assets/app.js');
+  const levelController = read('assets/app/levels/level-controller.js');
   const styles = read('assets/styles.css');
 
   assert.ok(app.includes('function hasSongResources(song)'), 'song filtering should define a resource-content gate');
@@ -625,10 +626,14 @@ test('level song lists hide placeholder songs without score or audio resources',
   for (const expected of [
     'selectedSongId: visibleSongs()[0] ? visibleSongs()[0].id : ""',
     'return visibleSongs().find((song) => song.id === state.selectedSongId) || visibleSongs()[0] || null;',
+  ]) {
+    assert.ok(app.includes(expected), `missing visible-song guard: ${expected}`);
+  }
+  for (const expected of [
     'return visibleSongs().filter((song) => song.level === levelId).length;',
     'return visibleSongs()',
   ]) {
-    assert.ok(app.includes(expected), `missing visible-song guard: ${expected}`);
+    assert.ok(levelController.includes(expected), `missing visible-song guard in level controller: ${expected}`);
   }
 
   assert.equal(app.includes('song.source.includes("2024") ? "2024" : "old"'), false, 'level song picker should not render old placeholder labels');
@@ -1161,8 +1166,9 @@ test('level cards use first-page covers for all nine ukulele books', () => {
   );
   assert.ok(levelViews.includes('data-level-gallery-prev'), 'level gallery should expose a previous slide control');
   assert.ok(levelViews.includes('data-level-gallery-next'), 'level gallery should expose a next slide control');
+  const levelController = read('assets/app/levels/level-controller.js');
   assert.ok(
-    app.includes('Math.round(levelGallery.target) - 1') && app.includes('Math.round(levelGallery.target) + 1'),
+    levelController.includes('Math.round(levelGallery.target) - 1') && levelController.includes('Math.round(levelGallery.target) + 1'),
     'level gallery controls should slide one book at a time'
   );
   assert.match(
