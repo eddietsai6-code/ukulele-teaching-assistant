@@ -8,9 +8,9 @@
       name="description"
       content="清新多巴胺风格的尤克里里教学网站基础框架，保留等级、曲库、课程详情和动效结构。"
     />
-    <link rel="stylesheet" href="./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3" />
+    <link rel="stylesheet" href="./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower17-clean-lesson-footer-practice-tools-callout-login-dialog" />
     <link rel="modulepreload" href="./assets/catalog-runtime.js?v=dual-channel-content-api" />
-    <link rel="modulepreload" href="./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower4" />
+    <link rel="modulepreload" href="./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower6-celebrity-zone-exact-practice-tools-carousel-login-dialog" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237CF6A3'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' font-family='serif' fill='%23171109'%3EU%3C/text%3E%3C/svg%3E" />
     <script type="module" src="./assets/vendor/audio-speed-player/audio-speed-player-pro.js"></script>
   </head>
@@ -40,12 +40,19 @@
             <nav class="tailark-links" aria-label="Hero navigation">
               <a href="#levels">Features</a>
               <a href="#lesson">Solution</a>
-              <a href="#catalog">Pricing</a>
+              <a href="#lesson">Pricing</a>
               <a href="#lesson">About</a>
             </nav>
             <div class="tailark-actions" aria-label="Account actions">
-              <a class="tailark-login tailark-login-light" href="#catalog">Login</a>
-              <a class="tailark-login tailark-login-dark" href="#lesson">Login</a>
+              <button
+                class="tailark-login tailark-login-dark"
+                type="button"
+                data-login-trigger
+                aria-haspopup="dialog"
+                aria-controls="tailarkLoginDialog"
+              >
+                Login
+              </button>
             </div>
           </div>
         </header>
@@ -159,10 +166,20 @@
 
       </section>
 
-      <section class="ukulele-tuner-section section" aria-label="从调音开始">
-        <div class="hero-product" aria-label="当前尤克里里课堂卡片">
-          <p class="scribble-caption caption-left">从调音开始</p>
-          <div id="heroNotebook" class="notebook-object tuner-notebook-object">
+      <section class="ukulele-tuner-section section practice-tools-section" id="tuner" aria-label="Practice tools">
+        <div class="gallery-choice-callout tools-choice-callout" aria-label="模块工具选择">
+          <p class="gallery-choice-callout-text tools-choice-callout-text">模块工具选择</p>
+          <svg class="gallery-choice-callout-arrow tools-choice-callout-arrow" viewBox="0 0 180 104" aria-hidden="true" focusable="false">
+            <path d="M9 30 C62 26, 116 42, 151 79" />
+            <path d="M134 78 L154 82 L147 62" />
+          </svg>
+        </div>
+        <div class="practice-tools-shell" data-practice-tools data-active-tool="tuner">
+          <div class="practice-tools-viewport">
+            <div class="practice-tools-track">
+              <article id="practiceTunerPanel" class="practice-tool-page tuner-tool-page is-active" data-practice-tool-page="tuner" data-practice-tool-name="调音器" aria-label="调音器">
+                <div class="hero-product" aria-label="当前尤克里里课堂卡片">
+                  <div id="heroNotebook" class="notebook-object tuner-notebook-object">
             <article
               id="ukuleleTuner"
               class="uke-tuner-panel hero-tuner-panel"
@@ -171,7 +188,7 @@
             >
               <header class="uke-tuner-top">
                 <div>
-                  <h2 id="ukuleleTunerTitle">Eddie Ukulele</h2>
+                  <h2 id="ukuleleTunerTitle">GoodDay</h2>
                 </div>
                 <div class="uke-status-lamp" aria-hidden="true"></div>
               </header>
@@ -272,73 +289,99 @@
               </footer>
               <p id="tunerStatusText" class="uke-status-text">READY</p>
             </article>
+                  </div>
+                  <div class="pencil-object" aria-hidden="true"></div>
+                  <div class="sticker sticker-beat" aria-hidden="true">节拍</div>
+                </div>
+              </article>
+
+              <article id="practiceRhythmPanel" class="practice-tool-page rhythm-tool-page" data-practice-tool-page="rhythm" data-practice-tool-name="节奏练习" aria-label="节奏练习" aria-hidden="true">
+                <article class="showcase-object notebook-blue rhythm-game-showcase">
+                  <div class="rhythm-game-frame" aria-label="节奏卡片游戏">
+                    <div class="rhythm-handheld" aria-hidden="false">
+                      <div class="rhythm-console-top">
+                        <span class="rhythm-led"></span>
+                        <strong>RHYTHM POCKET</strong>
+                        <span class="rhythm-speaker"></span>
+                      </div>
+                      <div class="rhythm-screen">
+                        <iframe
+                          src="./assets/rhythm-chain-game/index.html?v=20260722-ipad-scroll-reset"
+                          title="节奏卡片游戏"
+                          loading="lazy"
+                          allow="autoplay"
+                          style="width:430px;height:844px;border:0;max-width:100%;"
+                        ></iframe>
+                      </div>
+                      <div class="rhythm-controls" aria-hidden="true">
+                        <span class="rhythm-dpad"></span>
+                        <span class="rhythm-console-brand">UkeBeat</span>
+                        <span class="rhythm-action-buttons">
+                          <i></i>
+                          <i></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </article>
+            </div>
           </div>
-          <div class="pencil-object" aria-hidden="true"></div>
-          <div class="sticker sticker-beat" aria-hidden="true">节拍</div>
+          <div class="practice-tools-controls" aria-label="Practice tool carousel controls">
+            <button class="practice-tools-arrow" type="button" data-practice-tool-prev aria-label="Previous practice tool">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 5 8 12l7 7" />
+              </svg>
+            </button>
+            <p class="practice-tools-page-label" aria-live="polite">
+              <span data-practice-tool-label>调音器</span>
+              <span class="sr-only"> / 节奏练习</span>
+              <small data-practice-tool-status>1 / 2</small>
+            </p>
+            <button class="practice-tools-arrow" type="button" data-practice-tool-next aria-label="Next practice tool">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m9 5 7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
 
-      <section class="product-row" aria-label="尤克里里教学素材形态">
-        <article class="showcase-object notebook-blue rhythm-game-showcase">
-          <p class="scribble-caption">节奏卡片</p>
-          <svg class="arrow" viewBox="0 0 128 84" aria-hidden="true">
-            <path d="M8 64 C42 34, 70 22, 112 25" />
-            <path d="M99 12 L116 25 L102 40" />
+      <section class="scroll-gallery-section" aria-label="明星专区" data-scroll-gallery>
+        <div class="gallery-choice-callout" aria-label="明星专区">
+          <p class="gallery-choice-callout-text">明星专区</p>
+          <svg class="gallery-choice-callout-arrow" viewBox="0 0 170 96" aria-hidden="true" focusable="false">
+            <path d="M9 19 C53 5, 116 22, 147 72" />
+            <path d="M134 64 L151 76 L130 79" />
           </svg>
-          <div class="rhythm-game-frame" aria-label="节奏卡片游戏">
-            <div class="rhythm-handheld" aria-hidden="false">
-              <div class="rhythm-console-top">
-                <span class="rhythm-led"></span>
-                <strong>RHYTHM POCKET</strong>
-                <span class="rhythm-speaker"></span>
-              </div>
-              <div class="rhythm-screen">
-                <iframe
-                  src="./assets/rhythm-chain-game/index.html?v=20260722-ipad-scroll-reset"
-                  title="节奏卡片游戏"
-                  loading="lazy"
-                  allow="autoplay"
-                  style="width:430px;height:844px;border:0;max-width:100%;"
-                ></iframe>
-              </div>
-              <div class="rhythm-controls" aria-hidden="true">
-                <span class="rhythm-dpad"></span>
-                <span class="rhythm-console-brand">UkeBeat</span>
-                <span class="rhythm-action-buttons">
-                  <i></i>
-                  <i></i>
-                </span>
+        </div>
+        <div class="scroll-gallery-wrapper" data-scroll-gallery-wrapper>
+          <div class="scroll-gallery-container" data-scroll-gallery-container>
+            <div class="scroll-gallery-sticky">
+              <div class="scroll-gallery-banner">
+                <div class="scroll-gallery-shadow scroll-gallery-shadow-y" aria-hidden="true"></div>
+                <div class="scroll-gallery-shadow scroll-gallery-shadow-x" aria-hidden="true"></div>
+                <div class="scroll-gallery-perspective">
+                  <div class="scroll-gallery-matrix" data-scroll-gallery-matrix>
+                    <div class="scroll-gallery-column" data-scroll-gallery-column="1"></div>
+                    <div class="scroll-gallery-column" data-scroll-gallery-column="2"></div>
+                    <div class="scroll-gallery-column" data-scroll-gallery-column="3"></div>
+                    <div class="scroll-gallery-column" data-scroll-gallery-column="4"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </article>
-        <div class="showcase-copy" hidden>
-          <p class="marker-caption">fresh frame</p>
-          <h2>还是原来的网页结构，只换成尤克里里课堂。</h2>
-          <p>
-            这里继续使用原模板的笔记本、贴纸、等级卡和课程卡框架，后续可以逐步填入你自己的课程体系。
-          </p>
         </div>
-        <article class="showcase-object notebook-pink">
-          <p class="scribble-caption">扫弦卡</p>
-          <svg class="arrow" viewBox="0 0 128 84" aria-hidden="true">
-            <path d="M9 61 C39 35, 74 20, 114 28" />
-            <path d="M101 13 L118 28 L101 42" />
-          </svg>
-          <div class="mini-notebook">
-            <span>strum notes</span>
-            <strong>down · up · chuck</strong>
-          </div>
-        </article>
       </section>
 
       <section id="levels" class="levels-section section" aria-label="尤克里里等级路径">
-        <div class="section-heading wide">
-          <p class="marker-caption">level path</p>
-          <h2>从四弦入门到完整弹唱。</h2>
-          <p>
-            保留原模板的横向等级画廊和弹出式歌曲抽屉，方便以后扩展成完整课程路径。
-          </p>
+        <div class="gallery-choice-callout level-choice-callout" aria-label="标准考级曲目">
+          <p class="gallery-choice-callout-text level-choice-callout-text">标准考级曲目</p>
+          <svg class="gallery-choice-callout-arrow level-choice-callout-arrow" viewBox="0 0 170 96" aria-hidden="true" focusable="false">
+            <path d="M9 19 C53 5, 116 22, 147 72" />
+            <path d="M134 64 L151 76 L130 79" />
+          </svg>
         </div>
         <div
           id="levelBoard"
@@ -349,42 +392,13 @@
         <div id="levelSongPicker" class="level-song-picker" hidden></div>
       </section>
 
-      <section id="catalog" class="catalog-section section" aria-label="尤克里里歌曲目录">
-        <div class="section-heading wide">
-          <p class="marker-caption">song catalog</p>
-          <h2>歌单、技巧和课堂目标都在一页里。</h2>
-          <p>
-            用原版曲库筛选结构承接尤克里里歌曲：按等级、来源、类型和技巧标签快速定位。
-          </p>
-        </div>
-        <div class="filters" aria-label="歌曲筛选">
-          <label>
-            search
-            <input id="queryInput" type="search" placeholder="搜和弦 / 扫弦 / 节拍" autocomplete="off" />
-          </label>
-          <label>
-            level
-            <select id="levelFilter"></select>
-          </label>
-          <label>
-            source
-            <select id="sourceFilter"></select>
-          </label>
-          <label>
-            category
-            <select id="categoryFilter"></select>
-          </label>
-        </div>
-        <div id="techCloud" class="tech-cloud" aria-label="技巧标签"></div>
-      </section>
-
       <section id="lesson" class="lesson-section section" aria-label="尤克里里课程详情">
-        <div class="section-heading">
-          <p class="marker-caption">lesson card</p>
-          <h2>点一首歌，右侧就是课堂卡片。</h2>
-          <p>
-            原版课程详情卡继续保留，后面可以接入示范视频、授权音频、谱面图片或练习记录。
-          </p>
+        <div class="gallery-choice-callout lesson-choice-callout" aria-label="教学课堂">
+          <p class="gallery-choice-callout-text lesson-choice-callout-text">教学课堂</p>
+          <svg class="gallery-choice-callout-arrow lesson-choice-callout-arrow" viewBox="0 0 170 96" aria-hidden="true" focusable="false">
+            <path d="M9 19 C53 5, 116 22, 147 72" />
+            <path d="M134 64 L151 76 L130 79" />
+          </svg>
         </div>
         <article id="songDetail" class="lesson-card" aria-live="polite"></article>
       </section>
@@ -404,7 +418,7 @@
             <a href="#lesson">Lesson pages</a>
             <a href="#levels">Grade atlas</a>
             <a href="#lesson">Audio player</a>
-            <a href="#catalog">Score library <span class="footer-soon">soon</span></a>
+            <a href="#lesson">Score library <span class="footer-soon">soon</span></a>
             <a href="#lesson">Practice notes <span class="footer-soon footer-soon-tilt">soon</span></a>
           </section>
           <section class="activation-footer-column" aria-label="Company">
@@ -412,7 +426,7 @@
             <a href="#top">GoodDay音乐社区</a>
             <a href="#lesson">Teaching room</a>
             <a href="#lesson">Student feedback</a>
-            <a href="#catalog">Song requests</a>
+            <a href="#lesson">Song requests</a>
             <a href="#top">About UkuleleBook</a>
           </section>
         </nav>
@@ -430,6 +444,34 @@
         </div>
       </div>
     </footer>
+
+    <div
+      id="tailarkLoginDialog"
+      class="tailark-login-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tailarkLoginTitle"
+      hidden
+    >
+      <button class="tailark-login-backdrop" type="button" data-login-close aria-label="Close login"></button>
+      <section class="tailark-login-panel" tabindex="-1">
+        <button class="tailark-login-close" type="button" data-login-close aria-label="Close login">&times;</button>
+        <p class="tailark-login-eyebrow">GoodDay Account</p>
+        <h2 id="tailarkLoginTitle">Login</h2>
+        <form id="tailarkLoginForm" class="tailark-login-form" autocomplete="on">
+          <label class="tailark-login-field" for="tailarkLoginName">
+            <span>Account</span>
+            <input id="tailarkLoginName" name="account" type="text" autocomplete="username" required />
+          </label>
+          <label class="tailark-login-field" for="tailarkLoginPassword">
+            <span>Password</span>
+            <input id="tailarkLoginPassword" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <p id="tailarkLoginFeedback" class="tailark-login-feedback" role="status" aria-live="polite"></p>
+          <button class="tailark-login-submit" type="submit">Sign in</button>
+        </form>
+      </section>
+    </div>
 
     <script src="./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3"></script>
     <script src="./assets/rsl-ukulele-data.js?v=rockschool-ukulele-chord-rhythm-category"></script>

@@ -48,7 +48,7 @@ test('homepage embeds the ukulele-only tuner UI without other instrument choices
 
   for (const expected of [
     'id="ukuleleTuner"',
-    'Eddie Ukulele',
+    'GoodDay',
     'id="startTunerButton"',
     'id="tunerNoteName"',
     'id="tunerNeedle"',
@@ -63,6 +63,7 @@ test('homepage embeds the ukulele-only tuner UI without other instrument choices
   ]) {
     assert.ok(html.includes(expected), `missing tuner UI token: ${expected}`);
   }
+  assert.equal(html.includes('Eddie Ukulele'), false, 'tuner panel should use the GoodDay brand text');
 
   assert.match(
     html,
@@ -252,8 +253,8 @@ test('song selection opens the audio tab first when the selected song has audio'
   );
   assert.match(
     app,
-    /state\.selectedSongId\s*=\s*filteredSongs\[0\]\s*\?\s*filteredSongs\[0\]\.id\s*:\s*"";[\s\S]*?state\.detailTab\s*=\s*preferredDetailTabForSong\(state\.selectedSongId\)/,
-    'filter-driven song changes should also reveal audio when available'
+    /const songs = visibleSongs\(\);[\s\S]*?state\.selectedSongId\s*=\s*songs\[0\]\s*\?\s*songs\[0\]\.id\s*:\s*"";[\s\S]*?state\.detailTab\s*=\s*preferredDetailTabForSong\(state\.selectedSongId\)/,
+    'resource-backed song changes should also reveal audio when available'
   );
 });
 

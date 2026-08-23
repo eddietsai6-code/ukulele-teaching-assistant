@@ -1,8 +1,10 @@
-import { filterSongs } from "./app/catalog/filtering.js";
 import { getPublicDomRoots } from "./app/core/dom-roots.js";
 import { renderHeroNotebookView } from "./app/home/hero-notebook.js";
 import { mountHeroLanyard } from "./app/home/lanyard.js";
 import { mountHeroSongSearch } from "./app/home/hero-song-search.js";
+import { initTailarkLogin } from "./app/home/login.js";
+import { initPracticeToolsCarousel } from "./app/home/practice-tools.js?v=20260809-practice-tools-carousel";
+import { initScrollGallery } from "./app/home/scroll-gallery.js?v=20260809-celebrity-zone-exact";
 import { mountTailarkHeroScale } from "./app/home/tailark-hero-scale.js";
 import { mountTextPressure } from "./app/home/text-pressure.js";
 import { mountTrueFocus } from "./app/home/true-focus.js";
@@ -14,7 +16,7 @@ import { applyDetailTab } from "./app/detail/detail-tabs.js";
 import { renderLessonPane } from "./app/detail/lesson-pane.js";
 import { renderMetronomePane } from "./app/detail/metronome-pane.js";
 import { renderScorePane } from "./app/detail/score-pane.js";
-import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
+import { tagMarkup } from "./app/shared/tags.js";
 
 (function () {
   const data = window.UKULELE_LEVEL_DATA;
@@ -51,10 +53,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
   }
 
   const state = {
-    query: "",
     level: "all",
-    source: "all",
-    category: "all",
     selectedSongId: visibleSongs()[0] ? visibleSongs()[0].id : "",
     detailTab: "lesson",
     activeLevelPicker: "",
@@ -78,14 +77,6 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     cardStep: 320
   };
   const levelSongSplash = createLevelSongSplash(window);
-  function normalize(value) {
-    return String(value || "").toLowerCase().trim();
-  }
-
-  function uniqueValues(key) {
-    return [...new Set(visibleSongs().map((song) => song[key]).filter(Boolean))].sort();
-  }
-
   function getSelectedSong() {
     return visibleSongs().find((song) => song.id === state.selectedSongId) || visibleSongs()[0] || null;
   }
@@ -103,63 +94,6 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     return visibleSongs()
       .filter((song) => song.level === levelId)
       .sort((a, b) => a.title.localeCompare(b.title, "zh-CN"));
-  }
-
-  function getFilteredSongs() {
-    return filterSongs({
-      songs: visibleSongs(),
-      levels: data.levels,
-      query: state.query,
-      level: state.level,
-      source: state.source,
-      category: state.category
-    });
-  }
-
-  function initFilters() {
-    if (!els.levelFilter || !els.sourceFilter || !els.categoryFilter) return;
-    data.levels.forEach((level) => {
-      const option = document.createElement("option");
-      option.value = level.id;
-      option.textContent = level.label;
-      els.levelFilter.appendChild(option);
-    });
-
-    uniqueValues("source").forEach((source) => {
-      const option = document.createElement("option");
-      option.value = source;
-      option.textContent = source;
-      els.sourceFilter.appendChild(option);
-    });
-
-    uniqueValues("category").forEach((category) => {
-      const option = document.createElement("option");
-      option.value = category;
-      option.textContent = category;
-      els.categoryFilter.appendChild(option);
-    });
-  }
-
-  function syncControls() {
-    if (els.queryInput) els.queryInput.value = state.query;
-    if (els.sourceFilter) els.sourceFilter.value = state.source;
-    if (els.categoryFilter) els.categoryFilter.value = state.category;
-    if (els.levelFilter) els.levelFilter.value = state.level;
-  }
-
-  function setLevel(levelId, shouldScroll) {
-    state.level = levelId;
-    state.detailTab = "lesson";
-    if (levelId === "all") state.levelPickerOpen = false;
-    render();
-    if (shouldScroll) document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
-  }
-
-  function setQuery(query, shouldScroll) {
-    state.query = query;
-    state.detailTab = "lesson";
-    render();
-    if (shouldScroll) document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" });
   }
 
   function selectSong(songId, shouldScroll) {
@@ -197,6 +131,9 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
   mountTailarkHeroScale(document, window);
   mountTextPressure(els.heroPressure);
   mountTrueFocus(els.heroPrincipleFocus);
+  initTailarkLogin(document, window);
+  initPracticeToolsCarousel(document);
+  initScrollGallery(document);
 
 
 
@@ -426,42 +363,10 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     };
   }
 
-  function renderTechCloud(filteredSongs) {
-    if (!els.techCloud) return;
-    const counts = new Map();
-    filteredSongs.forEach((song) => {
-      song.techniques.forEach((tech) => counts.set(tech, (counts.get(tech) || 0) + 1));
-    });
-
-    const tags = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14);
-    els.techCloud.innerHTML = `
-      <span>技巧标签</span>
-      ${tags
-        .map(
-          ([tech, count]) => `
-            <button type="button" data-tech="${tech}" class="${normalize(state.query) === normalize(tech) ? "is-active" : ""}">
-              ${tech}<em>${count}</em>
-            </button>
-          `
-        )
-        .join("")}
-    `;
-
-    els.techCloud.querySelectorAll("[data-tech]").forEach((button) => {
-      button.addEventListener("click", () => setQuery(button.dataset.tech, false));
-    });
-  }
-
   function mountLessonMetronome(root = els.songDetail) {
     const host = root?.querySelector("[data-metronome-host]");
     if (!host) return;
     window.UkeBookMetronome?.mount(host);
-  }
-
-  function bindDetailTechButtons(root) {
-    root.querySelectorAll("[data-tech]").forEach((button) => {
-      button.addEventListener("click", () => setQuery(button.dataset.tech, true));
-    });
   }
 
   function normalizeDetailTab(tab) {
@@ -520,7 +425,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
           <p><span>Source</span><b>${song.source}</b></p>
           <p><span>Type</span><b>${song.category}</b></p>
         </div>
-        <div class="song-tags">${techButtonMarkup(song.techniques)}</div>
+        <div class="song-tags">${tagMarkup(song.techniques)}</div>
       </div>
       ${detailShell}
     `;
@@ -533,45 +438,19 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     });
 
     bindAudioVersionButtons(els.songDetail, song);
-    bindDetailTechButtons(els.songDetail);
     mountLessonMetronome(els.songDetail);
   }
 
   function render() {
-    const filteredSongs = getFilteredSongs();
-    if (!filteredSongs.some((song) => song.id === state.selectedSongId)) {
-      state.selectedSongId = filteredSongs[0] ? filteredSongs[0].id : "";
+    const songs = visibleSongs();
+    if (!songs.some((song) => song.id === state.selectedSongId)) {
+      state.selectedSongId = songs[0] ? songs[0].id : "";
       state.detailTab = preferredDetailTabForSong(state.selectedSongId);
     }
-    syncControls();
     renderHeroNotebook();
     renderLevelBoard();
     renderLevelSongPicker();
-    renderTechCloud(filteredSongs);
     renderSongDetail();
-  }
-
-  function bindEvents() {
-    els.queryInput?.addEventListener("input", (event) => {
-      state.query = event.target.value;
-      state.detailTab = "lesson";
-      render();
-    });
-
-    els.sourceFilter?.addEventListener("change", (event) => {
-      state.source = event.target.value;
-      state.detailTab = "lesson";
-      render();
-    });
-
-    els.categoryFilter?.addEventListener("change", (event) => {
-      state.category = event.target.value;
-      state.detailTab = "lesson";
-      render();
-    });
-
-    els.levelFilter?.addEventListener("change", (event) => setLevel(event.target.value, false));
-
   }
 
   function initDecryptedText() {
@@ -691,9 +570,7 @@ import { tagMarkup, techButtonMarkup } from "./app/shared/tags.js";
     });
   }
 
-  initFilters();
-  mountHeroSongSearch({ els, visibleSongs, levelById, selectSong, setQuery, documentRef: document });
-  bindEvents();
+  mountHeroSongSearch({ els, visibleSongs, levelById, selectSong, setQuery: () => {}, documentRef: document });
   render();
   initDecryptedText();
   initSupportFolder();

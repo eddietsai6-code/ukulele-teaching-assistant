@@ -31,13 +31,12 @@ test('ukulele template keeps the original interactive framework', () => {
     'tailark-carousel-row-mini',
     'class="hero-product"',
     'id="heroNotebook"',
-    'class="product-row"',
+    'class="ukulele-tuner-section section practice-tools-section"',
+    'data-practice-tools',
+    'id="practiceRhythmPanel"',
     'class="levels-section section"',
     'id="levelBoard"',
     'id="levelSongPicker"',
-    'class="catalog-section section"',
-    'id="queryInput"',
-    'id="techCloud"',
     'class="lesson-section section"',
     'id="songDetail"',
     'class="footer-band activation-footer"',
@@ -90,6 +89,21 @@ test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', (
   ]) {
     assert.ok(styles.includes(expected), `missing UkuleleBook Tailark style: ${expected}`);
   }
+  assert.match(
+    styles,
+    /\.uke-fresh-theme \.footer-band\s*\{[^}]*background:\s*var\(--page-clean-paper\);/,
+    'fresh theme footer should remove the pale green/diagonal background layer'
+  );
+  assert.match(
+    styles,
+    /\.activation-footer\s*\{[^}]*background:\s*var\(--page-clean-paper\);/,
+    'activation footer should sit on the same clean paper field instead of painting a separate footer tint'
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.uke-fresh-theme \.footer-band\s*\{[^}]*linear-gradient/,
+    'fresh theme footer should not keep the old gradient background layer'
+  );
 
   for (const expected of [
     'heroSongSearchForm',
@@ -103,7 +117,7 @@ test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', (
   assert.ok(domRoots.includes('heroPrincipleFocus: documentRef.getElementById("heroPrincipleFocus")'), 'DOM roots should expose the true-focus headline row');
   assert.ok(app.includes('import { mountTrueFocus } from "./app/home/true-focus.js";'), 'homepage should import the GuitarBook true-focus behavior');
   assert.ok(app.includes('mountTrueFocus(els.heroPrincipleFocus)'), 'homepage should mount the focus frame animation');
-  assert.ok(bootstrap.includes('benefits-scale-lower4'), 'bootstrap should import the uncached app bundle with the true-focus behavior');
+  assert.ok(bootstrap.includes('benefits-scale-lower6-celebrity-zone-exact'), 'bootstrap should import the uncached app bundle with the true-focus and exact celebrity gallery behavior');
   for (const expected of [
     'export function mountTrueFocus',
     'querySelector(".true-focus-frame")',
@@ -124,6 +138,55 @@ test('homepage adapts the GuitarBook hero and footer language to UkuleleBook', (
   );
 
   assert.equal(html.includes('class="footer-band sponsor-footer"'), false, 'old sponsor footer should be replaced');
+});
+
+test('homepage exposes one login trigger with a working sign-in dialog', () => {
+  const html = read('index.html');
+  const styles = read('assets/styles.css');
+  const app = read('assets/app.js');
+
+  const loginControls = html.match(/<(?:a|button)[^>]+class="tailark-login tailark-login-dark"/g) || [];
+  assert.equal(loginControls.length, 1, 'homepage should render a single Login entry');
+  assert.equal(html.includes('tailark-login-light'), false, 'homepage should remove the duplicate light Login button');
+
+  for (const expected of [
+    'type="button"',
+    'data-login-trigger',
+    'id="tailarkLoginDialog"',
+    'role="dialog"',
+    'aria-modal="true"',
+    'id="tailarkLoginForm"',
+    'id="tailarkLoginName"',
+    'id="tailarkLoginPassword"',
+  ]) {
+    assert.ok(html.includes(expected), `missing login dialog markup: ${expected}`);
+  }
+
+  for (const expected of [
+    '.tailark-login-dialog',
+    '.tailark-login-panel',
+    '.tailark-login-field',
+    '.tailark-login-submit',
+    '.tailark-login.is-signed-in',
+  ]) {
+    assert.ok(styles.includes(expected), `missing login dialog style: ${expected}`);
+  }
+
+  assert.ok(app.includes('import { initTailarkLogin } from "./app/home/login.js";'), 'homepage should import the login behavior');
+  assert.ok(app.includes('initTailarkLogin(document, window)'), 'homepage should mount the login behavior');
+
+  const loginModule = read('assets/app/home/login.js');
+  for (const expected of [
+    'export function initTailarkLogin',
+    'localStorage',
+    'ukebook-login-user',
+    'is-signed-in',
+    'addEventListener("submit"',
+    'addEventListener("keydown"',
+    'Escape',
+  ]) {
+    assert.ok(loginModule.includes(expected), `missing login behavior token: ${expected}`);
+  }
 });
 
 test('homepage removes the old rotating level orbit module', () => {
@@ -561,7 +624,6 @@ test('level song lists hide placeholder songs without score or audio resources',
 
   for (const expected of [
     'selectedSongId: visibleSongs()[0] ? visibleSongs()[0].id : ""',
-    'return [...new Set(visibleSongs().map((song) => song[key]).filter(Boolean))].sort();',
     'return visibleSongs().find((song) => song.id === state.selectedSongId) || visibleSongs()[0] || null;',
     'return visibleSongs().filter((song) => song.level === levelId).length;',
     'return visibleSongs()',
@@ -676,26 +738,303 @@ test('UI layout baseline is iPad-first before desktop and mobile adaptation', ()
   }
 });
 
-test('catalog removes the visible song result card module', () => {
+test('homepage removes the visible catalog filter module', () => {
   const html = read('index.html');
   const app = read('assets/app.js');
+  const domRoots = read('assets/app/core/dom-roots.js');
 
+  assert.equal(html.includes('id="catalog"'), false, 'catalog filter section should be removed');
+  assert.equal(html.includes('class="catalog-section section"'), false, 'catalog section wrapper should be removed');
+  assert.equal(html.includes('song catalog'), false, 'catalog section marker should be removed');
+  assert.equal(html.includes('歌单、技巧和课堂目标都在一页里。'), false, 'catalog headline should be removed');
+  assert.equal(html.includes('用原版曲库筛选结构承接尤克里里歌曲'), false, 'catalog helper copy should be removed');
+  assert.equal(html.includes('class="filters"'), false, 'catalog filters wrapper should be removed');
+  assert.equal(html.includes('id="queryInput"'), false, 'catalog query input should be removed');
+  assert.equal(html.includes('id="levelFilter"'), false, 'catalog level filter should be removed');
+  assert.equal(html.includes('id="sourceFilter"'), false, 'catalog source filter should be removed');
+  assert.equal(html.includes('id="categoryFilter"'), false, 'catalog category filter should be removed');
+  assert.equal(html.includes('id="techCloud"'), false, 'catalog technique cloud should be removed');
+  assert.equal(html.includes('href="#catalog"'), false, 'navigation should not point at the removed catalog section');
   assert.equal(html.includes('class="catalog-head"'), false, 'catalog result header should be removed');
   assert.equal(html.includes('id="resultCount"'), false, 'catalog result count should be removed');
   assert.equal(html.includes('id="activeSummary"'), false, 'catalog active summary should be removed');
   assert.equal(html.includes('id="songList"'), false, 'catalog song card grid mount should be removed');
+  assert.equal(app.includes('filterSongs'), false, 'homepage app should not keep catalog filtering behavior after removing the module');
+  assert.equal(app.includes('renderTechCloud'), false, 'homepage app should not render the removed technique cloud');
   assert.equal(app.includes('renderSongList(filteredSongs)'), false, 'app should not render the removed card grid');
+  assert.equal(domRoots.includes('queryInput'), false, 'public DOM roots should not expose removed catalog controls');
+  assert.equal(domRoots.includes('techCloud'), false, 'public DOM roots should not expose the removed technique cloud');
 });
 
-test('homepage hides the old fresh frame copy panel', () => {
+test('homepage removes the old fresh frame copy panel and keeps the practice tools carousel', () => {
+  const html = read('index.html');
+  const app = read('assets/app.js');
+  const styles = read('assets/styles.css');
+  const practiceTools = read('assets/app/home/practice-tools.js');
+
+  assert.equal(html.includes('class="product-row"'), false, 'the old two-column product row should not render after the practice tools carousel replaced it');
+  assert.equal(html.includes('class="showcase-copy"'), false, 'the old fresh frame copy panel should not render in the homepage UI');
+  assert.ok(html.includes('class="practice-tools-shell" data-practice-tools'), 'practice tools carousel should hold the tuner and rhythm game modules');
+  assert.ok(html.includes('class="gallery-choice-callout tools-choice-callout"'), 'practice tools should use the handwritten callout shell');
+  assert.ok(html.includes('class="gallery-choice-callout-text tools-choice-callout-text"'), 'practice tools should use the handwritten orange callout text');
+  assert.ok(html.includes('>模块工具选择</p>'), 'practice tools callout should use the requested title text');
+  assert.ok(html.includes('class="gallery-choice-callout-arrow tools-choice-callout-arrow"'), 'practice tools should include the hand-drawn arrow');
+  assert.equal(html.includes('从调音开始'), false, 'old tuner-only scribble sticker should be removed');
+  assert.equal(html.includes('class="scribble-caption caption-left"'), false, 'old tuner-only caption-left sticker should be removed');
+  assert.equal(styles.includes('.caption-left'), false, 'old tuner-only caption-left CSS should be removed');
+  assert.ok(html.includes('id="practiceTunerPanel"'), 'practice tools carousel should keep the tuner panel');
+  assert.ok(html.includes('id="practiceRhythmPanel"'), 'practice tools carousel should keep the rhythm game panel');
+  const rhythmPanelStart = html.indexOf('id="practiceRhythmPanel"');
+  const rhythmFrameStart = html.indexOf('class="rhythm-game-frame"', rhythmPanelStart);
+  const rhythmPanelIntro = html.slice(rhythmPanelStart, rhythmFrameStart);
+  assert.equal(rhythmPanelIntro.includes('class="scribble-caption"'), false, 'rhythm tool should not show the decorative label above the game frame');
+  assert.equal(rhythmPanelIntro.includes('class="arrow"'), false, 'rhythm tool should not show the decorative arrow above the game frame');
+  assert.ok(html.includes('data-practice-tool-prev'), 'practice tools carousel should expose the GuitarBook-style previous control');
+  assert.ok(html.includes('data-practice-tool-next'), 'practice tools carousel should expose the GuitarBook-style next control');
+  assert.ok(html.includes('data-practice-tool-label'), 'practice tools carousel should expose the active tool label');
+  assert.ok(html.includes('data-practice-tool-status'), 'practice tools carousel should expose the active tool page count');
+  assert.ok(html.includes('id="ukuleleTuner"'), 'practice tools carousel should preserve the original tuner DOM target');
+  assert.ok(html.includes('src="./assets/rhythm-chain-game/index.html?v=20260722-ipad-scroll-reset"'), 'practice tools carousel should preserve the rhythm game iframe source');
+
+  assert.ok(app.includes('import { initPracticeToolsCarousel } from "./app/home/practice-tools.js?v=20260809-practice-tools-carousel";'), 'homepage app should import the practice tools carousel behavior');
+  assert.ok(app.includes('initPracticeToolsCarousel(document)'), 'homepage app should mount the practice tools carousel behavior');
+  assert.ok(practiceTools.includes('querySelectorAll("[data-practice-tools]")'), 'carousel behavior should attach to the outer shell instead of individual tools');
+  assert.ok(practiceTools.includes('activePage.dataset.practiceToolName'), 'carousel behavior should read tool names from markup');
+  assert.ok(practiceTools.includes('setProperty("--practice-tool-index"'), 'carousel behavior should drive horizontal track motion with a CSS variable');
+  assert.ok(practiceTools.includes('pages.forEach'), 'carousel behavior should keep inactive pages mounted while toggling active state');
+
+  assert.match(
+    styles,
+    /\.practice-tools-track\s*\{[^}]*display:\s*flex;[^}]*transform:\s*translate3d\(calc\(var\(--practice-tool-index,\s*0\) \* -100%\),\s*0,\s*0\);[^}]*transition:\s*transform 520ms cubic-bezier\(0\.22,\s*0\.72,\s*0\.18,\s*1\);/ ,
+    'practice tools track should slide horizontally like the GuitarBook module'
+  );
+  assert.match(
+    styles,
+    /\.practice-tools-controls\s*\{[^}]*grid-template-columns:\s*44px minmax\(0,\s*1fr\) 44px;[^}]*margin:\s*22px auto 0;/,
+    'practice tools controls should keep the GuitarBook round-button label layout'
+  );
+  assert.match(
+    styles,
+    /\.practice-tools-arrow\s*\{[^}]*border-radius:\s*999px;[^}]*background:\s*#fffdf8;[^}]*box-shadow:\s*0 8px 22px rgba\(23,\s*17,\s*11,\s*0\.12\);/,
+    'practice tool arrows should use the clean cream circular GuitarBook treatment'
+  );
+  assert.match(
+    styles,
+    /\.practice-tools-section\.ukulele-tuner-section\s*\{[^}]*background:\s*#ffffff;/,
+    'practice tools section should cover the pale green page tint with a clean white field behind the tuner'
+  );
+  assert.match(
+    styles,
+    /\.tools-choice-callout\s*\{[^}]*min-height:\s*118px;[^}]*margin:\s*0 auto -24px;/,
+    'practice tools callout should sit above the tool carousel without adding a large spacer'
+  );
+  assert.match(
+    styles,
+    /\.tools-choice-callout-text\s*\{[^}]*top:\s*16px;[^}]*left:\s*82px;[^}]*font-size:\s*30px;[^}]*transform:\s*rotate\(-8deg\);/,
+    'practice tools callout title should match the handwritten orange treatment'
+  );
+  assert.match(
+    styles,
+    /\.tools-choice-callout-arrow\s*\{[^}]*top:\s*48px;[^}]*left:\s*254px;[^}]*width:\s*174px;[^}]*height:\s*96px;/,
+    'practice tools callout arrow should point from the title toward the carousel controls'
+  );
+});
+
+test('homepage replaces the strum card with the GuitarBook celebrity zone', () => {
+  const html = read('index.html');
+  const styles = read('assets/styles.css');
+  const app = read('assets/app.js');
+  const scrollGalleryPath = 'assets/app/home/scroll-gallery.js';
+  const scrollGallery = fs.existsSync(path.join(root, scrollGalleryPath)) ? read(scrollGalleryPath) : '';
+
+  assert.equal(html.includes('扫弦卡'), false, 'old strum card callout should be removed');
+  assert.equal(html.includes('strum notes'), false, 'old strum card label should be removed');
+  assert.equal(html.includes('down · up · chuck'), false, 'old strum card content should be removed');
+  const practiceToolsIndex = html.indexOf('<section class="ukulele-tuner-section section practice-tools-section"');
+  const celebrityZoneIndex = html.indexOf('<section class="scroll-gallery-section" aria-label="明星专区" data-scroll-gallery>');
+  const levelsIndex = html.indexOf('<section id="levels"');
+  assert.ok(celebrityZoneIndex > practiceToolsIndex, 'celebrity zone should come after the practice tools section like the GuitarBook module follows its preceding feature');
+  assert.ok(celebrityZoneIndex > -1 && celebrityZoneIndex < levelsIndex, 'celebrity zone should sit before the level path section');
+  assert.equal(html.includes('celebrity-zone-showcase'), false, 'celebrity zone should not be constrained by the former half-card showcase class');
+  assert.equal(html.includes('showcase-object celebrity-zone-showcase'), false, 'celebrity zone should not remain a product-row article');
+  assert.ok(html.includes('>明星专区</p>'), 'celebrity zone should keep the handwritten orange title text');
+  assert.ok(html.includes('class="gallery-choice-callout-arrow"'), 'celebrity zone should include the hand-drawn black curved arrow');
+  assert.ok(html.includes('data-scroll-gallery'), 'celebrity zone should expose the scroll gallery hook');
+  assert.ok(html.includes('data-scroll-gallery-wrapper'), 'celebrity zone should include the GuitarBook gallery wrapper');
+  assert.ok(html.includes('data-scroll-gallery-column="1"'), 'celebrity zone should render the first image column mount');
+  assert.ok(html.includes('data-scroll-gallery-column="4"'), 'celebrity zone should render the fourth image column mount');
+
+  assert.ok(app.includes('import { initScrollGallery } from "./app/home/scroll-gallery.js?v=20260809-celebrity-zone-exact";'), 'homepage should import the uncached celebrity gallery behavior');
+  assert.ok(app.includes('initScrollGallery(document)'), 'homepage should mount the celebrity gallery behavior');
+  assert.equal((scrollGallery.match(/label: "Replaceable celebrity avatar/g) || []).length, 18, 'celebrity gallery should keep the GuitarBook 18 replaceable photo slots');
+  assert.equal((scrollGallery.match(/src: "\.\/assets\/gallery\/celebrity-avatars\/celebrity-avatar-/g) || []).length, 18, 'celebrity gallery should point at local celebrity avatar assets');
+  assert.ok(scrollGallery.includes('rail.className = "scroll-gallery-rail"'), 'celebrity gallery should build vertical image rails');
+  assert.ok(scrollGallery.includes('const CRUISE_PROGRESS = 0.18'), 'celebrity gallery should keep the GuitarBook scroll threshold');
+  assert.ok(scrollGallery.includes('function applyProgress(gallery, progress)'), 'celebrity gallery should keep the GuitarBook scroll-progress animation');
+  assert.ok(scrollGallery.includes('gallery.classList.toggle("is-gallery-cruising", progress >= CRUISE_PROGRESS)'), 'celebrity gallery should cruise only after the GuitarBook scroll threshold');
+  assert.ok(scrollGallery.includes('wrapper.addEventListener("scroll", readProgress'), 'celebrity gallery should use the GuitarBook internal scroll scene behavior');
+
+  for (let index = 1; index <= 18; index += 1) {
+    const base = `assets/gallery/celebrity-avatars/celebrity-avatar-${String(index).padStart(2, '0')}`;
+    const exists = ['.jpg', '.jpeg', '.png'].some((ext) => fs.existsSync(path.join(root, `${base}${ext}`)));
+    assert.ok(exists, `missing celebrity avatar asset ${base}`);
+  }
+
+  assert.match(
+    styles,
+    /\.scroll-gallery-section\s*\{[^}]*position:\s*relative;[^}]*width:\s*100%;[^}]*padding:\s*0;[^}]*background:\s*transparent;/,
+    'celebrity zone section should not paint its own background'
+  );
+  assert.match(
+    styles,
+    /--page-clean-paper:\s*repeating-linear-gradient\(90deg,\s*rgba\(21,\s*48,\s*71,\s*0\.025\)\s*0 1px,\s*transparent 1px 36px\),\s*linear-gradient\(180deg,\s*#ffffff 0%,\s*#ffffff 100%\);/,
+    'clean module paper should remove the colored diagonal page tint while keeping the vertical paper ruling'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-section::before,\s*\.levels-section::before,\s*\.lesson-section::before\s*\{[^}]*background:\s*var\(--page-clean-paper\);/,
+    'celebrity, level, and lesson modules should cover the page tint with the same clean paper field'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-wrapper\s*\{[^}]*background:\s*transparent;/,
+    'celebrity scroll wrapper should not reintroduce a module background'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-container\s*\{[^}]*background:\s*transparent;/,
+    'celebrity scroll scene should stay transparent while scrolling'
+  );
+  assert.match(
+    styles,
+    /\.gallery-choice-callout-text\s*\{[^}]*color:\s*var\(--color-marker-orange\);[^}]*font-size:\s*28px;[^}]*transform:\s*rotate\(-8deg\);/,
+    'celebrity zone title should match the GuitarBook handwritten orange callout'
+  );
+  assert.match(
+    styles,
+    /\.gallery-choice-callout-arrow\s*\{[^}]*stroke:\s*var\(--color-charcoal\);[^}]*stroke-width:\s*2;[^}]*transform:\s*rotate\(3deg\);/,
+    'celebrity zone arrow should keep the black hand-drawn GuitarBook treatment'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-wrapper\s*\{[^}]*height:\s*100vh;[^}]*height:\s*100svh;[^}]*overflow-x:\s*hidden;[^}]*overflow-y:\s*auto;/,
+    'celebrity zone should keep the GuitarBook viewport-tall scroll wrapper'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-container\s*\{[^}]*height:\s*600vh;/,
+    'celebrity zone should keep the GuitarBook 600vh internal scroll scene'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-sticky\s*\{[^}]*position:\s*sticky;[^}]*top:\s*0;[^}]*height:\s*100vh;[^}]*height:\s*100svh;/,
+    'celebrity zone should keep the GuitarBook sticky viewport composition'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-shadow-y\s*\{[^}]*box-shadow:\s*[^}]*rgba\(255,\s*255,\s*255,\s*0\.88\)[^}]*rgba\(255,\s*255,\s*255,\s*0\.72\)/,
+    'celebrity vertical shadow mask should keep the white halo without painting a pale background'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-shadow-x\s*\{[^}]*box-shadow:\s*[^}]*rgba\(255,\s*255,\s*255,\s*0\.9\)[^}]*rgba\(255,\s*255,\s*255,\s*0\.86\)/,
+    'celebrity horizontal shadow mask should keep the white halo without painting a pale background'
+  );
+  assert.doesNotMatch(
+    styles,
+    /\.scroll-gallery-shadow-[xy]\s*\{[^}]*var\(--color-cream-paper\)/,
+    'celebrity halo masks should not use the page cream color as a background fill'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-matrix\s*\{[^}]*width:\s*120vw;[^}]*height:\s*150vh;[^}]*display:\s*flex;[^}]*rotateY\(var\(--gallery-rotate-y,\s*-45deg\)\)/,
+    'celebrity zone should keep the GuitarBook oversized 3D photo matrix'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-column\s*\{[^}]*width:\s*22vw;[^}]*min-width:\s*200px;/,
+    'celebrity zone should keep the GuitarBook column proportions'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-card\s*\{[^}]*height:\s*clamp\(200px,\s*24vw,\s*400px\);/,
+    'celebrity cards should keep the GuitarBook image proportions'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-rail\s*\{[^}]*animation:\s*galleryVerticalCruise var\(--gallery-cruise-duration\) linear infinite;/,
+    'celebrity image rails should keep the gentle vertical cruise motion'
+  );
+});
+
+test('level section uses a handwritten standard exam repertoire callout', () => {
   const html = read('index.html');
   const styles = read('assets/styles.css');
 
-  assert.ok(html.includes('<div class="showcase-copy" hidden>'), 'fresh frame copy panel should not render in the homepage UI');
+  assert.equal(html.includes('level path'), false, 'old level path marker text should be removed from the level section');
+  assert.equal(html.includes('从四弦入门到完整弹唱。'), false, 'old level section headline should be removed');
+  assert.equal(html.includes('保留原模板的横向等级画廊和弹出式歌曲抽屉'), false, 'old level section explanatory copy should be removed');
+  assert.ok(html.includes('class="gallery-choice-callout level-choice-callout"'), 'level section should use the handwritten callout shell');
+  assert.ok(html.includes('class="gallery-choice-callout-text level-choice-callout-text"'), 'level section should use the handwritten orange title treatment');
+  assert.ok(html.includes('>标准考级曲目</p>'), 'level section callout should use the requested title text');
+  assert.ok(html.includes('class="gallery-choice-callout-arrow level-choice-callout-arrow"'), 'level section should include the hand-drawn curved arrow');
   assert.match(
     styles,
-    /\.product-row\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(250px,\s*1fr\)\);/,
-    'product row should collapse to two visible teaching cards after the copy panel is hidden'
+    /\.level-choice-callout\s*\{[^}]*min-height:\s*118px;[^}]*margin:\s*0 auto -8px;/,
+    'level callout should keep the compact GuitarBook-style vertical spacing'
+  );
+  assert.match(
+    styles,
+    /\.level-choice-callout-text\s*\{[^}]*font-size:\s*30px;[^}]*transform:\s*rotate\(-8deg\);/,
+    'level callout title should match the handwritten orange scale'
+  );
+  assert.match(
+    styles,
+    /\.level-choice-callout-arrow\s*\{[^}]*top:\s*36px;[^}]*left:\s*186px;[^}]*width:\s*166px;[^}]*height:\s*92px;/,
+    'level callout arrow should point from the title toward the book carousel'
+  );
+  assert.match(
+    styles,
+    /\.levels-section\s*\{[^}]*position:\s*relative;[^}]*isolation:\s*isolate;[^}]*background:\s*transparent;/,
+    'level section shell should stay transparent while its clean paper field removes the diagonal page tint'
+  );
+});
+
+test('lesson section uses a handwritten teaching classroom callout', () => {
+  const html = read('index.html');
+  const styles = read('assets/styles.css');
+
+  assert.equal(html.includes('lesson card'), false, 'old lesson marker text should be removed from the lesson section');
+  assert.equal(html.includes('点一首歌，右侧就是课堂卡片。'), false, 'old lesson section headline should be removed');
+  assert.equal(html.includes('原版课程详情卡继续保留'), false, 'old lesson explanatory copy should be removed');
+  assert.ok(html.includes('class="gallery-choice-callout lesson-choice-callout"'), 'lesson section should use the handwritten callout shell');
+  assert.ok(html.includes('class="gallery-choice-callout-text lesson-choice-callout-text"'), 'lesson section should use the handwritten orange title treatment');
+  assert.ok(html.includes('>教学课堂</p>'), 'lesson section callout should use the requested title text');
+  assert.ok(html.includes('class="gallery-choice-callout-arrow lesson-choice-callout-arrow"'), 'lesson section should include the hand-drawn curved arrow');
+  assert.match(
+    styles,
+    /\.lesson-choice-callout\s*\{[^}]*min-height:\s*126px;[^}]*margin:\s*0 auto -12px;[^}]*justify-self:\s*stretch;[^}]*width:\s*100%;/,
+    'lesson callout should keep the GuitarBook-style full-width header spacing before the lesson card'
+  );
+  assert.match(
+    styles,
+    /\.lesson-choice-callout-text\s*\{[^}]*top:\s*18px;[^}]*left:\s*46px;[^}]*font-size:\s*30px;[^}]*white-space:\s*nowrap;[^}]*writing-mode:\s*horizontal-tb;[^}]*transform:\s*rotate\(-8deg\);/,
+    'lesson callout title should stay as a left-aligned horizontal handwritten orange label'
+  );
+  assert.match(
+    styles,
+    /\.lesson-choice-callout-arrow\s*\{[^}]*top:\s*42px;[^}]*left:\s*186px;[^}]*width:\s*166px;[^}]*height:\s*92px;/,
+    'lesson callout arrow should point from the title toward the lesson card'
+  );
+  assert.match(
+    styles,
+    /\.lesson-section\s*\{[^}]*position:\s*relative;[^}]*isolation:\s*isolate;[^}]*background:\s*transparent;/,
+    'lesson section shell should stay transparent while its clean paper field removes the diagonal page tint'
+  );
+  assert.match(
+    styles,
+    /\.scroll-gallery-section::before,\s*\.levels-section::before,\s*\.lesson-section::before\s*\{[^}]*background:\s*var\(--page-clean-paper\);/,
+    'lesson section should share the same clean paper field as the gallery and level modules'
   );
 });
 
@@ -852,8 +1191,12 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
   assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3'), 'homepage should bust cached level data');
-  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower4'), 'homepage should bust cached level rendering preload');
-  assert.ok(html.includes('./assets/styles.css?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower3'), 'homepage should bust cached cover styles');
+  assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower6-celebrity-zone-exact'), 'homepage should bust cached level rendering preload');
+  assert.match(
+    html,
+    /<link rel="stylesheet" href="\.\/assets\/styles\.css\?v=[^"]*lower17-clean-lesson-footer[^"]*"/,
+    'homepage should bust cached cover styles'
+  );
 });
 
 test('GuitarBook-style hero removes the pendant and keeps books on the right', () => {
