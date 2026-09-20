@@ -290,6 +290,36 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'category: "曲目练习"',
     './assets/scores/ukulele/g1-always-with-me/score-01.png',
     './assets/scores/ukulele/g1-always-with-me/score-02.png',
+    'id: "g1-jia-le-bi-hai-dao-zhu-ti-qu"',
+    'title: "加勒比海盗 主题曲"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-jia-le-bi-hai-dao-zhu-ti-qu/score-01.png',
+    'id: "g1-mo-si-ke-jiao-wai-de-wan-shang"',
+    'title: "莫斯科郊外的晚上"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-mo-si-ke-jiao-wai-de-wan-shang/score-01.png',
+    'id: "g1-si-ka-luo-man-ji-shi"',
+    'title: "斯卡罗曼集市"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-si-ka-luo-man-ji-shi/score-01.png',
+    'id: "g1-ye-mei-gui"',
+    'title: "野玫瑰"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-ye-mei-gui/score-01.png',
+    'id: "g1-xiao-mao-lv"',
+    'title: "小毛驴"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-xiao-mao-lv/score-01.png',
+    'id: "g1-xue-rong-hua"',
+    'title: "雪绒花"',
+    'level: "g1"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g1-xue-rong-hua/score-01.png',
     'id: "g2-tian-kong-zhi-cheng"',
     'title: "天空之城"',
     'level: "g2"',
@@ -307,6 +337,26 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'level: "g2"',
     'category: "曲目练习"',
     './assets/scores/ukulele/g2-chong-er-fei/score-01.png',
+    'id: "g2-xiao-bu-wu-qu"',
+    'title: "小步舞曲"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-xiao-bu-wu-qu/score-01.png',
+    'id: "g2-duo-nian-yi-qian"',
+    'title: "多年以前"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-duo-nian-yi-qian/score-01.png',
+    'id: "g2-huan-le-song"',
+    'title: "欢乐颂"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-huan-le-song/score-01.png',
+    'id: "g2-song-bie"',
+    'title: "送别"',
+    'level: "g2"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g2-song-bie/score-01.png',
     'id: "g3-summer"',
     'title: "SUMMER"',
     'level: "g3"',
@@ -328,6 +378,11 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'level: "g3"',
     'category: "曲目练习"',
     './assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png',
+    'id: "g3-tong-nian"',
+    'title: "童年"',
+    'level: "g3"',
+    'category: "曲目练习"',
+    './assets/scores/ukulele/g3-tong-nian/score-01.png',
     'id: "g4-ai-de-luo-man-shi"',
     'title: "爱的罗曼史"',
     'level: "g4"',
@@ -370,6 +425,42 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
 
   assert.match(
     data,
+    /id: "g1-jia-le-bi-hai-dao-zhu-ti-qu"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '加勒比海盗 主题曲 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g1-mo-si-ke-jiao-wai-de-wan-shang"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '莫斯科郊外的晚上 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g1-si-ka-luo-man-ji-shi"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '斯卡罗曼集市 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g1-ye-mei-gui"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '野玫瑰 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g1-xiao-mao-lv"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '小毛驴 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g1-xue-rong-hua"[\s\S]*?level: "g1"[\s\S]*?category: "曲目练习"/,
+    '雪绒花 should be assigned to G1 song practice'
+  );
+
+  assert.match(
+    data,
     /id: "g2-tian-kong-zhi-cheng"[\s\S]*?level: "g2"/,
     '天空之城 should be assigned to G2'
   );
@@ -384,6 +475,30 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     data,
     /id: "g2-chong-er-fei"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
     '虫儿飞 should be assigned to G2 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g2-xiao-bu-wu-qu"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
+    '小步舞曲 should be assigned to G2 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g2-duo-nian-yi-qian"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
+    '多年以前 should be assigned to G2 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g2-huan-le-song"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
+    '欢乐颂 should be assigned to G2 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g2-song-bie"[\s\S]*?level: "g2"[\s\S]*?category: "曲目练习"/,
+    '送别 should be assigned to G2 song practice'
   );
 
   assert.match(
@@ -408,6 +523,12 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     data,
     /id: "g3-tian-kong-zhi-cheng-du-zou-ban"[\s\S]*?level: "g3"[\s\S]*?category: "曲目练习"/,
     '天空之城（独奏版） should be assigned to G3 song practice'
+  );
+
+  assert.match(
+    data,
+    /id: "g3-tong-nian"[\s\S]*?level: "g3"[\s\S]*?category: "曲目练习"/,
+    '童年 should be assigned to G3 song practice'
   );
 
   assert.match(
@@ -444,16 +565,27 @@ test('ukulele template applies fresh dopamine ukulele skin with imported score a
     'assets/scores/ukulele/g1-f-diao-yin-jie/score-01.png',
     'assets/scores/ukulele/g1-always-with-me/score-01.png',
     'assets/scores/ukulele/g1-always-with-me/score-02.png',
+    'assets/scores/ukulele/g1-jia-le-bi-hai-dao-zhu-ti-qu/score-01.png',
+    'assets/scores/ukulele/g1-mo-si-ke-jiao-wai-de-wan-shang/score-01.png',
+    'assets/scores/ukulele/g1-si-ka-luo-man-ji-shi/score-01.png',
+    'assets/scores/ukulele/g1-ye-mei-gui/score-01.png',
+    'assets/scores/ukulele/g1-xiao-mao-lv/score-01.png',
+    'assets/scores/ukulele/g1-xue-rong-hua/score-01.png',
     'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-01.png',
     'assets/scores/ukulele/g2-tian-kong-zhi-cheng/score-02.png',
     'assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-01.png',
     'assets/scores/ukulele/g2-zhi-ai-li-si-for-elise/score-02.png',
     'assets/scores/ukulele/g2-chong-er-fei/score-01.png',
+    'assets/scores/ukulele/g2-xiao-bu-wu-qu/score-01.png',
+    'assets/scores/ukulele/g2-duo-nian-yi-qian/score-01.png',
+    'assets/scores/ukulele/g2-huan-le-song/score-01.png',
+    'assets/scores/ukulele/g2-song-bie/score-01.png',
     'assets/scores/ukulele/g3-summer/score-01.png',
     'assets/scores/ukulele/g3-hei-ren-tai-guan/score-01.png',
     'assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-01.png',
     'assets/scores/ukulele/g3-yue-liang-dai-biao-wo-de-xin/score-02.png',
     'assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png',
+    'assets/scores/ukulele/g3-tong-nian/score-01.png',
     'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-01.png',
     'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-02.png',
     'assets/scores/ukulele/g4-ai-de-luo-man-shi/score-03.png',
@@ -540,6 +672,36 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/g1-always-with-me/with-click.mp3',
     },
     {
+      id: 'g1-jia-le-bi-hai-dao-zhu-ti-qu',
+      title: '加勒比海盗 主题曲 音频',
+      src: './assets/audio/ukulele/g1-jia-le-bi-hai-dao-zhu-ti-qu/full.mp3',
+    },
+    {
+      id: 'g1-mo-si-ke-jiao-wai-de-wan-shang',
+      title: '莫斯科郊外的晚上 音频',
+      src: './assets/audio/ukulele/g1-mo-si-ke-jiao-wai-de-wan-shang/full.mp3',
+    },
+    {
+      id: 'g1-si-ka-luo-man-ji-shi',
+      title: '斯卡罗曼集市 音频',
+      src: './assets/audio/ukulele/g1-si-ka-luo-man-ji-shi/full.mp3',
+    },
+    {
+      id: 'g1-ye-mei-gui',
+      title: '野玫瑰 音频',
+      src: './assets/audio/ukulele/g1-ye-mei-gui/full.mp3',
+    },
+    {
+      id: 'g1-xiao-mao-lv',
+      title: '小毛驴 音频',
+      src: './assets/audio/ukulele/g1-xiao-mao-lv/full.mp3',
+    },
+    {
+      id: 'g1-xue-rong-hua',
+      title: '雪绒花 音频',
+      src: './assets/audio/ukulele/g1-xue-rong-hua/full.mp3',
+    },
+    {
       id: 'g2-tian-kong-zhi-cheng',
       title: '天空之城 音频',
       src: './assets/audio/ukulele/g2-tian-kong-zhi-cheng/full.mp3',
@@ -566,6 +728,26 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       src: './assets/audio/ukulele/g2-chong-er-fei/full.mp3',
     },
     {
+      id: 'g2-xiao-bu-wu-qu',
+      title: '小步舞曲 音频',
+      src: './assets/audio/ukulele/g2-xiao-bu-wu-qu/full.mp3',
+    },
+    {
+      id: 'g2-duo-nian-yi-qian',
+      title: '多年以前 音频',
+      src: './assets/audio/ukulele/g2-duo-nian-yi-qian/full.mp3',
+    },
+    {
+      id: 'g2-huan-le-song',
+      title: '欢乐颂 音频',
+      src: './assets/audio/ukulele/g2-huan-le-song/full.mp3',
+    },
+    {
+      id: 'g2-song-bie',
+      title: '送别 音频',
+      src: './assets/audio/ukulele/g2-song-bie/full.mp3',
+    },
+    {
       id: 'g3-summer',
       title: 'SUMMER Full 音频',
       src: './assets/audio/ukulele/g3-summer/full.mp3',
@@ -589,6 +771,11 @@ test('uploaded melody songs expose copied project-relative audio', () => {
       id: 'g3-tian-kong-zhi-cheng-du-zou-ban',
       title: '天空之城（独奏版） 音频',
       src: './assets/audio/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/full.mp3',
+    },
+    {
+      id: 'g3-tong-nian',
+      title: '童年 音频',
+      src: './assets/audio/ukulele/g3-tong-nian/full.mp3',
     },
     {
       id: 'g4-ai-de-luo-man-shi',
@@ -787,6 +974,10 @@ test('homepage removes the old fresh frame copy panel and keeps the practice too
   assert.equal(html.includes('从调音开始'), false, 'old tuner-only scribble sticker should be removed');
   assert.equal(html.includes('class="scribble-caption caption-left"'), false, 'old tuner-only caption-left sticker should be removed');
   assert.equal(styles.includes('.caption-left'), false, 'old tuner-only caption-left CSS should be removed');
+  assert.equal(html.includes('class="pencil-object"'), false, 'tuner panel should not render the pencil decoration over the interface');
+  assert.equal(html.includes('class="sticker sticker-beat"'), false, 'tuner panel should not render the beat sticker over the interface');
+  assert.equal(styles.includes('.pencil-object'), false, 'removed tuner pencil decoration should not keep CSS hooks');
+  assert.equal(styles.includes('.sticker-beat'), false, 'removed tuner beat sticker should not keep CSS hooks');
   assert.ok(html.includes('id="practiceTunerPanel"'), 'practice tools carousel should keep the tuner panel');
   assert.ok(html.includes('id="practiceRhythmPanel"'), 'practice tools carousel should keep the rhythm game panel');
   const rhythmPanelStart = html.indexOf('id="practiceRhythmPanel"');
@@ -1196,7 +1387,7 @@ test('level cards use first-page covers for all nine ukulele books', () => {
     /\.level-label\.has-book-cover \.circular-caption \.role,[\s\S]*?\.level-label\.has-book-cover \.circular-caption \.location\s*\{[^}]*white-space:\s*nowrap;/,
     'book-card captions should stay to single-line summaries so covers do not clip text'
   );
-  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3'), 'homepage should bust cached level data');
+  assert.ok(html.includes('./assets/data.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tong-nian-g3-jia-le-bi-hai-dao-g1-mo-si-ke-jiao-wai-de-wan-shang-g1-si-ka-luo-man-ji-shi-g1-ye-mei-gui-g1-xiao-mao-lv-g1-xue-rong-hua-g1-xiao-bu-wu-qu-g2-duo-nian-yi-qian-g2-huan-le-song-g2-song-bie-g2'), 'homepage should bust cached level data');
   assert.ok(html.includes('./assets/app.js?v=book-cover-cards-fit4-audio-player-photo-lanyard-row-clean-audio-title-scale-category-rhythm-game-panel-fit6-fixed-audio-progress-content-filter-song-category2-chong-er-fei-g2-huan-hua-cheng-feng-g5-summer-g3-hei-ren-tai-guan-g3-ai-de-luo-man-shi-g4-yue-liang-dai-biao-wo-de-xin-g3-tian-kong-zhi-cheng-du-zou-ban-g3-tailark-hero-footer-master-accordion-swap-ukulelebook-gap-ipad-master-ratio-benefits-scale-lower6-celebrity-zone-exact'), 'homepage should bust cached level rendering preload');
   assert.match(
     html,

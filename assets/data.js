@@ -381,6 +381,168 @@
       ]
     }),
     makeSong({
+      id: "g1-jia-le-bi-hai-dao-zhu-ti-qu",
+      title: "加勒比海盗 主题曲",
+      artist: "Klaus Badelt",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Film theme melody",
+      techniques: ["1=F", "3/4", "120 BPM", "eighth note", "repeat ending"],
+      goal: "练习《加勒比海盗 主题曲》的一级旋律曲目，掌握F调三拍子、120 BPM律动和反复结尾。",
+      focus: "保持三拍子重音清楚，读准F调旋律位置，并把反复段落与第一、第二结尾连接顺畅。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "慢练反复段落与结尾", "跟120 BPM完整弹奏"],
+      commonIssues: ["三拍子重音不稳", "八分音符连接容易抢拍", "反复结尾回弹位置不清楚"],
+      passStandard: "能在120 BPM稳定弹完整曲，并准确处理三拍子、八分音符和反复结尾。",
+      audio: [
+        {
+          title: "加勒比海盗 主题曲 音频",
+          src: "./assets/audio/ukulele/g1-jia-le-bi-hai-dao-zhu-ti-qu/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "加勒比海盗 主题曲 谱面 1",
+          src: "./assets/scores/ukulele/g1-jia-le-bi-hai-dao-zhu-ti-qu/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-mo-si-ke-jiao-wai-de-wan-shang",
+      title: "莫斯科郊外的晚上",
+      artist: "Vasily Solovyov-Sedoi",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Folk melody",
+      techniques: ["1=F", "2/4", "80 BPM", "eighth note", "tie"],
+      goal: "练习《莫斯科郊外的晚上》的一级旋律曲目，掌握F调2/4拍、80 BPM慢速律动和长音保持。",
+      focus: "保持二拍子稳定，读准F调旋律与临时升降音，并让连线长音自然延续。",
+      practiceOrder: ["唱名读谱", "拍读2/4节奏", "单独练习连线长音", "跟80 BPM完整弹奏"],
+      commonIssues: ["长音保持不够", "临时升降音位置反应慢", "二拍子弱拍进入不稳"],
+      passStandard: "能在80 BPM稳定弹完整曲，并准确处理2/4拍、连线长音和临时升降音。",
+      audio: [
+        {
+          title: "莫斯科郊外的晚上 音频",
+          src: "./assets/audio/ukulele/g1-mo-si-ke-jiao-wai-de-wan-shang/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "莫斯科郊外的晚上 谱面 1",
+          src: "./assets/scores/ukulele/g1-mo-si-ke-jiao-wai-de-wan-shang/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-si-ka-luo-man-ji-shi",
+      title: "斯卡罗曼集市",
+      artist: "Traditional",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "English folk melody",
+      techniques: ["1=F", "3/4", "120 BPM", "slide", "dotted note"],
+      goal: "练习《斯卡罗曼集市》的一级旋律曲目，掌握F调三拍子、滑音和附点长音。",
+      focus: "保持三拍子律动，读准滑音后的目标音，并让附点与长音的时值稳定。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "单独练习滑音小节", "跟120 BPM完整弹奏"],
+      commonIssues: ["滑音目标音不到位", "附点长音时值不够", "三拍子重音不清楚"],
+      passStandard: "能在120 BPM稳定弹完整曲，并准确处理三拍子、滑音和附点长音。",
+      audio: [
+        {
+          title: "斯卡罗曼集市 音频",
+          src: "./assets/audio/ukulele/g1-si-ka-luo-man-ji-shi/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "斯卡罗曼集市 谱面 1",
+          src: "./assets/scores/ukulele/g1-si-ka-luo-man-ji-shi/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-ye-mei-gui",
+      title: "野玫瑰",
+      artist: "舒伯特",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Classical melody",
+      techniques: ["1=F", "4/4", "80 BPM", "eighth note", "slide"],
+      goal: "练习《野玫瑰》的一级旋律曲目，掌握F调4/4拍、80 BPM中速律动和滑音连接。",
+      focus: "保持四拍子稳定，读准F调旋律与临时升降音，并让滑音后的目标音清楚落点。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "单独练习滑音与临时音小节", "跟80 BPM完整弹奏"],
+      commonIssues: ["八分音符连续处容易不均匀", "滑音目标音不到位", "高把位8品音反应慢"],
+      passStandard: "能在80 BPM稳定弹完整曲，并准确处理4/4拍、滑音和临时升降音。",
+      audio: [
+        {
+          title: "野玫瑰 音频",
+          src: "./assets/audio/ukulele/g1-ye-mei-gui/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "野玫瑰 谱面 1",
+          src: "./assets/scores/ukulele/g1-ye-mei-gui/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-xiao-mao-lv",
+      title: "小毛驴",
+      artist: "Traditional",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Children's melody",
+      techniques: ["1=C", "4/4", "90 BPM", "eighth note", "melody tab"],
+      goal: "练习《小毛驴》的一级旋律曲目，掌握C调四拍子、90 BPM律动和重复短句。",
+      focus: "保持四拍子稳定，读准C调旋律位置，并把重复节奏弹得均匀清楚。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "分句慢练重复短句", "跟90 BPM完整弹奏"],
+      commonIssues: ["重复音容易抢拍", "八分音符连接忽快忽慢", "结尾和声音按下不整齐"],
+      passStandard: "能在90 BPM稳定弹完整曲，并准确处理四拍子、重复音和结尾和声音。",
+      audio: [
+        {
+          title: "小毛驴 音频",
+          src: "./assets/audio/ukulele/g1-xiao-mao-lv/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "小毛驴 谱面 1",
+          src: "./assets/scores/ukulele/g1-xiao-mao-lv/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g1-xue-rong-hua",
+      title: "雪绒花",
+      artist: "Richard Rodgers",
+      level: "g1",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Musical melody",
+      techniques: ["1=C", "3/4", "120 BPM", "chord melody", "repeat ending"],
+      goal: "练习《雪绒花》的一级旋律曲目，掌握C调三拍子、120 BPM律动和反复结尾。",
+      focus: "保持三拍子重音清楚，读准C调和声音，并把反复段落和长音时值弹完整。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "慢练和声音与长音", "跟120 BPM完整弹奏"],
+      commonIssues: ["三拍子重音不清楚", "长音保持不够", "反复结尾回弹位置不清楚"],
+      passStandard: "能在120 BPM稳定弹完整曲，并准确处理三拍子、长音和反复结尾。",
+      audio: [
+        {
+          title: "雪绒花 音频",
+          src: "./assets/audio/ukulele/g1-xue-rong-hua/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "雪绒花 谱面 1",
+          src: "./assets/scores/ukulele/g1-xue-rong-hua/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
       id: "little-island",
       title: "Little Island",
       artist: "Ukulele Template",
@@ -454,6 +616,114 @@
         {
           title: "虫儿飞 谱面 1",
           src: "./assets/scores/ukulele/g2-chong-er-fei/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g2-xiao-bu-wu-qu",
+      title: "小步舞曲",
+      artist: "Johann Sebastian Bach",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Classical melody",
+      techniques: ["1=C", "3/4", "100 BPM", "eighth note", "melody tab"],
+      goal: "练习《小步舞曲》的二级旋律曲目，掌握C调三拍子、100 BPM律动和八分音符连接。",
+      focus: "保持三拍子重音清楚，读准C调旋律，并把低把位旋律与收尾和弦弹稳定。",
+      practiceOrder: ["唱名读谱", "拍读3/4节奏", "分句慢练八分音符连接", "跟100 BPM完整弹奏"],
+      commonIssues: ["三拍子重音不清楚", "八分音符连接忽快忽慢", "结尾和弦按下不整齐"],
+      passStandard: "能在100 BPM稳定弹完整曲，并准确处理三拍子、八分音符和收尾和声音。",
+      audio: [
+        {
+          title: "小步舞曲 音频",
+          src: "./assets/audio/ukulele/g2-xiao-bu-wu-qu/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "小步舞曲 谱面 1",
+          src: "./assets/scores/ukulele/g2-xiao-bu-wu-qu/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g2-duo-nian-yi-qian",
+      title: "多年以前",
+      artist: "Traditional",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Folk melody",
+      techniques: ["1=F", "4/4", "90 BPM", "eighth note", "arpeggio"],
+      goal: "练习《多年以前》的二级旋律曲目，掌握F调四拍子、90 BPM律动和八分音符分解连接。",
+      focus: "保持四拍子稳定，读准F调旋律位置，并让连续八分音符均匀流动。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "分句慢练八分音符连接", "跟90 BPM完整弹奏"],
+      commonIssues: ["八分音符颗粒不均匀", "F调音位和C调音位混淆", "长句换弦时节拍被拉慢"],
+      passStandard: "能在90 BPM稳定弹完整曲，并准确处理F调旋律、四拍子和八分音符连接。",
+      audio: [
+        {
+          title: "多年以前 音频",
+          src: "./assets/audio/ukulele/g2-duo-nian-yi-qian/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "多年以前 谱面 1",
+          src: "./assets/scores/ukulele/g2-duo-nian-yi-qian/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g2-huan-le-song",
+      title: "欢乐颂",
+      artist: "Ludwig van Beethoven",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Classical melody",
+      techniques: ["1=F", "4/4", "110 BPM", "eighth note", "melody tab"],
+      goal: "练习《欢乐颂》的二级旋律曲目，掌握F调四拍子、110 BPM律动和连续八分音符。",
+      focus: "保持四拍子强弱规律，读准F调旋律，并把熟悉旋律弹得均匀不抢拍。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "分句慢练连续八分音符", "跟110 BPM完整弹奏"],
+      commonIssues: ["熟悉旋律导致抢拍", "连续八分音符忽快忽慢", "结尾长音时值不够"],
+      passStandard: "能在110 BPM稳定弹完整曲，并准确处理四拍子、八分音符和结尾长音。",
+      audio: [
+        {
+          title: "欢乐颂 音频",
+          src: "./assets/audio/ukulele/g2-huan-le-song/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "欢乐颂 谱面 1",
+          src: "./assets/scores/ukulele/g2-huan-le-song/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g2-song-bie",
+      title: "送别",
+      artist: "John P. Ordway",
+      level: "g2",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Chinese school song",
+      techniques: ["1=C", "4/4", "80 BPM", "chord melody", "eighth note"],
+      goal: "练习《送别》的二级旋律曲目，掌握C调四拍子、80 BPM慢速律动和和声音连接。",
+      focus: "保持旋律歌唱性，读准C调TAB位置，并让和声音与八分音符衔接自然。",
+      practiceOrder: ["唱名读谱", "拍读4/4节奏", "慢练和声音按法", "跟80 BPM完整弹奏"],
+      commonIssues: ["长音保持不够", "和声音按下不整齐", "八分音符进入时抢拍"],
+      passStandard: "能在80 BPM稳定弹完整曲，并准确处理四拍子、和声音和旋律长音。",
+      audio: [
+        {
+          title: "送别 音频",
+          src: "./assets/audio/ukulele/g2-song-bie/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "送别 谱面 1",
+          src: "./assets/scores/ukulele/g2-song-bie/score-01.png"
         }
       ]
     }),
@@ -600,6 +870,33 @@
         {
           title: "天空之城（独奏版）谱面 1",
           src: "./assets/scores/ukulele/g3-tian-kong-zhi-cheng-du-zou-ban/score-01.png"
+        }
+      ]
+    }),
+    makeSong({
+      id: "g3-tong-nian",
+      title: "童年",
+      artist: "罗大佑",
+      level: "g3",
+      source: "用户上传曲谱",
+      category: "曲目练习",
+      style: "Mandopop chord melody",
+      techniques: ["1=C", "4/4", "80 BPM", "eighth note", "chord melody"],
+      goal: "练习《童年》的三级弹唱曲目，掌握80 BPM中速律动、八分音符旋律和A/B段衔接。",
+      focus: "保持C调旋律清楚，按稳常用和弦，并让前奏、A段和B段的拍点不断。",
+      practiceOrder: ["拍读80 BPM八分节奏", "先练前奏和A段旋律", "分开慢练B段高音与和弦", "跟音频完整连接前奏、A段和B段"],
+      commonIssues: ["八分音符连续处容易抢拍", "和弦伴奏音盖过旋律", "进入B段高音位置时换把不稳"],
+      passStandard: "能在80 BPM稳定弹完整曲，并保持旋律清楚、和弦干净、A/B段衔接不断拍。",
+      audio: [
+        {
+          title: "童年 音频",
+          src: "./assets/audio/ukulele/g3-tong-nian/full.mp3"
+        }
+      ],
+      scoreImages: [
+        {
+          title: "童年 谱面 1",
+          src: "./assets/scores/ukulele/g3-tong-nian/score-01.png"
         }
       ]
     }),

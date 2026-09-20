@@ -121,16 +121,6 @@ a {
   }
 }
 
-@keyframes pencilBob {
-  0%,
-  100% {
-    transform: rotate(15deg) translateY(0);
-  }
-  50% {
-    transform: rotate(13deg) translateY(9px);
-  }
-}
-
 @keyframes stickerBoltWiggle {
   0%,
   100% {
@@ -141,16 +131,6 @@ a {
   }
   70% {
     transform: rotate(-16deg) translateY(2px);
-  }
-}
-
-@keyframes stickerBeatWiggle {
-  0%,
-  100% {
-    transform: rotate(10deg) scale(1);
-  }
-  45% {
-    transform: rotate(15deg) scale(1.04);
   }
 }
 
@@ -669,55 +649,6 @@ main {
   font-size: 20px;
 }
 
-.pencil-object {
-  position: absolute;
-  right: 0;
-  top: 174px;
-  width: 28px;
-  height: 430px;
-  border: 1.5px solid var(--color-charcoal);
-  border-radius: 18px;
-  background: var(--color-marker-orange);
-  transform: rotate(15deg);
-  box-shadow: var(--shadow-subtle);
-  animation: pencilBob 4.8s ease-in-out 1s infinite;
-}
-
-.pencil-object::before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: -30px;
-  width: 18px;
-  height: 42px;
-  background: #e7c59d;
-  border: 1.5px solid var(--color-charcoal);
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
-.sticker {
-  position: absolute;
-  z-index: 4;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--color-charcoal);
-  color: var(--color-charcoal);
-  font-family: var(--font-geist);
-  font-weight: 500;
-  line-height: 1;
-}
-
-.sticker-beat {
-  right: 36px;
-  bottom: 58px;
-  width: 84px;
-  height: 62px;
-  border-radius: 48% 52% 46% 54%;
-  background: var(--color-bubblegum-sticker);
-  transform: rotate(10deg);
-  animation: stickerBeatWiggle 3.9s ease-in-out 1.2s infinite;
-}
-
 .uke-fresh-theme .pill-button,
 .uke-fresh-theme .tag-chip,
 .uke-fresh-theme .roll-number {
@@ -741,14 +672,6 @@ main {
 
 .uke-fresh-theme .name-sticker {
   background: rgba(255, 255, 255, 0.9);
-}
-
-.uke-fresh-theme .pencil-object {
-  background: linear-gradient(180deg, var(--color-lemon-sticker), var(--color-marker-orange));
-}
-
-.uke-fresh-theme .sticker-beat {
-  background: var(--color-bubblegum-sticker);
 }
 
 .uke-fresh-theme .level-song-picker-panel {
@@ -3886,10 +3809,6 @@ main {
     animation-name: notebookFloatMobile;
   }
 
-  .pencil-object {
-    right: 12%;
-  }
-
   .level-board,
   .song-label-grid,
   .level-song-picker-grid.chroma-grid {
@@ -4024,12 +3943,6 @@ main {
     left: 24px;
     right: 24px;
     font-size: 17px;
-  }
-
-  .pencil-object {
-    right: 8px;
-    top: 130px;
-    height: 360px;
   }
 
   .product-row {
