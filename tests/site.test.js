@@ -187,8 +187,8 @@ test('lesson detail mounts the Audio Speed Player from fixed song audio', () => 
   const rubberBandModulePath = path.join(root, 'assets/vendor/audio-speed-player/audio-speed-player-rubberband.mjs');
 
   assert.ok(
-    html.includes('./assets/vendor/audio-speed-player/audio-speed-player-pro.js'),
-    'homepage head should load the vendored Audio Speed Player Pro module'
+    html.includes('https://eddietsai6-code.github.io/audio-speed-player/dist/audio-speed-player-pro.js'),
+    'homepage head should load the shared Audio Speed Player Pro module'
   );
   assert.ok(
     proEntry.includes('audio-speed-player-rubberband.wasm'),
